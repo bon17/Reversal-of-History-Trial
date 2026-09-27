@@ -41,7 +41,9 @@
   function oops(kind) { return kind === '일반' ? G.ep.오답.일반 : kind === '피해' ? G.ep.오답.피해 : kind; }
 
   async function line(c) {
-    G.stage.speaker(c.말, c.표정);
+    // 보기: 말하는 사람 대신 다른 인물을 화면에 두고, 말하는 사람은 작은 얼굴로 보여 준다
+    if (c.보기) { G.stage.showChar(c.보기, c.보기표정); G.box.face(c.말, c.표정); }
+    else G.stage.speaker(c.말, c.표정);
     await G.box.say({ 이름: c.말, 글: c.대사 });
     if (P.cardsAfterLine) { G.stage.hideCards(); P.cardsAfterLine = false; }
   }
