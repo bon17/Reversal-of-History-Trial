@@ -55,10 +55,10 @@
       return new Promise(() => {
         G.store.clear();
         openScreen(h('div', { class: 'screen solid art-screen' },
-          G.imgEl('ui/screen_next_episode', 'art'),
-          h('div', { class: 'bottom' },
+          h('div', { class: 'art-frame' },
+            G.imgEl('ui/screen_next_episode', 'art'),
             h('div', { class: 'next-title' }, title),
-            h('button', { class: 'ui-btn', onclick: () => location.reload() }, '처음 화면으로'))));
+            h('div', { class: 'bottom' }, h('button', { class: 'ui-btn', onclick: () => location.reload() }, '처음 화면으로')))));
       });
     },
   };

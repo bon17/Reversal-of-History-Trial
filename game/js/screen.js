@@ -127,6 +127,7 @@
     // 외침, 띠, 증언 개시 같은 큰 그림
     async big(key, anim, ms) {
       const img = G.imgEl(key, anim);
+      img.style.animationDuration = ms + 'ms'; // 보이는 시간에 맞춰 애니메이션 길이도 맞춘다
       await G.loadImg(key);
       $('#big').append(img);
       await G.sleep(ms);
@@ -211,6 +212,7 @@
       // 실제 사진은 출처 표기 띠를 함께 띄운다
       if (ev.사진) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, ev.출처)));
       pop.hidden = false;
+      G.box.face(null);
       await G.box.say({ 이름: G.kindName(ev), 글: G.evidenceText(ev), 증거: true });
       pop.hidden = true;
       pop.innerHTML = '';
@@ -361,6 +363,7 @@
     // 대사 한 줄: 넘치면 여러 쪽으로 나누고, 쪽마다 누를 때까지 기다린다.
     async say({ 이름, 글, 표시이름, skin = 'normal', cls = '', 증거 = false }) {
       this.show(skin);
+      textEl.style.fontSize = '';
       const shownName = 표시이름 != null ? 표시이름 : (이름 === '(목소리)' ? '목소리' : 이름);
       this.setName(skin === 'normal' ? shownName : (skin === 'hint' ? '힌트' : '알아두기'));
       textEl.className = '';
@@ -391,6 +394,13 @@
       textEl.innerHTML = tokHtml(tokens, 0, tokens.length, false);
       textEl.className = glow ? 'glow' : '';
       nextIcon.classList.remove('on');
+      // 칸보다 길면 전부 보이도록 글자를 조금씩 줄인다
+      textEl.style.fontSize = '';
+      let size = parseFloat(getComputedStyle(textEl).fontSize);
+      for (let i = 0; i < 12 && textEl.scrollHeight > textEl.clientHeight + 1; i++) {
+        size *= 0.94;
+        textEl.style.fontSize = size + 'px';
+      }
     },
   };
 

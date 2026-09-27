@@ -130,12 +130,12 @@
     '잠깐': ['ui/shout_holdit', '외침 "잠깐!"'],
     '받아라': ['ui/shout_takethat', '외침 "받아라!"'],
   };
-  async function shout(kind) {
+  async function shout(kind, ms = 950) {
     const [img, se] = SHOUT[kind];
     G.box.hide();
     G.audio.se(se);
     G.stage.shake(false);
-    await G.stage.big(img, 'pop', 950);
+    await G.stage.big(img, 'pop', ms);
   }
 
   function gain(id) {
@@ -218,6 +218,8 @@
       if (act === 'next') { i = (i + 1) % n; continue; }
       if (act === 'press') {
         if (revised[i] && st.수정) { await runList(st.수정.뒤); continue; }
+        // 추궁할 때마다 "잠깐!" (대본에 이미 외침이 있는 추궁은 한 번만)
+        if (!(st.추궁 || []).some((c) => c.외침)) await shout('잠깐', 650);
         await runList(st.추궁);
         if (st.수정 && !revised[i]) {
           G.audio.se('증언 수정음');

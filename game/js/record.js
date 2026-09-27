@@ -36,7 +36,7 @@
     const frameKey = FRAME[ev.색] || FRAME.개념;
     const card = h('div', { class: 'card card-' + ({ 빨강: 'red', 파랑: 'blue', 초록: 'green', 개념: 'concept', 검찰: 'prosecution' }[ev.색] || 'concept') });
     card.append(G.imgEl(frameKey, 'frame'));
-    const win = h('div', { class: 'win' + (ev.사진 ? ' photo' : '') });
+    const win = h('div', { class: 'win' + (ev.사진 ? ' photo' : '') + (ev.그림 || ev.얼굴 ? '' : ' text') });
     win.append(G.cardInner(id));
     card.append(win);
     card.append(h('div', { class: 'nm' }, ev.이름));
@@ -96,11 +96,12 @@
           const desc = h('div', { class: 'desc' });
           ev.설명.forEach((t) => { const p = h('p'); p.innerHTML = descHtml(t); desc.append(p); });
           info.append(desc);
-          const row = h('div', { class: 'row' });
+          // 윗줄: [자세히 보기] [닫기], 아랫줄: [증거 제시] (증거를 고를 때만)
+          const row = h('div', { class: 'row first' + (ev.그림 ? '' : ' solo') });
           if (ev.그림) row.append(h('button', { class: 'img-btn same', 'aria-label': '자세히 보기', onclick: () => zoom(id) }, G.imgEl('ui/btn_examine')));
-          if (present && ev.색 !== '개념') row.append(h('button', { class: 'img-btn same', 'aria-label': '증거 제시', onclick: () => { d.remove(); close(id); } }, G.imgEl('ui/btn_present')));
           row.append(h('button', { class: 'same css', onclick: shut }, '닫기'));
           info.append(row);
+          if (present && ev.색 !== '개념') info.append(h('div', { class: 'row second' }, h('button', { class: 'img-btn same', 'aria-label': '증거 제시', onclick: () => { d.remove(); close(id); } }, G.imgEl('ui/btn_present'))));
           panel.append(G.renderCard(id), info);
           d.append(panel);
           d.addEventListener('click', (e) => { if (e.target === d) shut(); });
