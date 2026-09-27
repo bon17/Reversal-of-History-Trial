@@ -27,6 +27,8 @@
   G.loadImg = (key) => {
     if (!key) return Promise.resolve('');
     if (imgCache[key]) return imgCache[key];
+    // 한 파일짜리 게임(tools/build_single_html.mjs로 만든 것)은 그림이 파일 안에 들어 있다
+    if (window.EMBED_IMG && window.EMBED_IMG[key]) return (imgCache[key] = Promise.resolve(window.EMBED_IMG[key]));
     imgCache[key] = new Promise((resolve) => {
       const tries = ['game/img/' + key + '.webp', 'assets/' + key + '.png', 'assets/' + key + '.jpg'];
       const next = () => {
