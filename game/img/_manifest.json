@@ -1,0 +1,1550 @@
+{
+ "backgrounds/archive_room.png": {
+  "hash": "2cd815c902f41b80",
+  "webp": "backgrounds/archive_room.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_defendant.png": {
+  "hash": "7bf01ecae91a06f0",
+  "webp": "backgrounds/court_defendant.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_defendant_desk.png": {
+  "hash": "67660aa44f8e60a3",
+  "webp": "backgrounds/court_defendant_desk.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_defense.png": {
+  "hash": "3265acc1b1bf76e6",
+  "webp": "backgrounds/court_defense.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_defense_desk.png": {
+  "hash": "3c6ccb2658f94d20",
+  "webp": "backgrounds/court_defense_desk.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_empty_dark.png": {
+  "hash": "5460169a38b5982d",
+  "webp": "backgrounds/court_empty_dark.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_entrance.png": {
+  "hash": "92c016c7c642d100",
+  "webp": "backgrounds/court_entrance.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_hallway.png": {
+  "hash": "683e412c76589445",
+  "webp": "backgrounds/court_hallway.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_judge.png": {
+  "hash": "fc4589bb0d9523ac",
+  "webp": "backgrounds/court_judge.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_prosecution.png": {
+  "hash": "70d57b9dee0c80dc",
+  "webp": "backgrounds/court_prosecution.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_prosecution_desk.png": {
+  "hash": "a727c2d2eb186567",
+  "webp": "backgrounds/court_prosecution_desk.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_wide.png": {
+  "hash": "4a42ccc8302eeb2d",
+  "webp": "backgrounds/court_wide.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_witness.png": {
+  "hash": "f79e92df24df2481",
+  "webp": "backgrounds/court_witness.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/court_witness_desk.png": {
+  "hash": "8449069c1c35eb77",
+  "webp": "backgrounds/court_witness_desk.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep1_miners_silhouette.png": {
+  "hash": "4bacabcfd4190f02",
+  "webp": "backgrounds/cut_ep1_miners_silhouette.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep1_collapsed_shaft.png": {
+  "hash": "2bd66ca3b61820c3",
+  "webp": "backgrounds/ep1_collapsed_shaft.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep1_mine_office.png": {
+  "hash": "3ca40f453405f854",
+  "webp": "backgrounds/ep1_mine_office.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep1_mine_tunnel.png": {
+  "hash": "c22e1a957a336b3d",
+  "webp": "backgrounds/ep1_mine_tunnel.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep1_miners_room.png": {
+  "hash": "c891b5c64181cadc",
+  "webp": "backgrounds/ep1_miners_room.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/museum_stairs.png": {
+  "hash": "2a025d3e0243afd6",
+  "webp": "backgrounds/museum_stairs.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/visiting_room.png": {
+  "hash": "93bb4b80fa95c36f",
+  "webp": "backgrounds/visiting_room.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/visiting_room_desk.png": {
+  "hash": "9cbb301132a0ffed",
+  "webp": "backgrounds/visiting_room_desk.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/waiting_room.png": {
+  "hash": "f4078ce3d738e882",
+  "webp": "backgrounds/waiting_room.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "characters/bongsu_angry.png": {
+  "hash": "2704a0e1501752e3",
+  "webp": "characters/bongsu_angry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/bongsu_default.png": {
+  "hash": "7af2e8b4d288cb10",
+  "webp": "characters/bongsu_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/bongsu_sad.png": {
+  "hash": "790477f820024a31",
+  "webp": "characters/bongsu_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_default.png": {
+  "hash": "0552e8828c9557bf",
+  "webp": "characters/hanna_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_defendant.png": {
+  "hash": "55a1a9f6fa33d818",
+  "webp": "characters/hanna_defendant.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_determined.png": {
+  "hash": "80fb4107ffcdd7bf",
+  "webp": "characters/hanna_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_sad.png": {
+  "hash": "b0a9a12390f729e7",
+  "webp": "characters/hanna_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_serious.png": {
+  "hash": "7c84e285b3c1a684",
+  "webp": "characters/hanna_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_smile.png": {
+  "hash": "6774e9f0587f94e3",
+  "webp": "characters/hanna_smile.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_surprised.png": {
+  "hash": "e49e4e1463104573",
+  "webp": "characters/hanna_surprised.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hanna_worried.png": {
+  "hash": "61ef7a99ec482be8",
+  "webp": "characters/hanna_worried.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hayashi_default.png": {
+  "hash": "12ea8ffb7db9d880",
+  "webp": "characters/hayashi_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hayashi_determined.png": {
+  "hash": "fb9e62d3774025c1",
+  "webp": "characters/hayashi_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hayashi_relieved.png": {
+  "hash": "b06a5b601f16f8ae",
+  "webp": "characters/hayashi_relieved.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hayashi_sad.png": {
+  "hash": "c361a13c7d0d3c6c",
+  "webp": "characters/hayashi_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hayashi_serious.png": {
+  "hash": "6dcd7a5abd92e7ef",
+  "webp": "characters/hayashi_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hayashi_smile.png": {
+  "hash": "e7255d3bef89783d",
+  "webp": "characters/hayashi_smile.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hayashi_tired.png": {
+  "hash": "8b0702f817946aaf",
+  "webp": "characters/hayashi_tired.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/judge_default.png": {
+  "hash": "486ed21e4a9f7f04",
+  "webp": "characters/judge_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/judge_stern.png": {
+  "hash": "0370e9859b96d25e",
+  "webp": "characters/judge_stern.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/judge_surprised.png": {
+  "hash": "1ad32f476c5cb0aa",
+  "webp": "characters/judge_surprised.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_confident.png": {
+  "hash": "27345a3ec3b60236",
+  "webp": "characters/junghan_confident.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_default.png": {
+  "hash": "b43c121c10506bc1",
+  "webp": "characters/junghan_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_determined.png": {
+  "hash": "9eaa8969e10dc224",
+  "webp": "characters/junghan_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_flustered.png": {
+  "hash": "71d83ded5bfc4a13",
+  "webp": "characters/junghan_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_objection.png": {
+  "hash": "dd2dd8ccb170765e",
+  "webp": "characters/junghan_objection.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_sad.png": {
+  "hash": "9ac1cf53ebb36571",
+  "webp": "characters/junghan_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_serious.png": {
+  "hash": "4dabc5fc1e077725",
+  "webp": "characters/junghan_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_smile.png": {
+  "hash": "87af18ecb15607d6",
+  "webp": "characters/junghan_smile.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_surprised.png": {
+  "hash": "57dd6ca3572aa825",
+  "webp": "characters/junghan_surprised.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/junghan_think.png": {
+  "hash": "e2275340bf5ca01e",
+  "webp": "characters/junghan_think.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/lethe_angry.png": {
+  "hash": "d6f2153425d9707e",
+  "webp": "characters/lethe_angry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/lethe_back.png": {
+  "hash": "b29fc0893ccb0a90",
+  "webp": "characters/lethe_back.webp",
+  "size": [
+   768,
+   1024
+  ],
+  "source": [
+   1086,
+   1448
+  ]
+ },
+ "characters/lethe_default.png": {
+  "hash": "4cad6c7d0edb3f30",
+  "webp": "characters/lethe_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/lethe_flustered.png": {
+  "hash": "ba367a8c3fb5a655",
+  "webp": "characters/lethe_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/lethe_smirk.png": {
+  "hash": "78e28835292afefb",
+  "webp": "characters/lethe_smirk.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/mansu_default.png": {
+  "hash": "8bdd05b1c9b1861c",
+  "webp": "characters/mansu_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/mansu_grateful.png": {
+  "hash": "9ffa89e1a880c5ed",
+  "webp": "characters/mansu_grateful.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/mori_back.png": {
+  "hash": "6506cf8cee936411",
+  "webp": "characters/mori_back.webp",
+  "size": [
+   629,
+   801
+  ],
+  "source": [
+   629,
+   801
+  ]
+ },
+ "characters/mori_blank.png": {
+  "hash": "6d869d602a70cd65",
+  "webp": "characters/mori_blank.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/mori_default.png": {
+  "hash": "97592d06ce8459a9",
+  "webp": "characters/mori_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/mori_haughty.png": {
+  "hash": "cb0c038b385817dd",
+  "webp": "characters/mori_haughty.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/okada_arrogant.png": {
+  "hash": "e5c278c51290e013",
+  "webp": "characters/okada_arrogant.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/okada_breakdown.png": {
+  "hash": "36c6f94c658f5604",
+  "webp": "characters/okada_breakdown.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/okada_default.png": {
+  "hash": "a42581491faf7c07",
+  "webp": "characters/okada_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/okada_flustered.png": {
+  "hash": "52228f0c62fe4e0d",
+  "webp": "characters/okada_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/sato_cold.png": {
+  "hash": "fdcdaca5b61fa4af",
+  "webp": "characters/sato_cold.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/sato_default.png": {
+  "hash": "ecdb2c9111d5b55d",
+  "webp": "characters/sato_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/sato_flustered.png": {
+  "hash": "489a523225988373",
+  "webp": "characters/sato_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/seokjin_determined.png": {
+  "hash": "bfdb0a46ea628472",
+  "webp": "characters/seokjin_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/seokjin_relieved.png": {
+  "hash": "f1984dbf47df3634",
+  "webp": "characters/seokjin_relieved.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/seokjin_sad.png": {
+  "hash": "97cf0b1fcf952034",
+  "webp": "characters/seokjin_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/seokjin_scared.png": {
+  "hash": "408c8ee973e4399b",
+  "webp": "characters/seokjin_scared.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "evidence/ep1_accident_report.png": {
+  "hash": "dba3b4ff9440c95c",
+  "webp": "evidence/ep1_accident_report.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_escape_record.png": {
+  "hash": "5f8552defc82f117",
+  "webp": "evidence/ep1_escape_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_hashima_photo.jpg": {
+  "hash": "7c75fdbfbc2c0387",
+  "webp": "evidence/ep1_hashima_photo.webp",
+  "size": [
+   2048,
+   1361
+  ],
+  "source": [
+   4912,
+   3264
+  ]
+ },
+ "evidence/ep1_injury_record.png": {
+  "hash": "6b95600e35c6d4e5",
+  "webp": "evidence/ep1_injury_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_mobilization_record.png": {
+  "hash": "5eb86d1546e7a381",
+  "webp": "evidence/ep1_mobilization_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_pay_slip.png": {
+  "hash": "47ca441b4228a650",
+  "webp": "evidence/ep1_pay_slip.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_production_order.png": {
+  "hash": "d610f247febde28b",
+  "webp": "evidence/ep1_production_order.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_quota_table.png": {
+  "hash": "cb7ff6b534b74e13",
+  "webp": "evidence/ep1_quota_table.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_rescue_record.png": {
+  "hash": "6ca1c0ffa472986e",
+  "webp": "evidence/ep1_rescue_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_rotten_prop.png": {
+  "hash": "fae5a0849334c6b1",
+  "webp": "evidence/ep1_rotten_prop.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep1_safety_report.png": {
+  "hash": "224d2064433cbda2",
+  "webp": "evidence/ep1_safety_report.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "ui/banner_closing.png": {
+  "hash": "244365d51027994c",
+  "webp": "ui/banner_closing.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/banner_lethe_claim.png": {
+  "hash": "8c9cd5173c19d36d",
+  "webp": "ui/banner_lethe_claim.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/banner_lethe_counter.png": {
+  "hash": "ca0ce47d8b44ac07",
+  "webp": "ui/banner_lethe_counter.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/banner_listen.png": {
+  "hash": "fd56bce083ac22e9",
+  "webp": "ui/banner_listen.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/banner_recess.png": {
+  "hash": "fcb545a4dd0d0d78",
+  "webp": "ui/banner_recess.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/btn_examine.png": {
+  "hash": "273150b9b4d6dcce",
+  "webp": "ui/btn_examine.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/btn_move.png": {
+  "hash": "124d34c4d0ad9959",
+  "webp": "ui/btn_move.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/btn_present.png": {
+  "hash": "745a6ab988765105",
+  "webp": "ui/btn_present.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/btn_press.png": {
+  "hash": "86bd152fa5c9e9e9",
+  "webp": "ui/btn_press.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/btn_record.png": {
+  "hash": "627767be9975b299",
+  "webp": "ui/btn_record.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/caption_source.png": {
+  "hash": "a2fd5d5f6d04ff68",
+  "webp": "ui/caption_source.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/card_blue.png": {
+  "hash": "e9aa8c78dbab8041",
+  "webp": "ui/card_blue.webp",
+  "size": [
+   640,
+   640
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/card_concept.png": {
+  "hash": "a29392bc9ca9dd57",
+  "webp": "ui/card_concept.webp",
+  "size": [
+   640,
+   640
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/card_green.png": {
+  "hash": "bc6670f59a5c6731",
+  "webp": "ui/card_green.webp",
+  "size": [
+   640,
+   640
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/card_prosecution.png": {
+  "hash": "7ec44161b10a6c18",
+  "webp": "ui/card_prosecution.webp",
+  "size": [
+   640,
+   640
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/card_red.png": {
+  "hash": "935f416febe4e40e",
+  "webp": "ui/card_red.webp",
+  "size": [
+   640,
+   640
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/cursor_magnifier.png": {
+  "hash": "7fe00b209047f3ee",
+  "webp": "ui/cursor_magnifier.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/gauge_candle_off.png": {
+  "hash": "08744532233472ed",
+  "webp": "ui/gauge_candle_off.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/gauge_candle_on.png": {
+  "hash": "d6b4d4e4fcdd1d0b",
+  "webp": "ui/gauge_candle_on.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/gauge_frame.png": {
+  "hash": "e68ef5fe9964fd79",
+  "webp": "ui/gauge_frame.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/icon_next.png": {
+  "hash": "71adde721fa957c5",
+  "webp": "ui/icon_next.webp",
+  "size": [
+   384,
+   326
+  ],
+  "source": [
+   1362,
+   1155
+  ]
+ },
+ "ui/icon_record_colors.png": {
+  "hash": "2fc0ee3fd13fe6ec",
+  "webp": "ui/icon_record_colors.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/popup_evidence_get.png": {
+  "hash": "26fdbe237e977a8c",
+  "webp": "ui/popup_evidence_get.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/popup_green_get.png": {
+  "hash": "e7383fa5b98db9bf",
+  "webp": "ui/popup_green_get.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/screen_next_episode.png": {
+  "hash": "85ad48995ea0b05d",
+  "webp": "ui/screen_next_episode.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/screen_trial_postponed.png": {
+  "hash": "a13d9e84a7018cb2",
+  "webp": "ui/screen_trial_postponed.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/shout_holdit.png": {
+  "hash": "f637a91dbbaf5d7c",
+  "webp": "ui/shout_holdit.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/shout_objection.png": {
+  "hash": "edb94e61a03c607b",
+  "webp": "ui/shout_objection.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/shout_objection_green.png": {
+  "hash": "f46f60c8e44a068c",
+  "webp": "ui/shout_objection_green.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/shout_takethat.png": {
+  "hash": "1d1c7a268e2be397",
+  "webp": "ui/shout_takethat.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/stamp_updated.png": {
+  "hash": "216079cd45ccbf91",
+  "webp": "ui/stamp_updated.webp",
+  "size": [
+   384,
+   384
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "ui/text_guilty.png": {
+  "hash": "24fc6f31929fff03",
+  "webp": "ui/text_guilty.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/text_not_guilty.png": {
+  "hash": "d32e3419a7e1522e",
+  "webp": "ui/text_not_guilty.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/text_not_guilty_1.png": {
+  "hash": "9d303218e599150e",
+  "webp": "ui/text_not_guilty_1.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/text_not_guilty_2.png": {
+  "hash": "bfbe5cfc94d8f73b",
+  "webp": "ui/text_not_guilty_2.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/text_testimony_start.png": {
+  "hash": "922dcc2f934dcd49",
+  "webp": "ui/text_testimony_start.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/textbox.png": {
+  "hash": "a9fe932e559eb0aa",
+  "webp": "ui/textbox.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/title_episode_bg.png": {
+  "hash": "a907ab4263e7e753",
+  "webp": "ui/title_episode_bg.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/title_logo.png": {
+  "hash": "ccd100970120d2fa",
+  "webp": "ui/title_logo.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/title_part_bg.png": {
+  "hash": "fa205f00901c6299",
+  "webp": "ui/title_part_bg.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/window_hint.png": {
+  "hash": "7204a4e747778195",
+  "webp": "ui/window_hint.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "ui/window_tutorial.png": {
+  "hash": "696451688a1914e1",
+  "webp": "ui/window_tutorial.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ }
+}
