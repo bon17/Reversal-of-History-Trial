@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>기억의 법정</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="game/css/game.css">
+</head>
+<body>
+<div id="app" class="land">
+  <!-- 3:2 장면: 배경 → 인물 → 책상 앞그림 순서로 겹친다 -->
+  <div id="stage">
+    <div id="scene">
+      <img id="bg" class="layer" alt="">
+      <img id="cut" class="layer" alt="" hidden>
+      <div id="rain" class="layer"></div>
+      <img id="char" alt="" hidden>
+      <div id="glass" class="layer"></div>
+      <img id="desk" class="layer" alt="" hidden>
+    </div>
+    <div id="photo" class="layer" hidden>
+      <img id="photo-img" alt="">
+      <div class="caption"><img class="caption-band" alt=""><span class="caption-text"></span></div>
+    </div>
+    <div id="closeup" class="layer" hidden><img alt=""></div>
+    <div id="greenglow" class="layer"></div>
+    <div id="cards" class="layer"></div>
+    <div id="hotspots" class="layer"></div>
+    <div id="popup" class="layer" hidden></div>
+    <div id="black" class="layer"><div id="subtitle"></div></div>
+    <div id="flash" class="layer"></div>
+    <div id="big" class="layer"></div>
+    <div id="gauge" hidden></div>
+  </div>
+
+  <!-- 대사창과 버튼. 가로 화면에서는 장면 위에 겹치고, 세로 화면에서는 장면 아래에 놓인다 -->
+  <div id="hud">
+    <div id="topbar">
+      <button id="btn-menu" class="round-btn" aria-label="설정">⚙</button>
+      <button id="btn-full" class="round-btn" aria-label="전체 화면">⛶</button>
+      <button id="btn-record" class="img-btn" aria-label="법정 기록"><img alt=""></button>
+    </div>
+    <div id="box" hidden>
+      <img id="box-img" alt="">
+      <div id="face"></div>
+      <div id="name"></div>
+      <div id="text"></div>
+      <div id="text-measure" aria-hidden="true"></div>
+      <img id="next-icon" alt="">
+    </div>
+    <div id="choices" hidden></div>
+    <div id="controls" hidden></div>
+  </div>
+
+  <div id="overlay"></div>
+</div>
+
+<script src="game/data/common.js"></script>
+<script src="game/data/ep1.js"></script>
+<script src="game/data/ep2.js"></script>
+<script src="game/js/core.js"></script>
+<script src="game/js/screen.js"></script>
+<script src="game/js/record.js"></script>
+<script src="game/js/play.js"></script>
+<script src="game/js/main.js"></script>
+</body>
+</html>
