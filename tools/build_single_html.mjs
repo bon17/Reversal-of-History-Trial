@@ -1,12 +1,12 @@
 // 게임 전체(코드, 데이터, WebP 그림)를 HTML 파일 하나로 묶는다.
 // 이 파일 하나만 있으면 인터넷 없이 더블클릭으로 실행할 수 있다. game/fonts/ 의 글꼴도 함께 넣는다. (소리 파일은 들어가지 않는다)
 //
-// 실행: node tools/build_single_html.mjs [저장할 파일]   (기본: dist/기억의_법정_1화.html)
+// 실행: node tools/build_single_html.mjs [저장할 파일]   (기본: dist/기억의_법정.html)
 import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const out = path.resolve(process.argv[2] || path.join(ROOT, 'dist', '기억의_법정_1화.html'));
+const out = path.resolve(process.argv[2] || path.join(ROOT, 'dist', '기억의_법정.html'));
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 
 // 1) 그림: game/img/**/*.webp → { 'ui/textbox': 'data:image/webp;base64,…' }

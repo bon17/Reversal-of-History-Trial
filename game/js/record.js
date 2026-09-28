@@ -16,7 +16,7 @@
 
   // 카드 가운데 창에 들어갈 것: 증거 그림 / 인물 얼굴 / 글자
   G.cardInner = (id) => {
-    const ev = G.ep.증거[id];
+    const ev = G.ev[id];
     if (ev.그림) return G.imgEl(ev.그림);
     if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1]); return f; }
     // 그림이 없는 카드(개념 카드 등): 대본의 설명 글을 작게 넣는다
@@ -32,7 +32,7 @@
   };
 
   G.renderCard = (id) => {
-    const ev = G.ep.증거[id];
+    const ev = G.ev[id];
     const frameKey = FRAME[ev.색] || FRAME.개념;
     const card = h('div', { class: 'card card-' + ({ 빨강: 'red', 파랑: 'blue', 초록: 'green', 개념: 'concept', 검찰: 'prosecution' }[ev.색] || 'concept') });
     card.append(G.imgEl(frameKey, 'frame'));
@@ -68,7 +68,7 @@
         const tabs = h('div', { class: 'tabs' });
         const grid = h('div', { class: 'grid' });
         const draw = () => {
-          const all = G.play.evidence.map((id) => [id, G.ep.증거[id]]).filter(([, ev]) => ev);
+          const all = G.play.evidence.map((id) => [id, G.ev[id]]).filter(([, ev]) => ev);
           const evid = all.filter(([, ev]) => ev.색 !== '개념');
           const concept = all.filter(([, ev]) => ev.색 === '개념');
           tabs.innerHTML = '';
@@ -79,13 +79,13 @@
           const list = tab === '증거' ? evid : concept;
           if (!list.length) grid.append(h('div', { class: 'empty' }, '아직 없어요.'));
           for (const [id] of list) {
-            const b = h('button', { class: 'item', 'aria-label': G.ep.증거[id].이름, onclick: () => detail(id) });
+            const b = h('button', { class: 'item', 'aria-label': G.ev[id].이름, onclick: () => detail(id) });
             b.append(G.renderCard(id));
             grid.append(b);
           }
         };
         const detail = (id) => {
-          const ev = G.ep.증거[id];
+          const ev = G.ev[id];
           const d = h('div', { class: 'screen detail' });
           const shut = () => { d.remove(); G.closeTopOverlay = () => close(null); };
           G.closeTopOverlay = shut;
@@ -108,7 +108,7 @@
           scr.append(d);
         };
         const zoom = (id) => {
-          const ev = G.ep.증거[id];
+          const ev = G.ev[id];
           const z = h('div', { class: 'screen zoom' });
           const back = G.closeTopOverlay;
           const shut = () => { z.remove(); G.closeTopOverlay = back; };

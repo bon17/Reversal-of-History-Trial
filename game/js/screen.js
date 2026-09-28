@@ -70,6 +70,9 @@
         G.setImg(deskEl, b.책상 || null);
       }
       this.blackout(b.그림 === null);
+      this.rain(false);
+      this.closeup(null);
+      this.green(false);
       G.box.face(null);
     },
     camera(seat) {
@@ -81,7 +84,8 @@
     },
     // 말하는 사람을 화면에 맞게 보여 준다 (법정은 자리로 화면 전환, 화면 밖 인물은 얼굴만)
     speaker(name, expr) {
-      if (!name || name === '(목소리)') { G.box.face(null); return; }
+      // 이름만 있고 그림이 없는 말(목소리, 기록 자막 등)은 지금 화면을 그대로 둔다
+      if (!name || !DATA.인물[name]) { G.box.face(null); return; }
       if (isOffscreen(name)) { G.box.face(name, expr); return; }
       G.box.face(null);
       this.showChar(name, expr);
@@ -122,6 +126,18 @@
     wobble() { charEl.classList.remove('wobble'); void charEl.offsetWidth; charEl.classList.add('wobble'); },
     blackout(on) { $('#black').classList.toggle('on', !!on); },
     calm(on) { scene.classList.toggle('calm', !!on); S.calm = !!on; },
+    // 🟩 선택 기록 제시: 화면에 초록빛이 번진다
+    green(on) { $('#greenglow').classList.toggle('on', !!on); },
+    // 비 내리는 효과 (2화 오프닝)
+    rain(on) { $('#rain').classList.toggle('on', !!on); },
+    // 확대 화면 (흉터, 칼집 끝 등): 장면 위에 그림 한 장을 크게 띄운다
+    closeup(key) {
+      const c = $('#closeup');
+      if (!key) { c.classList.remove('on'); c.hidden = true; return; }
+      G.setImg($('img', c), key);
+      c.hidden = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => c.classList.add('on')));
+    },
     dark(on) { scene.classList.toggle('dark', !!on); S.dark = !!on; },
 
     // 외침, 띠, 증언 개시 같은 큰 그림
@@ -153,7 +169,7 @@
     photo(evId) {
       const p = $('#photo');
       if (!evId) { p.classList.remove('on'); p.hidden = true; return; }
-      const ev = G.ep.증거[evId];
+      const ev = G.ev[evId];
       G.setImg($('#photo-img'), ev.그림);
       G.setImg($('.caption-band', p), 'ui/caption_source');
       $('.caption-text', p).textContent = ev.출처 || '';
@@ -201,19 +217,24 @@
     },
 
     // 증거 획득 알림 (알림 그림 + 왼쪽 네모 안에 증거 그림)
-    async evidencePopup(id) {
-      const ev = G.ep.증거[id];
+    async evidencePopup(id, opts = {}) {
+      const ev = G.ev[id];
       const pop = $('#popup');
+      const green = ev.색 === '초록';
       pop.innerHTML = '';
-      pop.append(G.imgEl('ui/popup_evidence_get', 'band'));
-      const thumb = h('div', { class: 'thumb' + (ev.사진 ? ' photo' : '') });
+      pop.append(G.imgEl(green ? 'ui/popup_green_get' : 'ui/popup_evidence_get', 'band'));
+      const thumb = h('div', { class: 'thumb' + (ev.사진 ? ' photo' : '') + (green ? ' green' : '') });
       thumb.append(ev.그림 || ev.얼굴 ? G.cardInner(id) : h('div', { class: 'word' }, ev.이름));
       pop.append(thumb);
       // 실제 사진은 출처 표기 띠를 함께 띄운다
       if (ev.사진) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, ev.출처)));
+      // 증거 갱신: 알림 위에 "갱신" 도장을 찍는다
+      if (opts.updated) {
+        pop.append(G.imgEl('ui/stamp_updated', 'upd-stamp'));
+      }
       pop.hidden = false;
       G.box.face(null);
-      await G.box.say({ 이름: G.kindName(ev), 글: G.evidenceText(ev), 증거: true });
+      await G.box.say({ 이름: G.kindName(ev), 표시이름: opts.updated ? '증거 갱신' : null, 글: G.evidenceText(ev), 증거: true });
       pop.hidden = true;
       pop.innerHTML = '';
     },
@@ -364,7 +385,8 @@
     async say({ 이름, 글, 표시이름, skin = 'normal', cls = '', 증거 = false }) {
       this.show(skin);
       textEl.style.fontSize = '';
-      const shownName = 표시이름 != null ? 표시이름 : (이름 === '(목소리)' ? '목소리' : 이름);
+      // "(목소리, 일본어 억양)" → 목소리, "웨스트 대위의 기록 (자막)" → 웨스트 대위의 기록
+      const shownName = 표시이름 != null ? 표시이름 : /^\(목소리/.test(이름 || '') ? '목소리' : (이름 || '').replace(/\s*\(자막\)$/, '');
       this.setName(skin === 'normal' ? shownName : (skin === 'hint' ? '힌트' : '알아두기'));
       textEl.className = '';
       const thought = /^\(.*\)$/s.test(글);

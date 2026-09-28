@@ -1,9 +1,12 @@
-// 처음 화면, 화 코드 입력, 이어하기, 설정, 전체 화면, 여러 안내 화면
+// 처음 화면, 이어하기 코드 입력, 이어하기, 설정, 전체 화면, 여러 안내 화면
 (function () {
   const G = window.G;
   const $ = G.$, h = G.h;
   const ov = $('#overlay');
-  G.ep = DATA.ep1;
+  // 모든 화 (game/data/ep1.js, ep2.js … 를 불러온 것)
+  const episodes = () => Object.values(DATA).filter((d) => d && d.막 && d.번호).sort((a, b) => a.번호 - b.번호);
+  const epByNo = (n) => episodes().find((e) => e.번호 === n);
+  G.ep = epByNo(1);
 
   // 화면 전체를 덮는 창 하나를 띄우고, 닫힐 때까지 기다린다
   function openScreen(el) { ov.append(el); return el; }
@@ -50,15 +53,24 @@
         const s = openScreen(h('div', { class: 'screen history-card' }, panel));
       });
     },
-    // 다음 화 예고 → 처음 화면
+    // 다음 화 예고 → 다음 화가 만들어져 있으면 [제N화 시작], 아니면 처음 화면
     nextEpisode(title) {
       return new Promise(() => {
         G.store.clear();
+        const next = epByNo(G.ep.번호 + 1);
+        const startNext = () => {
+          ov.innerHTML = '';
+          G.audio.bgm('멈춤');
+          G.ep = next;
+          G.startGame({ 막: 0, 명령: 0 });
+        };
         openScreen(h('div', { class: 'screen solid art-screen' },
           h('div', { class: 'art-frame' },
             G.imgEl('ui/screen_next_episode', 'art'),
             h('div', { class: 'next-title' }, title),
-            h('div', { class: 'bottom' }, h('button', { class: 'ui-btn', onclick: () => location.reload() }, '처음 화면으로')))));
+            h('div', { class: 'bottom' },
+              next ? h('button', { class: 'ui-btn', onclick: startNext }, '제' + next.번호 + '화 시작') : null,
+              h('button', { class: 'ui-btn sub', onclick: () => location.reload() }, '처음 화면으로')))));
       });
     },
   };
@@ -75,16 +87,17 @@
     });
   }
 
-  // ─────────── 화 코드 입력 ───────────
-  // 화마다 코드가 하나 있다 (1화는 [처음부터]로 시작하므로 코드가 없다). 코드를 넣으면 그 화의 처음부터 시작한다.
-  const episodes = () => Object.values(DATA).filter((d) => d && d.막 && d.번호);
+  // ─────────── 이어하기 코드 입력 ───────────
+  // 화마다 코드가 하나 있다. 코드는 그 화의 제목이다 (예: 두 개의 국적). 1화는 [처음부터]로 시작하므로 코드가 없다.
+  // 띄어쓰기, 따옴표, 낫표는 무시한다.
   const hasCodes = () => episodes().some((e) => e.코드);
+  const norm = (t) => String(t || '').replace(/[\s「」『』"'.,!?·]/g, '');
   function codeScreen() {
-    const input = h('input', { class: 'code-input', inputmode: 'numeric', autocomplete: 'off', maxlength: '8', placeholder: '0000', 'aria-label': '화 코드' });
+    const input = h('input', { class: 'code-input text', type: 'text', autocomplete: 'off', maxlength: '20', placeholder: '예: 두 개의 국적', 'aria-label': '이어하기 코드' });
     const msg = h('div', { class: 'msg' });
     const go = () => {
-      const v = input.value.replace(/\D/g, '');
-      const ep = episodes().find((e) => e.코드 && e.코드 === v);
+      const v = norm(input.value);
+      const ep = v && episodes().find((e) => e.코드 && norm(e.코드) === v);
       if (!ep) { msg.textContent = '코드가 맞지 않아요. 다시 확인해 주세요.'; input.select(); return; }
       s.remove();
       G.ep = ep;
@@ -93,8 +106,8 @@
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
     const s = openScreen(h('div', { class: 'screen' },
       h('div', { class: 'panel' },
-        h('h2', {}, '화 코드 입력'),
-        h('p', { style: 'text-align:center' }, '선생님이 알려 준 네 자리 숫자를 넣으면 그 화의 처음부터 시작해요.'),
+        h('h2', {}, '이어하기 코드 입력'),
+        h('p', { style: 'text-align:center' }, '선생님이 알려 준 코드(그 화의 제목)를 넣으면 그 화의 처음부터 시작해요.'),
         input, msg,
         h('div', { class: 'row' },
           h('button', { class: 'ui-btn sub', onclick: () => s.remove() }, '취소'),
@@ -152,7 +165,8 @@
 
   async function titleScreen() {
     const saved = G.store.load();
-    const canResume = saved && saved.화 === G.ep.번호 && G.ep.막[saved.막];
+    const savedEp = saved && epByNo(saved.화);
+    const canResume = !!(savedEp && savedEp.막[saved.막]);
     const loading = h('div', { class: 'loading' }, '그림을 불러오는 중…');
     const menu = h('div', { class: 'menu' });
     const s = openScreen(h('div', { class: 'screen title-screen' },
@@ -164,11 +178,12 @@
     const startBtn = h('button', { class: 'ui-btn', onclick: async () => {
       if (canResume && !(await ask('처음부터 시작하면 저장된 진행이 지워져요. 처음부터 할까요?', '처음부터 하기'))) return;
       G.store.clear();
+      G.ep = epByNo(1);
       startFrom({ 막: 0, 명령: 0 });
     } }, '처음부터');
-    const resumeBtn = h('button', { class: 'ui-btn', disabled: !canResume, onclick: () => startFrom(saved) },
-      canResume ? '이어하기 (제' + G.ep.번호 + '화 「' + G.ep.막[saved.막].이름 + '」부터)' : '이어하기');
-    const codeBtn = h('button', { class: 'ui-btn sub', onclick: codeScreen, hidden: !hasCodes() }, '화 코드 입력');
+    const resumeBtn = h('button', { class: 'ui-btn', disabled: !canResume, onclick: () => { G.ep = savedEp; startFrom(saved); } },
+      canResume ? '이어하기 (제' + savedEp.번호 + '화 「' + savedEp.막[saved.막].이름 + '」부터)' : '이어하기');
+    const codeBtn = h('button', { class: 'ui-btn sub', onclick: codeScreen, hidden: !hasCodes() }, '이어하기 코드 입력');
     [startBtn, resumeBtn, codeBtn].forEach((b) => { b.disabled = true; menu.append(b); });
 
     // 처음에 꼭 필요한 그림을 먼저 받는다

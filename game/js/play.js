@@ -14,6 +14,7 @@
     section: 0, // 지금 구간(저장 지점)의 명령 번호
     explore: null, // 조사 진행 상황
     presented: null, // 방금 제시한 증거
+    upd: {}, // 증거 갱신 단계 { 증거: 몇 번 갱신됐는지 }
     cardsAfterLine: false,
     running: false,
   });
@@ -44,7 +45,7 @@
     // 보기: 말하는 사람 대신 다른 인물을 화면에 두고, 말하는 사람은 작은 얼굴로 보여 준다
     if (c.보기) { G.stage.showChar(c.보기, c.보기표정); G.box.face(c.말, c.표정); }
     else G.stage.speaker(c.말, c.표정);
-    await G.box.say({ 이름: c.말, 글: c.대사 });
+    await G.box.say({ 이름: c.말, 글: c.대사, cls: c.cls });
     if (P.cardsAfterLine) { G.stage.hideCards(); P.cardsAfterLine = false; }
   }
 
@@ -52,10 +53,10 @@
     if (P.quit) throw new Quit();
     const key = Object.keys(c)[0];
     switch (key) {
-      case '구간': P.section = P.idx; G.stage.calm(false); checkpoint(); return;
+      case '구간': P.section = P.idx; G.stage.calm(false); G.stage.green(false); checkpoint(); return;
       case '배경': G.stage.setBackground(c.배경, c); G.box.hide(); return;
       case 'BGM':
-        if (!['멈춤', '없음'].includes(c.BGM) && !/^없음/.test(c.BGM)) G.stage.calm(false);
+        if (!['멈춤', '없음'].includes(c.BGM) && !/^없음/.test(c.BGM)) { G.stage.calm(false); G.stage.green(false); }
         G.audio.bgm(c.BGM); return;
       case '효과음':
         G.audio.se(c.효과음);
@@ -72,14 +73,26 @@
       case '외침': await shout(c.외침); return;
       case '띠': G.box.hide(); await G.stage.big({ '레테의 반격': 'ui/banner_lethe_counter', '레테의 주장': 'ui/banner_lethe_claim', '증언 듣기': 'ui/banner_listen', '휴정': 'ui/banner_recess', '최종 변론': 'ui/banner_closing' }[c.띠], 'slide', 1900); return;
       case '증거획득': gain(c.증거획득); await G.stage.evidencePopup(c.증거획득); return;
+      case '증거갱신': {
+        const id = c.증거갱신;
+        P.upd[id] = (P.upd[id] || 0) + 1;
+        G.ev = buildEvidence(P.upd);
+        save();
+        await G.stage.evidencePopup(id, { updated: true });
+        return;
+      }
+      case '확대': G.box.hide(); G.stage.closeup(c.확대); if (c.확대) { if (c.번쩍) G.stage.flash(); await G.sleep(c.대기 || 1200); } return;
+      case '인용': G.stage.speaker(null); await G.box.say({ 이름: c.이름 || '', 표시이름: c.이름 || '', 글: c.인용, cls: 'quote' }); return;
       case '증거보이기': G.stage.showCards(c.증거보이기); P.cardsAfterLine = true; return;
       case '증거제출': {
         const id = c.증거제출 === '$제시' ? P.presented : c.증거제출;
-        const red = G.ep.증거[id].색 === '빨강';
+        const red = G.ev[id].색 === '빨강';
+        const green = G.ev[id].색 === '초록';
         if (red) { G.audio.bgm('멈춤'); G.stage.calm(true); } // 🟥 피해 기록: 음악을 멈추고 화면을 차분하게
-        G.stage.showCards([id], { center: true, slow: red });
+        if (green) { G.audio.bgm('멈춤'); G.stage.green(true); } // 🟩 선택 기록: 초록빛이 번진다
+        G.stage.showCards([id], { center: true, slow: red || green });
         P.cardsAfterLine = true;
-        await G.sleep(red ? 1600 : 500);
+        await G.sleep(red || green ? 1600 : 500);
         return;
       }
       case '선택지': {
@@ -121,6 +134,8 @@
       case '암전': G.stage.cut(null); G.stage.blackout(true); await G.sleep(900); return;
       case '휘청': G.stage.wobble(); await G.sleep(700); return;
       case '정적': G.box.hide(); await G.sleep(1800); return;
+      case '비': G.stage.rain(true); return;
+      case '비 그침': G.stage.rain(false); return;
       case '어둡게': G.stage.dark(true); G.listening = true; updateTopbar(); return;
       case '밝게': G.stage.dark(false); G.listening = false; updateTopbar(); return;
       default: console.warn('[모르는 연출]', name);
@@ -131,6 +146,7 @@
     '이의 있음': ['ui/shout_objection', '외침 "이의 있음!"'],
     '잠깐': ['ui/shout_holdit', '외침 "잠깐!"'],
     '받아라': ['ui/shout_takethat', '외침 "받아라!"'],
+    '이의 있음 초록': ['ui/shout_objection_green', '외침 "이의 있음!"'],
   };
   async function shout(kind, ms = 950) {
     const [img, se] = SHOUT[kind];
@@ -142,7 +158,20 @@
 
   function gain(id) {
     if (!P.evidence.includes(id)) P.evidence.push(id);
+    // 🟩 선택 기록은 6화의 기록 보관함에서 다시 쓰므로 화와 상관없이 따로 모아 둔다
+    if (G.ev[id] && G.ev[id].색 === '초록') G.store.addGreen(G.ep.번호, id);
     updateTopbar();
+  }
+
+  // 증거 갱신: 대본 순서대로 설명을 바꾸거나(교체) 덧붙인다(추가)
+  function buildEvidence(upd) {
+    const ev = JSON.parse(JSON.stringify(G.ep.증거));
+    for (const [id, n] of Object.entries(upd || {})) {
+      const e = ev[id];
+      if (!e || !e.갱신) continue;
+      for (const u of e.갱신.slice(0, n)) e.설명 = u.방식 === '추가' ? e.설명.concat(u.설명) : u.설명.slice();
+    }
+    return ev;
   }
 
   async function verdict() {
@@ -174,7 +203,7 @@
 
   // 오답: 일반 증거는 신뢰도 1칸 감소, 🟥 피해 기록은 벌칙 없이 부드러운 안내. 두 번째부터 한나의 힌트.
   async function wrongAnswer(spec, evId, state) {
-    const ev = G.ep.증거[evId];
+    const ev = G.ev[evId];
     const red = ev.색 === '빨강';
     if (!red && !spec.튜토리얼) await penalty();
     await runList(oops(red ? spec.피해오답 : spec.일반오답));
@@ -223,6 +252,17 @@
         // 추궁할 때마다 "잠깐!" (대본에 이미 외침이 있는 추궁은 한 번만)
         if (!(st.추궁 || []).some((c) => c.외침)) await shout('잠깐', 650);
         await runList(st.추궁);
+        // 추궁으로 증언이 더해지는 문장 (2화 증언 1)
+        if (st.추가 && !revised[i]) {
+          revised[i] = st.글;
+          for (const t of st.추가) {
+            G.stage.speaker(T.증인, T.표정);
+            G.box.showStatic({ 이름: T.증인, 글: t, cls: 'cross-text' });
+            await stamp();
+            await G.box.say({ 이름: T.증인, 글: t, cls: 'cross-text' });
+          }
+        }
+        if (T.추궁정답 === i + 1) { await runList(T.정답장면); return; }
         if (st.수정 && !revised[i]) {
           G.audio.se('증언 수정음');
           revised[i] = st.수정.글;
@@ -237,8 +277,18 @@
       if (act === 'present') {
         const ev = await G.record.open({ present: true });
         if (!ev) continue;
-        const ok = T.정답.some((a) => a.문장 - 1 === i && a.증거 === ev && (!a.수정후 || revised[i]));
+        const ok = (T.정답 || []).some((a) => a.문장 - 1 === i && a.증거 === ev && (!a.수정후 || revised[i]));
         if (ok) { P.presented = ev; await runList(T.정답장면); return; }
+        // 보조 정답: 반론 장면을 보여 주고 신뢰도는 줄이지 않은 채 반대 심문으로 돌아간다
+        const sub = (T.보조정답 || []).find((a) => a.문장 - 1 === i && a.증거 === ev);
+        if (sub) {
+          const bgmBefore = G.audio.current;
+          P.presented = ev;
+          await runList(sub.장면);
+          G.stage.calm(false);
+          if (bgmBefore) G.audio.bgm(bgmBefore); // 반대 심문 음악으로 돌아간다
+          continue;
+        }
         await wrongAnswer(T, ev, state);
       }
     }
@@ -315,6 +365,8 @@
         save();
         if (X.장소.every(complete)) break;
       }
+      // 조사 포인트가 없는 장소(이야기만 듣는 곳)는 바로 장소 고르기로 돌아간다
+      if (!cur.포인트.length) { cur = null; continue; }
       G.box.hide();
       G.stage.hideChar(true);
       const act = await exploreIdle(cur, prog, key);
@@ -341,7 +393,8 @@
           class: 'hotspot' + (prog.조사[key(loc, pt)] ? ' done' : ''), 'aria-label': pt.이름,
           style: `left:${(x / 1536) * 100}%;top:${(y / 1024) * 100}%;width:${(w / 1536) * 100}%;height:${(hh / 1024) * 100}%`,
           onclick: () => done(pt),
-        }, h('span', { class: 'mag' }, G.imgEl('ui/cursor_magnifier')));
+        }, h('span', { class: 'mag' }, G.imgEl('ui/cursor_magnifier')),
+          G.missing.has((DATA.배경[loc.배경] || {}).그림) ? h('span', { class: 'label' }, pt.이름) : null);
         hs.append(b);
       }
       clearControls();
@@ -356,7 +409,7 @@
 
   // ─────────── 저장과 이어하기 ───────────
   function saveData() {
-    return { 화: G.ep.번호, 막: P.act, 명령: P.section, 증거: P.evidence.slice(), 신뢰도: P.gauge, 조사: P.explore, 시각: Date.now() };
+    return { 화: G.ep.번호, 막: P.act, 명령: P.section, 증거: P.evidence.slice(), 갱신: Object.assign({}, P.upd), 신뢰도: P.gauge, 조사: P.explore, 시각: Date.now() };
   }
   function save() { if (P.running) G.store.write(saveData()); }
   function checkpoint() { save(); }
@@ -373,17 +426,22 @@
       }
     }
   }
+  // 막의 처음부터 시작할 때, 그 앞까지 얻었을 증거와 증거 갱신 단계를 모은다
   function collectEvidence(uptoAct, uptoIdx) {
-    const out = [];
+    const out = [], upd = {};
+    const take = (c) => {
+      if (c.증거획득 && !out.includes(c.증거획득)) out.push(c.증거획득);
+      if (c.증거갱신) upd[c.증거갱신] = (upd[c.증거갱신] || 0) + 1;
+    };
     G.ep.막.forEach((act, a) => {
       if (a > uptoAct) return;
       const list = a < uptoAct ? act.내용 : act.내용.slice(0, uptoIdx);
       walk(list, (c) => {
-        if (c.증거획득 && !out.includes(c.증거획득)) out.push(c.증거획득);
-        if (c.장소) c.장소.forEach((l) => walk([...l.도착, ...l.포인트.flatMap((p) => p.내용)], (cc) => { if (cc.증거획득 && !out.includes(cc.증거획득)) out.push(cc.증거획득); }));
+        take(c);
+        if (c.장소) c.장소.forEach((l) => walk([...l.도착, ...l.포인트.flatMap((p) => p.내용)], take));
       });
     });
-    return out;
+    return { list: out, upd };
   }
   function restoreScene(uptoAct, uptoIdx) {
     let bg = null, bgOpt = {}, bgm = null, trial = false;
@@ -419,8 +477,9 @@
       if (c.보이기) keys.add(G.charKey(c.보이기, c.표정));
       if (c.등장) keys.add(G.charKey(c.등장, c.표정));
       if (c.증인) keys.add(G.charKey(c.증인, c.표정));
-      if (c.증거획득 && G.ep.증거[c.증거획득]) keys.add(G.ep.증거[c.증거획득].그림);
+      if (c.증거획득 && G.ev[c.증거획득]) keys.add(G.ev[c.증거획득].그림);
       if (c.컷) keys.add(c.컷);
+      if (c.확대) keys.add(c.확대);
       if (c.장소) c.장소.forEach((l) => { const b = DATA.배경[l.배경]; if (b) keys.add(b.그림); });
     });
     return [...keys].filter(Boolean);
@@ -437,7 +496,10 @@
     P.act = from.막 || 0;
     P.idx = from.명령 || 0;
     P.section = P.idx;
-    P.evidence = from.증거 ? from.증거.slice() : collectEvidence(P.act, P.idx);
+    const got = collectEvidence(P.act, P.idx);
+    P.evidence = from.증거 ? from.증거.slice() : got.list;
+    P.upd = from.증거 ? Object.assign({}, from.갱신 || {}) : got.upd;
+    G.ev = buildEvidence(P.upd);
     P.gauge = from.신뢰도 || 5;
     P.explore = from.조사 || null;
     P.quit = false;

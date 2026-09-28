@@ -28,7 +28,16 @@ DATA.인물 = {
   '오카다': { 파일: 'okada',   자리: '증언대',   얼굴: [700, 230, 180] },
   '사토':   { 파일: 'sato',    자리: '증언대',   얼굴: [540, 230, 170] },
   '모리':   { 파일: 'mori',    자리: '증언대',   얼굴: [540, 230, 170] },
+  // 2화 (그림 제작 중: 그림이 오면 얼굴 자르는 곳을 맞춘다)
+  '박영수':     { 파일: 'youngsu',  자리: '피고석', 얼굴: [512, 300, 170] },
+  '최동식':     { 파일: 'dongsik',  자리: '증언대', 얼굴: [512, 300, 170] },
+  '웨스트 대위': { 파일: 'west',     자리: '증언대', 얼굴: [512, 300, 170] },
+  '해리스 상병': { 파일: 'harris',   자리: '증언대', 얼굴: [512, 300, 170] },
+  '야마모토':   { 파일: 'yamamoto', 자리: '증언대', 얼굴: [512, 300, 170] },
 };
+
+// 대본 반대 심문 표에서 줄여 쓴 이름 → 인물 이름
+DATA.별칭 = { '해리스': '해리스 상병' };
 
 // 법정 자리: 배경과 책상 앞그림
 DATA.법정자리 = {
@@ -54,7 +63,20 @@ DATA.배경 = {
   '광업소 사무실':       { 그림: 'backgrounds/ep1_mine_office' },
   '법정 대기실':         { 그림: 'backgrounds/waiting_room' },
   '법정 앞 복도':        { 그림: 'backgrounds/court_hallway' },
+  // 2화
+  '정글 속 철도 공사장': { 그림: 'backgrounds/ep2_railway_jungle' },
+  '감시원 숙소':         { 그림: 'backgrounds/ep2_guard_barracks' },
+  '포로 막사':           { 그림: 'backgrounds/ep2_pow_barracks' },
+  '수용소 사무실':       { 그림: 'backgrounds/ep2_camp_office' },
   '검은 화면':           { 그림: null },
+};
+
+// 연출 컷 이름 (그림이 없을 때 자리 그림에 쓰는 이름)
+DATA.컷 = {
+  'backgrounds/cut_ep1_miners_silhouette': '갱도 속 광부 실루엣',
+  'backgrounds/cut_ep2_pow_line_rain': '빗속에 침목을 나르는 포로 행렬',
+  'backgrounds/cut_ep2_scabbard_closeup': '야마모토 군도 칼집 끝의 둥근 쇠 장식',
+  'backgrounds/cut_ep2_handshake': '해리스와 박영수의 악수',
 };
 
 // 소리: 대본의 이름 → 파일 (assets/audio/ 아래, 확장자 없이).
@@ -63,6 +85,7 @@ DATA.소리 = {
   BGM: {
     '법정 개정 테마': 'bgm/court_open',
     '심문 테마 (느림)': 'bgm/testimony',
+    '심문 테마 (느림, 낮게)': 'bgm/testimony',
     '추궁 테마 (빠름)': 'bgm/pursuit',
     '역전 테마': 'bgm/turnabout',
     '조사 테마': 'bgm/investigation',
@@ -92,10 +115,18 @@ DATA.소리 = {
     '법정 문 열리는 소리': 'se/door_court',
     '느린 발소리': 'se/footsteps_slow',
     '대사 글자음': 'se/text_blip',
+    // 2화
+    '빗소리': 'se/rain',
+    '망치로 침목 박는 소리': 'se/sleeper_hammer',
+    '호루라기': 'se/whistle',
+    '누군가 쓰러지는 소리': 'se/fall',
+    '선택 기록 획득음': 'se/green_get',
+    '증거 갱신음': 'se/evidence_update',
   },
   // 이름 뒤 괄호 속 꾸밈말 → 음량 (0~1). 따로 된 음악 파일이 생기면 위 표에 이름을 더하면 된다.
   꾸밈음량: {
     '잔잔하게': 0.55, '낮게': 0.5, '조용하게': 0.45, '낮고 엄숙하게': 0.5, '절정': 1, '다시': 0.8,
     '크게': 1, '가장 크게': 1, '튜토리얼에서는 약하게': 0.35,
+    '느림, 낮게': 0.5, '초록빛 연출': 0.9,
   },
 };

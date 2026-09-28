@@ -33,7 +33,7 @@
       const tries = ['game/img/' + key + '.webp', 'assets/' + key + '.png', 'assets/' + key + '.jpg'];
       const next = () => {
         const url = tries.shift();
-        if (!url) { console.warn('[그림 없음]', key); G.missing.add(key); resolve(''); return; }
+        if (!url) { console.warn('[그림 없음]', key); G.missing.add(key); resolve(G.placeholder(key)); return; }
         const im = new Image();
         im.onload = () => resolve(url);
         im.onerror = next;
@@ -44,6 +44,60 @@
     return imgCache[key];
   };
   G.missing = new Set();
+
+  // ─────────── 그림이 아직 없을 때 띄우는 자리 그림 ───────────
+  // 그림 파일이 올라오면 코드를 고치지 않아도 진짜 그림으로 바뀐다.
+  const xml = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const allEvidence = () => Object.values(DATA).filter((d) => d && d.증거).flatMap((d) => Object.values(d.증거));
+  G.placeholder = (key) => {
+    const [dir, file] = key.split('/');
+    const font = 'font-family="Noto Sans KR, Malgun Gothic, Apple SD Gothic Neo, sans-serif" text-anchor="middle"';
+    let svg = '';
+    if (dir === 'characters') {
+      let who = file, expr = '';
+      for (const [n, c] of Object.entries(DATA.인물)) {
+        if (file.startsWith(c.파일 + '_')) {
+          who = n;
+          const e = file.slice(c.파일.length + 1);
+          expr = (Object.entries(DATA.표정).find(([, v]) => v === e) || [e])[0];
+        }
+      }
+      svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+        <g fill="rgba(18,22,38,.78)" stroke="rgba(232,184,74,.75)" stroke-width="6" stroke-dasharray="18 12">
+          <circle cx="512" cy="350" r="130"/>
+          <path d="M252 1024 C252 660 340 520 512 520 C684 520 772 660 772 1024 Z"/>
+        </g>
+        <rect x="192" y="70" width="640" height="130" rx="20" fill="rgba(8,12,26,.82)"/>
+        <text x="512" y="138" ${font} font-size="60" font-weight="700" fill="#ffe29a">${xml(who)}${expr ? ' · ' + xml(expr) : ''}</text>
+        <text x="512" y="186" ${font} font-size="36" fill="#f2ead4">그림 준비 중</text></svg>`;
+    } else if (dir === 'backgrounds') {
+      const bg = Object.entries(DATA.배경).find(([, b]) => b.그림 === key);
+      const cut = !bg && (DATA.컷 || {})[key];
+      const title = bg ? bg[0] : cut || file;
+      svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26324f"/><stop offset="1" stop-color="#0b0f1c"/></linearGradient></defs>
+        <rect width="1536" height="1024" fill="url(#g)"/>
+        <rect x="40" y="40" width="1456" height="944" fill="none" stroke="rgba(232,184,74,.5)" stroke-width="6" stroke-dasharray="24 16"/>
+        ${bg
+          ? `<g font-family="Noto Sans KR, Malgun Gothic, Apple SD Gothic Neo, sans-serif" text-anchor="start">
+               <text x="80" y="540" font-size="32" fill="#bfb49a">배경 준비 중</text>
+               <text x="80" y="598" font-size="44" font-weight="700" fill="#ffe29a">${xml(title)}</text>
+               <text x="80" y="640" font-size="26" fill="#bfb49a">${xml(file)}.png</text></g>`
+          : `<text x="768" y="400" ${font} font-size="40" fill="#bfb49a">연출 그림 준비 중 · ${xml(file)}.png</text>
+             <text x="768" y="480" ${font} font-size="64" font-weight="700" fill="#ffe29a">${xml(title)}</text>`}</svg>`;
+    } else if (dir === 'evidence') {
+      const ev = allEvidence().find((e) => e.그림 === key || e.확대 === key);
+      const name = ev ? ev.이름 + (ev.확대 === key ? ' (확대)' : '') : file;
+      svg = `<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768">
+        <rect x="80" y="80" width="608" height="608" rx="24" fill="#e9dcc0" stroke="#8a6a3a" stroke-width="8" stroke-dasharray="22 14"/>
+        <text x="384" y="370" ${font} font-size="${name.length > 12 ? 40 : name.length > 9 ? 48 : 60}" font-weight="700" fill="#3b2a0e">${xml(name)}</text>
+        <text x="384" y="450" ${font} font-size="40" fill="#6b5634">그림 준비 중</text></svg>`;
+    } else {
+      return '';
+    }
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  };
+  G.isPlaceholder = (url) => typeof url === 'string' && url.startsWith('data:image/svg+xml');
   G.setImg = async (el, key) => {
     el.dataset.key = key || '';
     if (!key) { el.hidden = true; el.removeAttribute('src'); return; }
@@ -172,5 +226,15 @@
     load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { return null; } },
     write(data) { try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch (e) {} },
     clear() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} },
+    // 🟩 선택 기록 모음 (6화 기록 보관함용): { '2': ['treatment_record'], … }
+    green() { try { return JSON.parse(localStorage.getItem('memory-court-green') || '{}'); } catch (e) { return {}; } },
+    addGreen(ep, id) {
+      try {
+        const g = this.green();
+        g[ep] = g[ep] || [];
+        if (!g[ep].includes(id)) g[ep].push(id);
+        localStorage.setItem('memory-court-green', JSON.stringify(g));
+      } catch (e) {}
+    },
   };
 })();
