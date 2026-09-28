@@ -27,6 +27,7 @@ function ruleFor(rel) {
   if (dir === 'characters') return { max: 1024, q: 0.85 };
   if (dir === 'evidence') {
     if (/\.jpe?g$/i.test(file)) return { max: 2048, q: 0.85 }; // 실제 사진
+    if (/_(closeup|zoom|map)$/.test(name)) return { max: 1536, q: 0.85 }; // 화면 가득 띄우는 확대 그림과 지도
     return { max: 768, q: 0.86 };
   }
   if (dir === 'ui') {

@@ -996,7 +996,7 @@
   ]
  },
  "evidence/ep1_quota_table.png": {
-  "hash": "cb7ff6b534b74e13",
+  "hash": "51d969993dd346a4",
   "webp": "evidence/ep1_quota_table.webp",
   "size": [
    768,
@@ -1538,6 +1538,870 @@
  "ui/window_tutorial.png": {
   "hash": "696451688a1914e1",
   "webp": "ui/window_tutorial.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep2_handshake.png": {
+  "hash": "0190ea7271a1cd99",
+  "webp": "backgrounds/cut_ep2_handshake.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep2_pow_line_rain.png": {
+  "hash": "8aa4c1c28de192f5",
+  "webp": "backgrounds/cut_ep2_pow_line_rain.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep2_scabbard_closeup.png": {
+  "hash": "02b0ee801faaf29b",
+  "webp": "backgrounds/cut_ep2_scabbard_closeup.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep3_cane_drop.png": {
+  "hash": "ffb5fbb7eb0466d6",
+  "webp": "backgrounds/cut_ep3_cane_drop.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep3_newspaper_desk.png": {
+  "hash": "b4c2a400d053c5df",
+  "webp": "backgrounds/cut_ep3_newspaper_desk.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep3_reporter_silhouette.png": {
+  "hash": "5674fa0ed9e4f01d",
+  "webp": "backgrounds/cut_ep3_reporter_silhouette.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep2_camp_office.png": {
+  "hash": "0e437962fa8e28ae",
+  "webp": "backgrounds/ep2_camp_office.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep2_guard_barracks.png": {
+  "hash": "38396f1e24710920",
+  "webp": "backgrounds/ep2_guard_barracks.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep2_pow_barracks.png": {
+  "hash": "dcf47384a462b08a",
+  "webp": "backgrounds/ep2_pow_barracks.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep2_railway_jungle.png": {
+  "hash": "d4362a808159e165",
+  "webp": "backgrounds/ep2_railway_jungle.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep3_library_archive.png": {
+  "hash": "b31667bef3447942",
+  "webp": "backgrounds/ep3_library_archive.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep3_newsroom.png": {
+  "hash": "8fb9bf0d4359b35e",
+  "webp": "backgrounds/ep3_newsroom.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "characters/dongsik_default.png": {
+  "hash": "def74067583c2732",
+  "webp": "characters/dongsik_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/dongsik_determined.png": {
+  "hash": "68672cdc7a01f892",
+  "webp": "characters/dongsik_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/dongsik_sad.png": {
+  "hash": "2373fb45adc15706",
+  "webp": "characters/dongsik_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/harris_anguish.png": {
+  "hash": "acbe8b9c8f08aa32",
+  "webp": "characters/harris_anguish.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/harris_default.png": {
+  "hash": "846e1ea953b4857f",
+  "webp": "characters/harris_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/harris_determined.png": {
+  "hash": "36e4de81294b99ea",
+  "webp": "characters/harris_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/harris_sad.png": {
+  "hash": "03712da2b5e8c392",
+  "webp": "characters/harris_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/kimura_awkward.png": {
+  "hash": "c62c9f531b43c9a0",
+  "webp": "characters/kimura_awkward.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/kimura_default.png": {
+  "hash": "9373a4bb5fb85dd7",
+  "webp": "characters/kimura_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/kimura_flustered.png": {
+  "hash": "251e5c4aba57ceb5",
+  "webp": "characters/kimura_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/kimura_sorry.png": {
+  "hash": "cf944cc7511176f7",
+  "webp": "characters/kimura_sorry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/ono_default.png": {
+  "hash": "ccbbf74c4eff7f27",
+  "webp": "characters/ono_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/ono_determined.png": {
+  "hash": "c1759d9903645d92",
+  "webp": "characters/ono_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/ono_serious.png": {
+  "hash": "ed40743fb3ea95a5",
+  "webp": "characters/ono_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/tanaka_angry.png": {
+  "hash": "682b24ef8f8b4959",
+  "webp": "characters/tanaka_angry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/tanaka_back.png": {
+  "hash": "345a0b19f8434ca7",
+  "webp": "characters/tanaka_back.webp",
+  "size": [
+   683,
+   1024
+  ],
+  "source": [
+   1024,
+   1536
+  ]
+ },
+ "characters/tanaka_breakdown.png": {
+  "hash": "c27f69a015e9f10e",
+  "webp": "characters/tanaka_breakdown.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/tanaka_default.png": {
+  "hash": "2305a8c893e613c1",
+  "webp": "characters/tanaka_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/tanaka_flustered.png": {
+  "hash": "19a0c5adb1274c74",
+  "webp": "characters/tanaka_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/tanaka_gentle.png": {
+  "hash": "f921ef4b5ae4d27b",
+  "webp": "characters/tanaka_gentle.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/west_default.png": {
+  "hash": "6c8ed2093d3d5a41",
+  "webp": "characters/west_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/west_sad.png": {
+  "hash": "4b76639a19bef3cd",
+  "webp": "characters/west_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/west_serious.png": {
+  "hash": "866e7c829e78e052",
+  "webp": "characters/west_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/yamamoto_angry.png": {
+  "hash": "c90d8dd5023b7fd7",
+  "webp": "characters/yamamoto_angry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/yamamoto_arrogant.png": {
+  "hash": "5a2f92c9bb4746c6",
+  "webp": "characters/yamamoto_arrogant.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/yamamoto_back.png": {
+  "hash": "150a16e3e8fd8711",
+  "webp": "characters/yamamoto_back.webp",
+  "size": [
+   346,
+   1024
+  ],
+  "source": [
+   698,
+   2064
+  ]
+ },
+ "characters/yamamoto_breakdown.png": {
+  "hash": "eb866d1b813fbe6e",
+  "webp": "characters/yamamoto_breakdown.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/yamamoto_default.png": {
+  "hash": "035b8478371c204a",
+  "webp": "characters/yamamoto_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/yamamoto_flustered.png": {
+  "hash": "2e0f82ef7f6a671a",
+  "webp": "characters/yamamoto_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/yamamoto_hide_scabbard.png": {
+  "hash": "d19e75ccfa5950bb",
+  "webp": "characters/yamamoto_hide_scabbard.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/youngsu_determined.png": {
+  "hash": "70e2fe303556f07a",
+  "webp": "characters/youngsu_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/youngsu_relieved.png": {
+  "hash": "1427b31fff3037e8",
+  "webp": "characters/youngsu_relieved.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/youngsu_sad.png": {
+  "hash": "dfc42ea6b451abcd",
+  "webp": "characters/youngsu_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/youngsu_scared.png": {
+  "hash": "9081bc15c69617bd",
+  "webp": "characters/youngsu_scared.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/youngsu_smile.png": {
+  "hash": "ef224b6ccecd592c",
+  "webp": "characters/youngsu_smile.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "evidence/ep2_civilian_status.png": {
+  "hash": "81c8158f466bfac5",
+  "webp": "evidence/ep2_civilian_status.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_doctor_diary.png": {
+  "hash": "7279d3b41ac154b1",
+  "webp": "evidence/ep2_doctor_diary.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_duty_log_original.png": {
+  "hash": "31736c8116059806",
+  "webp": "evidence/ep2_duty_log_original.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_duty_roster_submitted.png": {
+  "hash": "ea1cd7c0b6810839",
+  "webp": "evidence/ep2_duty_roster_submitted.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_guard_quota.png": {
+  "hash": "c36862e6b7f983cd",
+  "webp": "evidence/ep2_guard_quota.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_pow_statement.png": {
+  "hash": "3d22826eb9684c87",
+  "webp": "evidence/ep2_pow_statement.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_railway_map.png": {
+  "hash": "5be537185a3ecf74",
+  "webp": "evidence/ep2_railway_map.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep2_scar.png": {
+  "hash": "e1ffed104fde89b9",
+  "webp": "evidence/ep2_scar.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_scar_closeup.png": {
+  "hash": "24e4fbbebda573bd",
+  "webp": "evidence/ep2_scar_closeup.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep2_secret_record.png": {
+  "hash": "23bd916a49d5c539",
+  "webp": "evidence/ep2_secret_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_treatment_record.png": {
+  "hash": "0e1a9b94689c9345",
+  "webp": "evidence/ep2_treatment_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep2_verdict_1946.png": {
+  "hash": "c9a673a49df374a5",
+  "webp": "evidence/ep2_verdict_1946.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_army_document_1938.png": {
+  "hash": "e22ef9d5f72c7ef4",
+  "webp": "evidence/ep3_army_document_1938.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_article_1991.png": {
+  "hash": "9fcc2495f29f1b95",
+  "webp": "evidence/ep3_article_1991.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_burn_order.png": {
+  "hash": "6e703136b34796f0",
+  "webp": "evidence/ep3_burn_order.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_burned_list.png": {
+  "hash": "6e703136b34796f0",
+  "webp": "evidence/ep3_burned_list.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_burned_list_zoom.png": {
+  "hash": "8867c77c2faf3288",
+  "webp": "evidence/ep3_burned_list_zoom.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep3_complaint.png": {
+  "hash": "6f24cf1ad4c8a08d",
+  "webp": "evidence/ep3_complaint.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_correction.png": {
+  "hash": "8055f9ee973ef5da",
+  "webp": "evidence/ep3_correction.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_fuse_tatsuji.png": {
+  "hash": "dd122391d7b2cfb5",
+  "webp": "evidence/ep3_fuse_tatsuji.webp",
+  "size": [
+   403,
+   598
+  ],
+  "source": [
+   403,
+   598
+  ]
+ },
+ "evidence/ep3_hayashi_notebook.png": {
+  "hash": "ef35318cdf0da731",
+  "webp": "evidence/ep3_hayashi_notebook.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_kim_haksun_1991.jpg": {
+  "hash": "52ca24e40850db87",
+  "webp": "evidence/ep3_kim_haksun_1991.webp",
+  "size": [
+   300,
+   434
+  ],
+  "source": [
+   300,
+   434
+  ]
+ },
+ "evidence/ep3_kono_statement.png": {
+  "hash": "4ee9fcbef2d076ba",
+  "webp": "evidence/ep3_kono_statement.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep3_station_map.png": {
+  "hash": "93be1802a26f2abb",
+  "webp": "evidence/ep3_station_map.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep2_verdict_open.png": {
+  "hash": "f1f2d3d5a57e66b1",
+  "webp": "backgrounds/cut_ep2_verdict_open.webp",
   "size": [
    1536,
    1024
