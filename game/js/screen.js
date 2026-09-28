@@ -388,7 +388,8 @@
       // "(목소리, 일본어 억양)" → 목소리, "웨스트 대위의 기록 (자막)" → 웨스트 대위의 기록
       const shownName = 표시이름 != null ? 표시이름 : /^\(목소리/.test(이름 || '') ? '목소리' : (이름 || '').replace(/\s*\(자막\)$/, '');
       this.setName(skin === 'normal' ? shownName : (skin === 'hint' ? '힌트' : '알아두기'));
-      textEl.className = '';
+      textEl.className = 증거 ? 'ev' : '';
+      measure.classList.toggle('ev', 증거); // 증거 알림은 줄 간격을 줄이고 조금 위에서 시작한다 (나누기도 같은 기준으로)
       const thought = /^\(.*\)$/s.test(글);
       const tokens = tokenize(글, [cls, thought && 'thought'].filter(Boolean).join(' '));
       if (증거) { // 증거 알림: 첫 줄(증거 이름)을 금색으로
