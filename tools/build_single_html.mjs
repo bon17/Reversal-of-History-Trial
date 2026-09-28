@@ -1,5 +1,5 @@
 // 게임 전체(코드, 데이터, WebP 그림)를 HTML 파일 하나로 묶는다.
-// 이 파일 하나만 있으면 인터넷 없이 더블클릭으로 실행할 수 있다. (소리 파일과 글꼴 파일은 들어가지 않는다)
+// 이 파일 하나만 있으면 인터넷 없이 더블클릭으로 실행할 수 있다. game/fonts/ 의 글꼴도 함께 넣는다. (소리 파일은 들어가지 않는다)
 //
 // 실행: node tools/build_single_html.mjs [저장할 파일]   (기본: dist/기억의_법정_1화.html)
 import fs from 'node:fs';
@@ -27,7 +27,13 @@ const embed = {};
 const inline = (s) => s.replace(/<\/script/gi, '<\\/script');
 html = html.replace(/<link rel="stylesheet" href="([^"]+)">/g, (m, href) => {
   let css = fs.readFileSync(path.join(ROOT, href), 'utf8');
-  css = css.replace(/url\("\.\.\/fonts\/[^"]+"\) format\("woff"\),\s*/g, ''); // 글꼴 파일은 인터넷에서 받는다
+  // 글꼴: game/fonts/ 에 있는 파일은 파일 안에 넣고, 없는 파일 이름은 지운다 (없으면 인터넷에서 받는다)
+  css = css.replace(/url\("\.\.\/fonts\/([^"]+)"\) format\("([^"]+)"\),\s*/g, (m2, name, fmt) => {
+    const f = path.join(ROOT, 'game', 'fonts', name);
+    if (!fs.existsSync(f)) return '';
+    const mime = { woff2: 'font/woff2', woff: 'font/woff', opentype: 'font/otf', truetype: 'font/ttf' }[fmt] || 'application/octet-stream';
+    return `url("data:${mime};base64,${fs.readFileSync(f).toString('base64')}") format("${fmt}"), `;
+  });
   return '<style>\n' + css + '\n</style>';
 });
 html = html.replace(/<link rel="manifest"[^>]*>\n?/, '');
