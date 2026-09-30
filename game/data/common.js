@@ -6,7 +6,7 @@ window.DATA = window.DATA || {};
 DATA.설정 = {
   // 기억 노트·반박문 답을 저장할 GAS 웹 앱 주소 (…/exec). 만드는 법: docs/게임_실행_안내.md 11장 "기억 노트 저장"
   // 비워 두면 답을 저장하지 않고, 쓴 답을 화면에 보여 준다 (이 기기에도 남는다).
-  GAS주소: 'https://script.google.com/macros/s/AKfycbwI7gcf-9a2CpT9gZUEwrmFw3UaZsyt7wEj3NbsUseUaGqlCWC7h2T2kjt---q6MgQ/exec',
+  GAS주소: 'https://script.google.com/macros/s/AKfycbyDkyQdQyQiJjaT4aM4iseZtuM69UOr0DphhaXkNJbMauw_zUmQvGFk7eDK0jKQzk1J/exec',
 };
 
 // 표정 한글 → 파일 이름 (스프라이트 목록 2-2 표)
@@ -85,6 +85,7 @@ DATA.배경 = {
   '신문사 편집국':       { 그림: 'backgrounds/ep3_newsroom' },
   '도서관 자료실':       { 그림: 'backgrounds/ep3_library_archive' },
   '텅 빈 기억의 법정':   { 그림: 'backgrounds/court_empty_dark' },
+  '법정 문 쪽 (어둡게)': { 그림: 'backgrounds/court_witness', 어둡게: true }, // 증언대 너머 법정 문. 1부 마무리에서 세 사람이 문 밖으로 걸어 나간다
   '검은 화면':           { 그림: null },
 };
 

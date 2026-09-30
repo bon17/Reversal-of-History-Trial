@@ -22,6 +22,9 @@
     return h('div', { class: 'ev-stack' }, main, G.imgEl(ev.겹침));
   };
 
+  // 그림 없는 카드의 이름 글자: 줄을 나눌 곳을 정해 준다 (일본군/'위안부'처럼 띄어 쓰지 않는 이름도 두 줄로)
+  G.wordName = (name) => name.replace("일본군'", "일본군\u200b'");
+
   // 카드 가운데 창에 들어갈 것: 증거 그림 / 인물 얼굴 / 글자
   G.cardInner = (id) => {
     const ev = G.ev[id];
@@ -68,7 +71,7 @@
   function slotInner(ev) {
     if (ev.그림) return G.evImg(ev);
     if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1]); return f; }
-    return h('div', { class: 'word' }, ev.이름);
+    return h('div', { class: 'word' }, G.wordName(ev.이름));
   }
   // 큰 그림 칸 안: 그림 / 얼굴 / 그림 없는 카드는 카드 모양 그대로
   function picInner(id) {

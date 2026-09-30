@@ -84,6 +84,7 @@ img { -webkit-user-drag: none; }
 
 #scene.calm { filter: saturate(.25) brightness(.72); }
 #scene.dark #bg, #scene.dark #desk { filter: brightness(.22) saturate(.5); }
+#scene.dim #bg { filter: brightness(.42) saturate(.55); }
 #scene.dark #char { filter: drop-shadow(0 0 calc(var(--u) * 40) rgba(255, 240, 200, .25)); }
 
 #photo { z-index: 10; background: #000; opacity: 0; transition: opacity 2.2s; }
@@ -162,7 +163,7 @@ img { -webkit-user-drag: none; }
 #popup .source { position: absolute; inset: 0; transform: translateY(calc(var(--u) * -262)); }
 #popup .source .caption-band { position: absolute; inset: 0; width: 100%; height: 100%; }
 #popup .thumb .face { width: 100%; height: 100%; }
-#popup .thumb .word { font-size: max(12px, calc(var(--u) * 34)); color: var(--gold-light); font-weight: 800; text-align: center; line-height: 1.2; padding: 4px; }
+#popup .thumb .word { font-size: max(12px, calc(var(--u) * 34)); color: var(--gold-light); font-weight: 800; text-align: center; line-height: 1.2; padding: 4px; word-break: keep-all; } /* 낱말 중간에서 줄이 나뉘지 않게 (일본군/'위안부', BC급/전범 재판) */
 @keyframes popIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
 
 #black { z-index: 13; background: #000; opacity: 0; pointer-events: none; transition: opacity .7s; display: flex; align-items: center; justify-content: center; }
@@ -190,11 +191,14 @@ img { -webkit-user-drag: none; }
 }
 #closeup .dots span.on { opacity: 1; transform: scale(1); }
 /* 3화 1부 마무리: 뒷모습이 법정 문 쪽(안쪽)으로 걸어가며 작아지고 흐려진다 */
-#big img.walker { inset: auto; left: 50%; bottom: 0; top: auto; width: auto; height: 88%; transform-origin: 50% 100%; animation: walkAway 3s ease-in both; }
+/* 법정 문 쪽 배경(증언대 너머 문): 증언대 윗면(y≈68%) 아래는 잘라서 인물이 증언대 뒤에 있게 한다 */
+#big .walk-lane { position: absolute; inset: 0; clip-path: inset(0 0 32% 0); }
+#big .walk-lane img.walker { position: absolute; inset: auto; left: 50%; bottom: 14%; top: auto; width: auto; height: 62%; object-fit: contain; transform-origin: 50% 100%; filter: brightness(.7); animation: walkAway 3s ease-in both; }
 @keyframes walkAway {
-  0% { opacity: 0; transform: translateX(-50%) translateY(6%) scale(1); }
+  0% { opacity: 0; transform: translateX(-50%) translateY(0) scale(1); }
   15% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-22%) scale(.42); }
+  80% { opacity: .9; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-68%) scale(.34); }
 }
 #big .walk-cap { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: calc(var(--u) * 60) 6% calc(var(--u) * 44); background: linear-gradient(transparent, rgba(0, 0, 0, .78) 45%); text-align: center; font-size: max(15px, calc(var(--u) * 38)); line-height: 1.7; color: #eee; text-shadow: 0 2px 6px #000; transition: opacity .7s; }
 #big .walk-cap div { opacity: 0; transition: opacity 1s; }
@@ -590,7 +594,7 @@ img { -webkit-user-drag: none; }
 .card .win.text { align-items: flex-start; }
 .card .win .mini { font-size: 10px; font-size: 5.8cqw; line-height: 1.35; color: #3b2a0e; padding: 7% 8% 0; text-align: left; word-break: keep-all; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
 .card.card-concept .win .mini, .card.card-red .win .mini, .card.card-green .win .mini { color: #f2ead4; }
-.card .win .word { font-size: 14px; font-size: 10cqw; font-weight: 900; color: #3b2a0e; text-align: center; line-height: 1.2; padding: 4%; }
+.card .win .word { font-size: 14px; font-size: 10cqw; font-weight: 900; color: #3b2a0e; text-align: center; line-height: 1.2; padding: 4%; word-break: keep-all; }
 .card.card-concept .win .word, .card.card-red .win .word, .card.card-green .win .word { color: var(--gold-light); }
 .card .nm { position: absolute; left: 9.4%; width: 81.2%; top: 69.5%; height: 20.3%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 800; line-height: 1.2; font-size: 13px; font-size: 8.4cqw; padding: 0 4%; word-break: keep-all; }
 .card.card-blue .nm { color: #2a2410; }
@@ -616,6 +620,8 @@ img { -webkit-user-drag: none; }
 .note .panel h2 { font-size: clamp(20px, 3.2vmin, 26px); }
 .note .q { font-size: clamp(17px, 2.8vmin, 23px); line-height: 1.6; text-align: center; margin: 6px 0 14px; word-break: keep-all; }
 .note .q b, .note .fb b { color: var(--gold-light); }
+.note .q.small { font-size: clamp(15px, 2.4vmin, 19px); margin: 16px 0 8px; }
+.note .intro p { word-break: keep-all; }
 .note .intro p { font-size: clamp(17px, 2.8vmin, 22px); text-align: center; }
 .note .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
 .note .fields label { margin: 0; }

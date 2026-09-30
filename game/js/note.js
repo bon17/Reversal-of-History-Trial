@@ -30,14 +30,22 @@
   async function send(row) {
     const url = (DATA.설정 || {}).GAS주소;
     if (!url) return 'no-url';
+    const body = JSON.stringify(row);
     try {
       // text/plain 으로 보낸다 (application/json 이면 브라우저가 사전 요청을 보내는데 GAS가 받지 못한다)
-      const res = await fetch(url, { method: 'POST', body: JSON.stringify(row), redirect: 'follow' });
+      const res = await fetch(url, { method: 'POST', body, redirect: 'follow' });
       if (!res.ok) return 'fail';
       const j = await res.json().catch(() => ({}));
       return j.ok === false ? 'fail' : 'ok';
     } catch (e) {
-      return 'fail';
+      // 답을 읽는 것이 브라우저 보안 규칙(CORS)에 막힌 경우가 많다. 이때는 답은 읽지 않고 보내기만 한다 (no-cors).
+      // 보내기는 되지만 저장됐는지는 확인할 수 없어서, 시트에서 확인하도록 'sent' 로 알린다.
+      try {
+        await fetch(url, { method: 'POST', body, mode: 'no-cors' });
+        return 'sent';
+      } catch (e2) {
+        return 'fail';
+      }
     }
   }
 
@@ -71,7 +79,7 @@
 
     // 0. 반, 번호, 이름
     function start() {
-      a = { 증거: null, 이유버튼: [], 이유한줄: '', 잘못한사람: null, 잘못: '', 벌: null, 선택: null, 이유: '' };
+      a = { 증거: null, 이유버튼: [], 이유한줄: '', 잘못한사람: null, 잘못: '', 벌: null, 선택: null, 이유: '', 기억: '' };
       const cls = h('select', { 'aria-label': '반' }, h('option', { value: '' }, '반 고르기'));
       for (let i = 1; i <= 5; i++) cls.append(h('option', { value: String(i) }, i + '반'));
       const num = h('select', { 'aria-label': '번호' }, h('option', { value: '' }, '번호 고르기'));
@@ -104,7 +112,7 @@
       page(...kids);
     }
 
-    // 1-2. 왜 기억에 남았나요? (여러 개 고르기 + 한 줄 더 쓰기는 선택)
+    // 1-2. 왜 기억에 남았나요? (여러 개 고르기 + 이유를 한 문장으로 쓰기, 둘 다 필수)
     function step1b() {
       const opts = h('div', { class: 'opts' });
       const draw = () => {
@@ -112,10 +120,13 @@
         REASONS.forEach((r) => opts.append(btn(r, () => { a.이유버튼 = a.이유버튼.includes(r) ? a.이유버튼.filter((x) => x !== r) : [...a.이유버튼, r]; draw(); }, 'ui-btn' + (a.이유버튼.includes(r) ? ' on' : ''))));
       };
       draw();
+      const why = textInput('왜 기억에 남았는지 한 문장으로 써 주세요', a.이유한줄);
       const msg = h('div', { class: 'msg' });
-      page(q('왜 기억에 남았나요? (여러 개 골라도 돼요)'), opts, msg,
+      page(q('왜 기억에 남았나요? (여러 개 골라도 돼요)'), opts, h('div', { class: 'q small' }, '기억에 남은 이유를 한 문장으로 써 주세요.'), why, msg,
         row(btn('이전', step1, 'ui-btn sub'), btn('다음', () => {
           if (!a.이유버튼.length) { msg.textContent = '하나 이상 골라 주세요.'; return; }
+          if (!why.value.trim()) { msg.textContent = '기억에 남은 이유를 한 문장으로 써 주세요.'; return; }
+          a.이유한줄 = why.value.trim();
           step2();
         })));
     }
@@ -178,7 +189,16 @@
       const inp = textInput('한 줄로 써 주세요', a.이유);
       const msg = h('div', { class: 'msg' });
       page(q('왜 그렇게 생각했나요? 한 줄이면 충분해요.'), inp, msg,
-        row(btn('이전', step3, 'ui-btn sub'), btn('저장하기', () => { if (!inp.value.trim()) { msg.textContent = '한 줄을 써 주세요.'; return; } a.이유 = inp.value.trim(); save(); })));
+        row(btn('이전', step3, 'ui-btn sub'), btn('다음', () => { if (!inp.value.trim()) { msg.textContent = '한 줄을 써 주세요.'; return; } a.이유 = inp.value.trim(); step4(); })));
+      setTimeout(() => inp.focus(), 50);
+    }
+
+    // 4. 왜 기억해야 할까? (한 문장 쓰기, 필수)
+    function step4() {
+      const inp = textInput('한 문장으로 써 주세요', a.기억);
+      const msg = h('div', { class: 'msg' });
+      page(q('왜 우리는 이 사건과 이들의 행동을 **기억해야** 할까요?'), h('div', { class: 'q small' }, '내 생각을 한 문장으로 써 주세요.'), inp, msg,
+        row(btn('이전', step3b, 'ui-btn sub'), btn('저장하기', () => { if (!inp.value.trim()) { msg.textContent = '한 문장을 써 주세요.'; return; } a.기억 = inp.value.trim(); save(); })));
       setTimeout(() => inp.focus(), 50);
     }
 
@@ -186,12 +206,12 @@
     const noteRow = () => ({
       종류: '기억노트', 반: who.반, 번호: who.번호, 이름: who.이름, 화2: played.includes(2) ? '했음' : '안 함',
       증거: evs[a.증거] ? evs[a.증거].이름 : '', 이유버튼: a.이유버튼.join(', '), 이유한줄: a.이유한줄,
-      잘못한사람: a.잘못한사람, 잘못: a.잘못, 벌: a.벌, 선택: a.선택, 이유: a.이유,
+      잘못한사람: a.잘못한사람, 잘못: a.잘못, 벌: a.벌, 선택: a.선택, 이유: a.이유, 기억: a.기억,
     });
     function summary(r) {
       const box = h('div', { class: 'summary' });
       [['반·번호·이름', r.반 + '반 ' + r.번호 + '번 ' + r.이름], ['기억에 남은 증거', r.증거], ['기억에 남은 이유', r.이유버튼 + (r.이유한줄 ? ' / ' + r.이유한줄 : '')],
-        ['잘못한 사람', r.잘못한사람], ['그 사람의 잘못', r.잘못], ['벌을 받았을까', r.벌], ['어쩔 수 없었다', r.선택], ['이유', r.이유]]
+        ['잘못한 사람', r.잘못한사람], ['그 사람의 잘못', r.잘못], ['벌을 받았을까', r.벌], ['어쩔 수 없었다', r.선택], ['이유', r.이유], ['왜 기억해야 할까', r.기억]]
         .forEach(([k, v]) => box.append(h('div', {}, h('b', {}, k + ': '), v)));
       return box;
     }
@@ -203,7 +223,7 @@
       const res = await send(r);
       // 다시 쓰기: 반·번호·이름은 그대로 두고 처음부터 다시 쓴다 (다시 저장하면 가장 최근 것이 쓰인다)
       const endRow = row(btn('다시 쓰기', () => { fails = 0; start(); }, 'ui-btn sub'), btn('끝내기', () => { scr.remove(); finish(); }));
-      if (res === 'ok') {
+      if (res === 'ok' || res === 'sent') {
         page(q('기억 노트를 저장했어요. 정답은 없어요. 게임 2가 끝나면 다시 물어볼게요.'), endRow);
         return;
       }

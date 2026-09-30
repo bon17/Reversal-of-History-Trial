@@ -57,6 +57,7 @@
       S.bgName = name;
       stage.dataset.bg = name;
       S.court = !!b.법정;
+      scene.classList.toggle('dim', !!b.어둡게); // 어둡게: 불 꺼진 법정처럼 배경을 어둡게 (3화 1부 마무리)
       S.offscreen = opts.화면밖 || [];
       S.char = null; S.expr = null;
       this.hideChar(true);
@@ -265,10 +266,13 @@
       const big = $('#big');
       const cap = h('div', { class: 'walk-cap' });
       big.append(cap);
+      // 인물은 증언대 뒤(화면 아래 32%는 가려짐)에서 법정 문 쪽으로 걸어가며 작아진다
+      const lane = h('div', { class: 'walk-lane' });
+      big.append(lane);
       for (const w of list) {
         const img = G.imgEl(G.charKey(w.인물, '뒷모습'), 'walker');
         await G.loadImg(G.charKey(w.인물, '뒷모습'));
-        big.append(img);
+        lane.append(img);
         const line = h('div');
         line.innerHTML = G.mdBold(w.글);
         cap.append(line);
@@ -280,6 +284,7 @@
       cap.classList.add('out');
       await G.sleep(700);
       cap.remove();
+      lane.remove();
     },
 
     gauge(show) {
@@ -313,7 +318,7 @@
       pop.innerHTML = '';
       pop.append(G.imgEl(green ? 'ui/popup_green_get' : 'ui/popup_evidence_get', 'band'));
       const thumb = h('div', { class: 'thumb' + (ev.사진 ? ' photo' : '') + (green ? ' green' : '') });
-      thumb.append(ev.그림 || ev.얼굴 ? G.cardInner(id) : h('div', { class: 'word' }, ev.이름));
+      thumb.append(ev.그림 || ev.얼굴 ? G.cardInner(id) : h('div', { class: 'word' }, G.wordName(ev.이름)));
       pop.append(thumb);
       // 실제 사진은 출처 표기 띠를 함께 띄운다
       if (ev.사진) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, ev.출처)));
