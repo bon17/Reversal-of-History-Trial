@@ -18,6 +18,9 @@ const OUT = path.join(ROOT, 'game', 'img');
 const MANIFEST = path.join(OUT, '_manifest.json');
 const FORCE = process.argv.includes('--all');
 
+// .png로 올라온 실제 사진 (보통 실제 사진은 .jpg). 증거 그림 크기(768)가 아니라 사진 크기로 줄인다
+const PHOTO_PNG = new Set(['ep4_schindler']);
+
 // 폴더와 파일별 크기 규칙: max = 가장 긴 변의 최대 크기 (null이면 그대로), q = 품질(0~1)
 function ruleFor(rel) {
   const [dir, file] = rel.split('/');
@@ -26,7 +29,7 @@ function ruleFor(rel) {
   if (dir === 'backgrounds') return { max: null, q: 0.82 };
   if (dir === 'characters') return { max: 1024, q: 0.85 };
   if (dir === 'evidence') {
-    if (/\.jpe?g$/i.test(file)) return { max: 1536, q: 0.85 }; // 실제 사진 (화면 너비 1536보다 크게 둘 필요가 없다)
+    if (/\.jpe?g$/i.test(file) || PHOTO_PNG.has(name)) return { max: 1536, q: 0.85 }; // 실제 사진 (화면 너비 1536보다 크게 둘 필요가 없다)
     if (/_(closeup|zoom|map)$/.test(name)) return { max: 1536, q: 0.85 }; // 화면 가득 띄우는 확대 그림과 지도
     return { max: 768, q: 0.86 };
   }

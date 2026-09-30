@@ -27,7 +27,7 @@
   // key 예: 'characters/okada_arrogant'. game/img/…webp → assets/…png → assets/…jpg 순서로 찾는다.
   const imgCache = {};
   G.loadImg = (key) => {
-    if (!key) return Promise.resolve('');
+    if (!key || typeof key !== 'string') return Promise.resolve(''); // 그림 이름이 아닌 것이 들어와도 멈추지 않게
     if (imgCache[key]) return imgCache[key];
     // 한 파일짜리 게임(tools/build_single_html.mjs로 만든 것)은 그림이 파일 안에 들어 있다
     if (window.EMBED_IMG && window.EMBED_IMG[key]) return (imgCache[key] = Promise.resolve(window.EMBED_IMG[key]));
@@ -88,8 +88,8 @@
           : `<text x="768" y="400" ${font} font-size="40" fill="#bfb49a">연출 그림 준비 중 · ${xml(file)}.png</text>
              <text x="768" y="480" ${font} font-size="64" font-weight="700" fill="#ffe29a">${xml(title)}</text>`}</svg>`;
     } else if (dir === 'evidence') {
-      const ev = allEvidence().find((e) => e.그림 === key || e.확대 === key);
-      const name = ev ? ev.이름 + (ev.확대 === key ? ' (확대)' : '') : file;
+      const ev = allEvidence().find((e) => e.그림 === key || e.확대 === key || e.자세히 === key);
+      const name = ev ? ev.이름 + (ev.확대 === key || ev.자세히 === key ? ' (확대)' : '') : file;
       svg = `<svg xmlns="http://www.w3.org/2000/svg" width="768" height="768" viewBox="0 0 768 768">
         <rect x="80" y="80" width="608" height="608" rx="24" fill="#e9dcc0" stroke="#8a6a3a" stroke-width="8" stroke-dasharray="22 14"/>
         <text x="384" y="370" ${font} font-size="${name.length > 12 ? 40 : name.length > 9 ? 48 : 60}" font-weight="700" fill="#3b2a0e">${xml(name)}</text>
@@ -219,6 +219,21 @@
         if (i < times - 1) await G.sleep(420);
       }
     },
+    // 계속 되풀이되는 효과음 (4화 시계방의 째깍 소리). 장소를 떠나면 stopLoop()로 멈춘다
+    async loop(full) {
+      if (this.loopName === full) return;
+      this.stopLoop();
+      this.loopName = full;
+      const { 이름, 꾸밈 } = splitName(DATA.소리.효과음, full);
+      const path = DATA.소리.효과음[이름];
+      if (!path) { console.warn('[효과음 이름 없음]', full); return; }
+      const vol = (꾸밈 && DATA.소리.꾸밈음량[꾸밈]) || 0.6;
+      const a = await playAudio(path, vol * G.settings.se, true);
+      if (!a) return;
+      if (this.loopName !== full) { a.pause(); return; }
+      this.loopEl = a;
+    },
+    stopLoop() { this.loopName = null; if (this.loopEl) { this.loopEl.pause(); this.loopEl = null; } },
     blip() {
       // 대사 글자음 (파일이 있을 때만)
       const path = DATA.소리.효과음['대사 글자음'];

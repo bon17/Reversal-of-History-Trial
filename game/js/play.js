@@ -44,6 +44,7 @@
   async function line(c) {
     // 보기: 말하는 사람 대신 다른 인물을 화면에 두고, 말하는 사람은 작은 얼굴로 보여 준다
     if (c.보기) { G.stage.showChar(c.보기, c.보기표정); G.box.face(c.말, c.표정); }
+    else if ((G.scene.overlayFaces || G.scene.photoFaces) && DATA.인물[c.말]) G.box.face(c.말, c.표정); // 지도·사진이 화면을 덮고 있을 때
     else G.stage.speaker(c.말, c.표정);
     await G.box.say({ 이름: c.말, 글: c.대사, cls: c.cls });
     if (P.cardsAfterLine) { G.stage.hideCards(); P.cardsAfterLine = false; }
@@ -59,6 +60,7 @@
         if (!['멈춤', '없음'].includes(c.BGM) && !/^없음/.test(c.BGM)) { G.stage.calm(false); G.stage.green(false); }
         G.audio.bgm(c.BGM); return;
       case '효과음':
+        if (c.반복) { G.audio.loop(c.효과음); return; } // 계속 되풀이되는 소리
         G.audio.se(c.효과음);
         if (/^쾅/.test(c.효과음)) { G.stage.flash(); if (/가장 크게|크게/.test(c.효과음)) G.stage.shake(true); }
         return;
@@ -87,7 +89,7 @@
         await G.stage.evidencePopup(id, { updated: true });
         return;
       }
-      case '확대': G.box.hide(); G.stage.closeup(c.확대); if (c.확대) { if (c.번쩍) G.stage.flash(); await G.sleep(c.대기 || 1200); } return;
+      case '확대': G.box.hide(); G.stage.closeup(c.확대, { faces: c.얼굴 }); if (c.확대) { if (c.번쩍) G.stage.flash(); await G.sleep(c.대기 || 1200); } return;
       case '인용': G.stage.speaker(null); await G.box.say({ 이름: c.이름 || '', 표시이름: c.이름 || '', 글: c.인용, cls: 'quote' }); return;
       case '증거보이기': G.stage.showCards(c.증거보이기); P.cardsAfterLine = true; return;
       case '증거제출': {
@@ -109,7 +111,7 @@
           await runList(o.결과);
         }
       }
-      case '안내창': await G.box.say({ 글: c.안내창.join('\n'), skin: 'tutorial' }); return;
+      case '안내창': await G.box.say({ 글: c.안내창.join('\n'), skin: 'tutorial', 제목: c.제목, 건너뛰기: c.건너뛰기 }); return;
       case '보이기':
         G.box.hide();
         G.stage.showChar(c.보이기, c.표정);
@@ -121,7 +123,20 @@
       case '퇴장':
         G.box.hide();
         await G.stage.exit(c.퇴장 === '모두' ? null : c.퇴장, c.뒷모습); return;
-      case '사진': G.stage.photo(c.사진); if (c.사진) await G.sleep(1800); return;
+      case '사진': G.stage.photo(c.사진, { faces: c.얼굴 }); if (c.사진) await G.sleep(1800); return;
+      // ── 4화에서 더한 연출 ──
+      case '화제목': G.box.hide(); await G.screens.episodeTitle(); return; // 화 제목을 맨 앞이 아닌 자리에 띄울 때
+      case '부제목': G.box.hide(); await G.screens.partTitle(c.부제목); return; // 게임 2 타이틀, 제2부 제목
+      case '지난기록': G.box.hide(); await G.screens.pastRecords(c.지난기록); return;
+      case '보관함': await G.stage.drawer(c.보관함); return; // 🟩 기록을 기록 보관함에 넣는다
+      case '회상얼굴': await G.stage.recallFaces(c.회상얼굴); return;
+      case '지도넓히기': await G.stage.mapZoomOut(c.지도넓히기); return;
+      case '불길': G.box.hide(); await G.stage.fires(); return;
+      case '창문그림자': await G.stage.windowShadows(c.창문그림자); return;
+      case '이름표': await G.stage.nameTag(c.이름표); return;
+      case '사진컷': G.stage.heldPhoto(c.사진컷); if (c.사진컷) await G.sleep(1400); return;
+      case '겹치기': await G.stage.overlap(c.겹치기, c.옮김); return;
+      case '종이': await G.stage.paper(c.종이, c); return;
       case '재판': G.scene.trial = c.재판 === '시작'; G.stage.gauge(G.scene.trial); if (G.scene.trial) { P.gauge = 5; G.stage.updateGauge(); } return;
       case '판결': await verdict(); return;
       case '기록카드': await G.screens.historyCard(c.기록카드); return;
@@ -152,8 +167,12 @@
       case '차분함 끝': G.stage.calm(false); return;
       case '비': G.stage.rain(true); return;
       case '비 그침': G.stage.rain(false); return;
+      case '회상': G.stage.recall(true); return; // 화면 가장자리가 흐려진다
+      case '회상 끝': G.stage.recall(false); return;
       case '어둡게': G.stage.dark(true); G.listening = true; updateTopbar(); return;
       case '밝게': G.stage.dark(false); G.listening = false; updateTopbar(); return;
+      case '듣기': G.listening = true; updateTopbar(); return; // 증언 듣기: 화면은 그대로 두고 법정 기록 버튼만 숨긴다 (배경이 이미 어두울 때)
+      case '듣기 끝': G.listening = false; updateTopbar(); return;
       default: console.warn('[모르는 연출]', name);
     }
   }
@@ -180,8 +199,17 @@
   }
 
   // 증거 갱신: 대본 순서대로 설명을 바꾸거나(교체) 덧붙인다(추가)
+  // 가져오기: 다른 화의 증거를 그대로 빌려 쓴다 (4화의 1부 🟩 기록). 글을 복사하지 않아서 그 화를 고치면 함께 바뀐다
+  function evidenceSource() {
+    const src = {};
+    for (const [id, e] of Object.entries(G.ep.증거)) {
+      const from = e.가져오기 && DATA[e.가져오기] && DATA[e.가져오기].증거[e.원래 || id];
+      src[id] = e.가져오기 ? (from || { 이름: id, 색: '초록', 설명: [] }) : e;
+    }
+    return src;
+  }
   function buildEvidence(upd) {
-    const ev = JSON.parse(JSON.stringify(G.ep.증거));
+    const ev = JSON.parse(JSON.stringify(evidenceSource()));
     for (const [id, n] of Object.entries(upd || {})) {
       const e = ev[id];
       if (!e || !e.갱신) continue;
@@ -229,11 +257,13 @@
       P.gauge = 5;
       throw new Restart(P.section);
     }
-    if (state.wrong >= 2 && spec.힌트) {
-      G.box.face(spec.힌트.말, spec.힌트.표정);
-      await G.box.say({ 이름: spec.힌트.말, 글: spec.힌트.대사, skin: 'hint' });
-      G.box.face(null);
-    }
+    if (state.wrong >= 2) await showHint(spec.힌트);
+  }
+  async function showHint(hint) {
+    if (!hint) return;
+    G.box.face(hint.말, hint.표정);
+    await G.box.say({ 이름: hint.말, 글: hint.대사, skin: 'hint' });
+    G.box.face(null);
   }
 
   // ─────────── 증언과 반대 심문 ───────────
@@ -242,14 +272,20 @@
   async function testimony(T) {
     const n = T.문장.length;
     const revised = {};
-    const state = { wrong: 0 };
+    let state = { wrong: 0 };
+    // 단계: 한 증언에서 정답을 차례로 여러 번 찾는다 (4화 증언 3: 4번 → 3번). 없으면 한 단계
+    const stages = T.단계 || [{ 정답: T.정답, 정답장면: T.정답장면, 힌트: T.힌트 }];
+    let stageNo = 0;
+    // 확대: 이 단계에서 [자세히 보기]로 이 증거를 확대하면 대사가 나오고, 그 뒤에야 정답이 된다 (4화 매각 기록)
+    const setZoomHook = () => { const z = stages[stageNo].확대; P.zoomHook = z ? { 증거: z.증거, 대사: z.대사, done: false } : null; };
+    setZoomHook();
     // 증언 개시
     G.stage.speaker(T.증인, T.표정);
     G.box.hide();
     await G.stage.big('ui/text_testimony_start', 'fadehold', 1700);
     for (const st of T.문장) {
       G.stage.speaker(T.증인, T.표정);
-      await G.box.say({ 이름: T.증인, 글: strip(st.글) });
+      await G.box.say({ 이름: T.증인, 글: strip(st.낭독 || st.글) }); // 낭독: 처음 들려줄 때의 글이 반대 심문 문장보다 길 때 (4화)
     }
     await runList(T.증언후);
     await runList(T.반대심문전);
@@ -278,7 +314,7 @@
             await G.box.say({ 이름: T.증인, 글: t, cls: 'cross-text' });
           }
         }
-        if (T.추궁정답 === i + 1) { await runList(T.정답장면); return; }
+        if (T.추궁정답 === i + 1) { P.zoomHook = null; await runList(T.정답장면); return; }
         if (st.수정 && !revised[i]) {
           G.audio.se('증언 수정음');
           revised[i] = st.수정.글;
@@ -293,10 +329,29 @@
       if (act === 'present') {
         const ev = await G.record.open({ present: true });
         if (!ev) continue;
-        const ok = (T.정답 || []).some((a) => a.문장 - 1 === i && a.증거 === ev && (!a.수정후 || revised[i]));
-        if (ok) { P.presented = ev; await runList(T.정답장면); return; }
-        // 보조 정답: 반론 장면을 보여 주고 신뢰도는 줄이지 않은 채 반대 심문으로 돌아간다
-        const sub = (T.보조정답 || []).find((a) => a.문장 - 1 === i && a.증거 === ev);
+        const stage = stages[stageNo];
+        const hit = (stage.정답 || []).find((a) => a.문장 - 1 === i && a.증거 === ev && (!a.수정후 || revised[i]));
+        // 확대해야 하는 정답을 확대하기 전에 냈다: 벌칙 없이 그 단계의 힌트
+        if (hit && hit.확대후 && !(P.zoomHook && P.zoomHook.done)) { await showHint(stage.힌트); continue; }
+        if (hit) {
+          P.presented = ev;
+          const bgmBefore = G.audio.current;
+          await runList(stage.정답장면);
+          stageNo++;
+          if (stageNo >= stages.length) { P.zoomHook = null; return; }
+          // 다음 단계: 반대 심문으로 돌아간다 (음악도 반대 심문 음악으로)
+          state = { wrong: 0 };
+          G.stage.calm(false);
+          G.stage.green(false);
+          G.stage.hideCards();
+          P.cardsAfterLine = false;
+          if (bgmBefore) G.audio.bgm(bgmBefore);
+          await runList(stages[stageNo].앞);
+          setZoomHook();
+          continue;
+        }
+        // 보조 정답: 반론 장면을 보여 주고 신뢰도는 줄이지 않은 채 반대 심문으로 돌아간다 (단계: 그 단계에서만)
+        const sub = (T.보조정답 || []).find((a) => a.문장 - 1 === i && a.증거 === ev && (!a.단계 || a.단계 === stageNo + 1));
         if (sub) {
           const bgmBefore = G.audio.current;
           P.presented = ev;
@@ -305,7 +360,7 @@
           if (bgmBefore) G.audio.bgm(bgmBefore); // 반대 심문 음악으로 돌아간다
           continue;
         }
-        await wrongAnswer(T, ev, state);
+        await wrongAnswer(Object.assign({}, T, { 힌트: stage.힌트 }), ev, state);
       }
     }
   }
@@ -344,7 +399,7 @@
     for (const step of C.단계) {
       const state = { wrong: 0 };
       await runList(step.앞);
-      const claim = step.앞[step.앞.length - 1];
+      const claim = [...step.앞].reverse().find((c) => c.말); // 주장 대사 (그 뒤에 안내창이 붙을 수 있다)
       for (;;) {
         G.stage.speaker(claim.말, claim.표정);
         G.box.showStatic({ 이름: claim.말, 글: claim.대사 });
@@ -367,14 +422,23 @@
     const prog = (P.explore = P.explore || { 도착: {}, 조사: {} });
     const key = (loc, pt) => loc.이름 + '/' + pt.이름;
     const complete = (loc) => prog.도착[loc.이름] && loc.포인트.every((pt) => prog.조사[key(loc, pt)]);
+    // 열림: 이 장소들을 다 조사해야 갈 수 있다 (4화)
+    const isOpen = (loc) => !loc.열림 || loc.열림.every((n) => complete(X.장소.find((l) => l.이름 === n)));
+    const single = X.장소.length === 1; // 한 곳짜리 짧은 조사 (4화 휴정): 장소 고르기 없이 바로
+    // 음악: 조사 파트의 음악. 적어 두면 장소마다 그 장소의 음악(장소.음악, 없으면 이것)으로 바꾸고, 조사 포인트를 본 뒤에도 되돌린다
+    const music = (loc) => loc.음악 || X.음악;
+    const restoreMusic = (loc) => { if (!X.음악) return; G.stage.calm(false); G.audio.bgm(music(loc)); };
     let cur = null;
     while (!X.장소.every(complete)) {
       if (!cur) {
         G.box.hide();
-        const k = await G.choose(X.장소.map((l) => l.이름 + (complete(l) ? '  ✓ 조사 완료' : '')));
-        cur = X.장소[k];
+        const open = X.장소.filter(isOpen);
+        const k = single ? 0 : await G.choose(open.map((l) => l.이름 + (complete(l) ? '  ✓ 조사 완료' : '')));
+        cur = open[k];
         G.stage.setBackground(cur.배경);
         G.scene.exploring = cur.이름;
+        if (cur.환경음) G.audio.loop(cur.환경음); else G.audio.stopLoop(); // 시계방의 째깍 소리처럼 그 장소에서만 나는 소리
+        restoreMusic(cur);
       }
       if (!prog.도착[cur.이름]) {
         await runList(cur.도착);
@@ -386,12 +450,14 @@
       if (!cur.포인트.length) { cur = null; continue; }
       G.box.hide();
       G.stage.hideChar(true);
-      const act = await exploreIdle(cur, prog, key);
+      const act = await exploreIdle(cur, prog, key, single);
       if (act === 'move') { cur = null; continue; }
       await runList(act.내용);
       prog.조사[key(cur, act)] = true;
       save();
+      restoreMusic(cur);
     }
+    G.audio.stopLoop();
     clearControls();
     $('#hotspots').innerHTML = '';
     await runList(X.마무리);
@@ -399,7 +465,7 @@
     G.scene.exploring = null;
   }
 
-  function exploreIdle(loc, prog, key) {
+  function exploreIdle(loc, prog, key, noMove) {
     return new Promise((resolve) => {
       const hs = $('#hotspots');
       hs.innerHTML = '';
@@ -419,7 +485,7 @@
       controls.append(
         h('span', { class: 'help' }, loc.이름 + ' · 돋보기를 눌러 조사하세요'),
         h('div', { class: 'grow' }),
-        imgButton('ui/btn_move', '장소 이동', () => done('move'), 'act-btn move'));
+        noMove ? null : imgButton('ui/btn_move', '장소 이동', () => done('move'), 'act-btn move'));
       controls.hidden = false;
     });
   }
@@ -496,10 +562,19 @@
       if (c.증인) keys.add(G.charKey(c.증인, c.표정));
       if (c.증거획득 && G.ev[c.증거획득]) { keys.add(G.ev[c.증거획득].그림); keys.add(G.ev[c.증거획득].겹침); }
       if (c.컷) keys.add(c.컷);
-      if (c.확대) keys.add(c.확대);
+      if (typeof c.확대 === 'string') keys.add(c.확대); // 증언 단계의 확대({ 증거, 대사 })는 그림이 아니다
       if (c.지도점) keys.add(c.지도점);
       if (c.사진 && G.ev[c.사진]) keys.add(G.ev[c.사진].그림);
       if (Array.isArray(c.뒷모습)) c.뒷모습.forEach((w) => keys.add(G.charKey(w.인물, '뒷모습')));
+      if (c.부제목) keys.add('ui/title_part_bg');
+      if (c.지난기록) c.지난기록.forEach((k) => { keys.add(G.charKey(k.피고[0], k.피고[1])); k.진범.forEach(([n, e]) => keys.add(G.charKey(n, e))); });
+      if (c.회상얼굴) c.회상얼굴.forEach(([n, e]) => keys.add(G.charKey(n, e)));
+      if (c.보관함) c.보관함.forEach((id) => G.ev[id] && keys.add(G.ev[id].그림));
+      if (c.지도넓히기) { keys.add(c.지도넓히기.처음); keys.add(c.지도넓히기.전체); }
+      if (c.창문그림자) { keys.add(c.창문그림자.바탕); c.창문그림자.그림자.forEach((k) => keys.add(k)); }
+      if (c.사진컷) keys.add(c.사진컷);
+      if (c.겹치기) keys.add(c.겹치기);
+      if (c.증거보이기) c.증거보이기.forEach((id) => G.ev[id] && keys.add(G.ev[id].그림));
       if (c.장소) c.장소.forEach((l) => { const b = DATA.배경[l.배경]; if (b) keys.add(b.그림); });
     });
     return [...keys].filter(Boolean);
@@ -537,7 +612,8 @@
         const startIdx = a === from.막 ? P.idx : 0;
         await G.preload(imagesOfAct(a));
         G.preload(imagesOfAct(a + 1)); // 다음 막은 뒤에서 미리 받기
-        if (a === 0 && startIdx === 0) await G.screens.episodeTitle(); // 제1화 제목은 맨 처음에만
+        // 제N화 제목은 맨 처음에만. 제목화면: false 인 화(4화)는 대본의 자리({ 화제목 })에 띄운다
+        if (a === 0 && startIdx === 0 && ep.제목화면 !== false) await G.screens.episodeTitle();
         let i = startIdx;
         while (i < act.내용.length) {
           P.idx = i;

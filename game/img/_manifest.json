@@ -2422,5 +2422,569 @@
    1536,
    1024
   ]
+ },
+ "backgrounds/archive_worldmap.png": {
+  "hash": "fa3a333ee79d58dd",
+  "webp": "backgrounds/archive_worldmap.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_levi_family_photo.png": {
+  "hash": "a7034efac191cce2",
+  "webp": "backgrounds/cut_ep4_levi_family_photo.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_map_eastasia.png": {
+  "hash": "310cb231bd08cc4f",
+  "webp": "backgrounds/cut_ep4_map_eastasia.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_map_world.png": {
+  "hash": "31fe0f3d5a888ae2",
+  "webp": "backgrounds/cut_ep4_map_world.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_s_compare.png": {
+  "hash": "658efa5f75cec4de",
+  "webp": "backgrounds/cut_ep4_s_compare.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_window_shadows.png": {
+  "hash": "606d3b2ba4d7b0a3",
+  "webp": "backgrounds/cut_ep4_window_shadows.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_window_shadows_1.png": {
+  "hash": "7206a40aa6340e8e",
+  "webp": "backgrounds/cut_ep4_window_shadows_1.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_window_shadows_2.png": {
+  "hash": "bdf690efa216c32d",
+  "webp": "backgrounds/cut_ep4_window_shadows_2.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_window_shadows_3.png": {
+  "hash": "3c0f3a0f21ac602b",
+  "webp": "backgrounds/cut_ep4_window_shadows_3.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_window_shadows_4.png": {
+  "hash": "8deefb947deb131c",
+  "webp": "backgrounds/cut_ep4_window_shadows_4.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep4_window_shadows_people.png": {
+  "hash": "8045da2bcf29cad3",
+  "webp": "backgrounds/cut_ep4_window_shadows_people.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep4_attic.png": {
+  "hash": "8c19666caaec7468",
+  "webp": "backgrounds/ep4_attic.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep4_attic_dark.png": {
+  "hash": "c383bf8d69b897ef",
+  "webp": "backgrounds/ep4_attic_dark.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep4_bakery_kitchen.png": {
+  "hash": "99efae081bdb45f6",
+  "webp": "backgrounds/ep4_bakery_kitchen.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep4_bakery_street_dawn.png": {
+  "hash": "b9ea52252129f550",
+  "webp": "backgrounds/ep4_bakery_street_dawn.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep4_clock_shop.png": {
+  "hash": "30d6336c2b069bcd",
+  "webp": "backgrounds/ep4_clock_shop.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep4_street_across.png": {
+  "hash": "6482260deb59cc1c",
+  "webp": "backgrounds/ep4_street_across.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "characters/marta_cry.png": {
+  "hash": "6657124ba3b34668",
+  "webp": "characters/marta_cry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/marta_determined.png": {
+  "hash": "897e5ca54279673c",
+  "webp": "characters/marta_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/marta_pensive.png": {
+  "hash": "29f8a53a6b197f99",
+  "webp": "characters/marta_pensive.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/marta_relieved.png": {
+  "hash": "05f519a329b3ea45",
+  "webp": "characters/marta_relieved.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/marta_sad.png": {
+  "hash": "08a2944e458e0b92",
+  "webp": "characters/marta_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/marta_smile.png": {
+  "hash": "c87c9b054e26773c",
+  "webp": "characters/marta_smile.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/marta_tired.png": {
+  "hash": "751508e5136cc290",
+  "webp": "characters/marta_tired.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/schneider_breakdown.png": {
+  "hash": "0a0ae3e651307bc8",
+  "webp": "characters/schneider_breakdown.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/schneider_flustered.png": {
+  "hash": "92044fa644d40aa5",
+  "webp": "characters/schneider_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/schneider_kind.png": {
+  "hash": "5c4c753982c96622",
+  "webp": "characters/schneider_kind.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/schneider_sad.png": {
+  "hash": "d92739e580f7f179",
+  "webp": "characters/schneider_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/schneider_serious.png": {
+  "hash": "3e850a5f8e9f5ae9",
+  "webp": "characters/schneider_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/schwarz_frosty.png": {
+  "hash": "9700648bf08918b3",
+  "webp": "characters/schwarz_frosty.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/schwarz_smirk.png": {
+  "hash": "01ce8d7aab0cd1ce",
+  "webp": "characters/schwarz_smirk.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "evidence/ep4_anne_frank_diary.jpg": {
+  "hash": "f4a33307a0565af4",
+  "webp": "evidence/ep4_anne_frank_diary.webp",
+  "size": [
+   640,
+   384
+  ],
+  "source": [
+   640,
+   384
+  ]
+ },
+ "evidence/ep4_diary_1.png": {
+  "hash": "43c438e8aeb08d92",
+  "webp": "evidence/ep4_diary_1.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_diary_2.png": {
+  "hash": "b10af58870931a43",
+  "webp": "evidence/ep4_diary_2.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_ghetto.png": {
+  "hash": "0c69ba13b768b10e",
+  "webp": "evidence/ep4_ghetto.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_indictment_1946.png": {
+  "hash": "531b2016e5f9ccad",
+  "webp": "evidence/ep4_indictment_1946.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_informer_letter.png": {
+  "hash": "633e961c187abbfb",
+  "webp": "evidence/ep4_informer_letter.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_kristallnacht.jpg": {
+  "hash": "ffda9f0c9f8092ee",
+  "webp": "evidence/ep4_kristallnacht.webp",
+  "size": [
+   1024,
+   710
+  ],
+  "source": [
+   1024,
+   710
+  ]
+ },
+ "evidence/ep4_mein_kampf.png": {
+  "hash": "02711b9e82d11827",
+  "webp": "evidence/ep4_mein_kampf.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_nuremberg_laws.png": {
+  "hash": "8dff9cc8a6dd3c0a",
+  "webp": "evidence/ep4_nuremberg_laws.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_sale_record.png": {
+  "hash": "7bb3841acb72d63a",
+  "webp": "evidence/ep4_sale_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_sale_record_zoom.png": {
+  "hash": "bb065ae27e40129b",
+  "webp": "evidence/ep4_sale_record_zoom.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep4_schindler.png": {
+  "hash": "7d6aa10099847c14",
+  "webp": "evidence/ep4_schindler.webp",
+  "size": [
+   488,
+   758
+  ],
+  "source": [
+   488,
+   758
+  ]
+ },
+ "evidence/ep4_silverware.png": {
+  "hash": "ac16d54662cf8f31",
+  "webp": "evidence/ep4_silverware.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_summons.png": {
+  "hash": "071ec0d5a33a7b7d",
+  "webp": "evidence/ep4_summons.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_witness_statement.png": {
+  "hash": "abb5cbb66adef650",
+  "webp": "evidence/ep4_witness_statement.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep4_yellow_star.png": {
+  "hash": "8986de7a855b78cd",
+  "webp": "evidence/ep4_yellow_star.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
  }
 }

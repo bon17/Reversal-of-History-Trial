@@ -19,7 +19,7 @@ DATA.표정 = {
   '이의 있음 포즈': 'objection', '시계를 귀에 댐': 'watch_ear',
   '무너짐': 'breakdown', '냉정': 'cold', '오만': 'haughty', '무표정': 'blank', '괴로움': 'anguish',
   '지침': 'tired', '난처함': 'awkward', '미안함': 'sorry', '생각에 잠김': 'pensive', '경계': 'wary',
-  '굳음': 'stiff', '피고석 포즈': 'defendant', '실루엣': 'silhouette',
+  '굳음': 'stiff', '피고석 포즈': 'defendant', '실루엣': 'silhouette', '우는 모습': 'cry',
   '분노에 가까운 진지': 'serious', // 3화 에필로그의 신중한: 진지한 얼굴 그림을 쓴다
 };
 
@@ -47,6 +47,10 @@ DATA.인물 = {
   '기무라':     { 파일: 'kimura',   자리: '증언대', 얼굴: [512, 210, 165] },
   '오노 교수':  { 파일: 'ono',      자리: '증언대', 얼굴: [525, 210, 150] },
   '다나카':     { 파일: 'tanaka',   자리: '증언대', 얼굴: [512, 190, 155] },
+  // 4화
+  '마르타':        { 파일: 'marta',     자리: '피고석', 얼굴: [512, 200, 150] },
+  '슈나이더':      { 파일: 'schneider', 자리: '증언대', 얼굴: [512, 250, 150] },
+  '슈바르츠 부인': { 파일: 'schwarz',   자리: '증언대', 얼굴: [512, 180, 150] },
 };
 
 // 대본 반대 심문 표에서 줄여 쓴 이름 → 인물 이름
@@ -86,6 +90,14 @@ DATA.배경 = {
   '도서관 자료실':       { 그림: 'backgrounds/ep3_library_archive' },
   '텅 빈 기억의 법정':   { 그림: 'backgrounds/court_empty_dark' },
   '법정 문 쪽 (어둡게)': { 그림: 'backgrounds/court_witness', 어둡게: true }, // 증언대 너머 법정 문. 1부 마무리에서 세 사람이 문 밖으로 걸어 나간다
+  // 4화
+  '기억의 법정 기록실 (벽에 커다란 세계 지도)': { 그림: 'backgrounds/archive_worldmap' },
+  '새벽의 골목, 작은 빵집': { 그림: 'backgrounds/ep4_bakery_street_dawn' },
+  '빵집 다락방':         { 그림: 'backgrounds/ep4_attic' },
+  '어두운 다락방':       { 그림: 'backgrounds/ep4_attic_dark' },
+  '빵집 뒤편 부엌':      { 그림: 'backgrounds/ep4_bakery_kitchen' },
+  '옆집 시계방':         { 그림: 'backgrounds/ep4_clock_shop' },
+  '빵집 건너편 거리':    { 그림: 'backgrounds/ep4_street_across' },
   '검은 화면':           { 그림: null },
 };
 
@@ -98,6 +110,11 @@ DATA.컷 = {
   'backgrounds/cut_ep3_newspaper_desk': '책상 위 신문 1면',
   'backgrounds/cut_ep3_reporter_silhouette': '수화기를 내려놓고 머리를 감싼 기자 실루엣',
   'backgrounds/cut_ep3_cane_drop': '다나카의 지팡이가 바닥에 떨어짐',
+  'backgrounds/cut_ep4_map_eastasia': '동아시아 지도',
+  'backgrounds/cut_ep4_map_world': '세계 지도 (추축국)',
+  'backgrounds/cut_ep4_window_shadows': '2층 창문',
+  'backgrounds/cut_ep4_levi_family_photo': '레비 가족사진',
+  'backgrounds/cut_ep4_s_compare': '밀고 편지의 S와 슈나이더 서명의 S',
 };
 
 // 소리: 대본의 이름 → 파일 (assets/audio/ 아래, 확장자 없이).
@@ -149,6 +166,21 @@ DATA.소리 = {
     '멀리서 기차 바퀴 소리': 'se/train',
     '기차 바퀴 소리가 조금 가까워진다': 'se/train',
     '기차 소리가 멀어진다': 'se/train',
+    // 4화
+    '구두 소리': 'se/shoes',
+    '멀리서 자동차 엔진 소리': 'se/car_engine',
+    '군홧발 소리': 'se/boots',
+    '문을 세게 두드리는 소리': 'se/door_knock_hard',
+    '문이 부서지는 소리': 'se/door_break',
+    '계단을 뛰어오르는 발소리': 'se/stairs_run',
+    '누군가 우는 소리': 'se/crying',
+    '수많은 시계의 째깍 소리': 'se/clocks_ticking',
+    '수많은 시계의 째깍 소리가 한꺼번에 멈춘다': 'se/clocks_stop',
+    '커튼 닫히는 소리': 'se/curtain',
+    '문이 쾅 닫히는 소리': 'se/door_slam',
+    '나무 판자 들어 올리는 소리': 'se/plank_lift',
+    '발소리': 'se/footsteps',
+    '종이 넘기는 소리': 'se/paper',
   },
   // 이름 뒤 괄호 속 꾸밈말 → 음량 (0~1). 따로 된 음악 파일이 생기면 위 표에 이름을 더하면 된다.
   꾸밈음량: {

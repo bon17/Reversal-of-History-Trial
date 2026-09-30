@@ -191,16 +191,25 @@
             wrap.append(pb);
           } else {
             if (ev.겹침) wrap.append(h('div', { class: 'photo-box' }, G.evImg(ev))); // 지도 + 점처럼 겹친 그림은 3:2 칸에 함께
-            else wrap.append(G.imgEl(ev.그림));
+            else wrap.append(G.imgEl(ev.자세히 || ev.그림)); // 자세히: [자세히 보기]에서 따로 보여 줄 확대 그림 (4화 매각 기록의 서명)
             wrap.addEventListener('click', () => wrap.classList.toggle('big'));
           }
           z.append(wrap, h('div', { class: 'bar' }, h('button', { class: 'ui-btn', onclick: shut }, '닫기')));
           scr.append(z);
+          // 확대해야 알 수 있는 단서: 확대하면 신중한의 생각이 아래에 나오고, 그 뒤로는 제시하면 정답이 된다 (4화 증언 3)
+          const hook = G.play.zoomHook;
+          if (hook && hook.증거 === id) {
+            const face = h('div', { class: 'face' });
+            G.applyFace(face, hook.대사.말, hook.대사.표정);
+            const line = h('div', { class: 'zoom-thought' }, face, h('div', { class: 'tx' }, hook.대사.대사));
+            setTimeout(() => { if (!z.isConnected) return; z.insertBefore(line, z.lastChild); requestAnimationFrame(() => line.classList.add('on')); }, 900);
+            if (!hook.done) { hook.done = true; G.log.push({ 이름: hook.대사.말, 글: hook.대사.대사 }); }
+          }
         };
         scr.append(rec);
         // 그림을 먼저 받아 두고 창을 띄운다 (빈 칸만 있는 창이 잠깐 번쩍이지 않게). 오래 걸리면 1.2초 뒤에는 그냥 띄운다
         const keys = ['ui/btn_examine', 'ui/btn_present', 'ui/caption_source'];
-        all.forEach(([, ev]) => { keys.push(ev.그림, ev.겹침); if (ev.얼굴) keys.push(G.charKey(ev.얼굴[0], ev.얼굴[1])); });
+        all.forEach(([, ev]) => { keys.push(ev.그림, ev.겹침, ev.자세히); if (ev.얼굴) keys.push(G.charKey(ev.얼굴[0], ev.얼굴[1])); });
         Promise.race([G.preload(keys.filter(Boolean)), G.sleep(1200)]).then(() => { ov.append(scr); draw(); });
       });
     },
