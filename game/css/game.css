@@ -73,7 +73,7 @@ img { -webkit-user-drag: none; }
 #stage[data-seat="검사석"] #char { left: 25.333%; width: 58.667%; top: 12%; height: 88%; }
 #stage[data-seat="재판장석"] #char { left: 20%; width: 60%; top: 10%; height: 90%; }
 /* 면회실: 유리창 바로 뒤에 앉은 모습. 그림 아래 끝(허리)이 유리창 아래 틀(y≈790) 뒤로 들어가 앞그림에 가려진다. 유리 반사를 인물 위에 겹친다 */
-#stage[data-bg="면회실"] #char { left: 29.35%; width: 41.3%; top: 16%; height: 62%; clip-path: inset(0 0 8% 0); } /* 유리 아래 끝(y≈748)에서 잘라 유리 안쪽에만 보이게 */
+#stage[data-bg="면회실"] #char { left: 29.35%; width: 41.3%; top: 16%; height: 62%; clip-path: inset(0 0 7.5% 0); } /* 유리창 아랫단의 밝은 선(y≈752) 바로 위에서 잘라, 유리 안쪽에 있으면서 아랫단과 틈이 없게 */
 #glass { z-index: 3; pointer-events: none; display: none;
   background:
     linear-gradient(118deg, transparent 18%, rgba(210, 232, 255, .18) 22%, rgba(210, 232, 255, .07) 27%, transparent 31%,
@@ -167,9 +167,39 @@ img { -webkit-user-drag: none; }
 
 #black { z-index: 13; background: #000; opacity: 0; pointer-events: none; transition: opacity .7s; display: flex; align-items: center; justify-content: center; }
 #black.on { opacity: 1; }
-#subtitle { text-align: center; font-size: max(17px, calc(var(--u) * 50)); line-height: 1.8; color: #eee; padding: 0 6%; }
+#subtitle { text-align: center; font-size: max(17px, calc(var(--u) * 50)); line-height: 1.8; color: #eee; padding: 0 6%; word-break: keep-all; }
 #subtitle div { opacity: 0; transition: opacity 1.2s; }
 #subtitle div.on { opacity: 1; }
+#subtitle b { color: var(--gold-light); font-weight: 800; }
+/* 겹쳐: 사진이나 컷을 어둡게 비친 채 글을 띄운다 */
+#black.veil { background: rgba(0, 0, 0, .66); }
+#subtitle.big { font-size: max(20px, calc(var(--u) * 60)); line-height: 1.6; }
+#subtitle.long { font-size: max(15px, calc(var(--u) * 40)); line-height: 1.7; text-align: left; max-width: 88%; }
+#subtitle.long div + div { margin-top: .8em; }
+/* 3화 숫자 화면: 큰 숫자 하나가 줄어들고, 아래에 연도와 설명 */
+#subtitle.numbers .num { font-size: max(64px, calc(var(--u) * 260)); font-weight: 900; line-height: 1.1; color: #fff; text-shadow: 0 0 calc(var(--u) * 30) rgba(255, 226, 154, .45); }
+#subtitle.numbers .label { font-size: max(17px, calc(var(--u) * 46)); color: #e8dcc0; min-height: 1.8em; }
+#subtitle.numbers .label b { color: var(--gold-light); }
+#subtitle.numbers .after { font-size: max(16px, calc(var(--u) * 42)); }
+/* 3화 위안소 분포도의 표시점 */
+#closeup .dots { position: absolute; inset: 0; pointer-events: none; }
+#closeup .dots span {
+  position: absolute; width: max(5px, calc(var(--u) * 13)); height: max(5px, calc(var(--u) * 13)); margin: calc(var(--u) * -6.5) 0 0 calc(var(--u) * -6.5);
+  border-radius: 50%; background: #d8261b; border: max(1px, calc(var(--u) * 2)) solid #ffe0d0;
+  box-shadow: 0 0 calc(var(--u) * 10) rgba(255, 60, 40, .8); opacity: 0; transform: scale(2.2); transition: opacity .35s, transform .35s;
+}
+#closeup .dots span.on { opacity: 1; transform: scale(1); }
+/* 3화 1부 마무리: 뒷모습이 법정 문 쪽(안쪽)으로 걸어가며 작아지고 흐려진다 */
+#big img.walker { inset: auto; left: 50%; bottom: 0; top: auto; width: auto; height: 88%; transform-origin: 50% 100%; animation: walkAway 3s ease-in both; }
+@keyframes walkAway {
+  0% { opacity: 0; transform: translateX(-50%) translateY(6%) scale(1); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-22%) scale(.42); }
+}
+#big .walk-cap { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: calc(var(--u) * 60) 6% calc(var(--u) * 44); background: linear-gradient(transparent, rgba(0, 0, 0, .78) 45%); text-align: center; font-size: max(15px, calc(var(--u) * 38)); line-height: 1.7; color: #eee; text-shadow: 0 2px 6px #000; transition: opacity .7s; }
+#big .walk-cap div { opacity: 0; transition: opacity 1s; }
+#big .walk-cap div.on { opacity: 1; }
+#big .walk-cap.out { opacity: 0; }
 
 #flash { z-index: 14; background: #fff; opacity: 0; pointer-events: none; }
 #flash.go { animation: flash .35s ease-out; }
@@ -421,52 +451,150 @@ img { -webkit-user-drag: none; }
 .history-card .panel { max-width: min(760px, 94vw); }
 .history-card .panel p { font-size: clamp(16px, 2.4vmin, 21px); }
 
-/* 법정 기록 */
-.record { flex-direction: column; justify-content: flex-start; align-items: stretch; background: rgba(4, 8, 20, .96); padding: calc(10px + env(safe-area-inset-top)) 12px calc(10px + env(safe-area-inset-bottom)); }
-.record .head { display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 2px solid rgba(232, 184, 74, .5); }
-.record .head h2 { margin: 0; color: var(--gold-light); font-size: 21px; flex: 1; }
-.record .tabs { display: flex; gap: 8px; margin: 10px 0; }
-.record .tabs .ui-btn { flex: 1; font-size: 16px; min-height: 44px; padding: 4px; }
-.record .tabs .ui-btn.on { background: linear-gradient(#e8b84a, #a57a1d); color: #1a1204; }
-.record .grid { flex: 1; overflow: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 16vmin, 180px), 1fr)); gap: 12px; padding: 4px 2px 20px; align-content: start; }
-.record .grid .item { background: none; border: none; padding: 0; cursor: pointer; }
-.record .empty { color: #a99f86; text-align: center; padding: 30px; }
-.record .guide { color: var(--gold-light); font-weight: 700; }
+/* 법정 기록: 역전재판처럼 위에 큰 증거 칸, 아래에 작은 칸 8개.
+   가로 화면은 장면 위(대사창 윗부분)에 겹쳐서 아래 대사창이 그대로 보인다. 세로 화면은 화면 전체를 덮는다. */
+.screen.record { display: block; background: transparent; }
+.rec { position: absolute; display: flex; flex-direction: column; color: #f2ead4; }
+.rec .rhead { display: flex; align-items: center; }
+.rec .rhead h2 { margin: 0; color: var(--gold-light); white-space: nowrap; }
+.rec .tabs { display: flex; flex: 1; min-width: 0; }
+.rec .tabs .ui-btn, .rec .close { min-height: 0; padding: 0 1em; }
+.rec .tabs .ui-btn.on { background: linear-gradient(#e8b84a, #a57a1d); color: #1a1204; }
+/* 기록 색: --kc 테두리, --kbg 설명 칸 바탕, --kline 설명 칸 줄 */
+.rinfo, .slot { --kc: #e8b84a; --kbg: #f4e9c8; --kline: rgba(140, 100, 30, .28); }
+.rinfo[data-kind="red"], .slot.k-red { --kc: #c9412f; --kbg: #f8e1db; --kline: rgba(160, 45, 30, .26); }
+.rinfo[data-kind="blue"], .slot.k-blue { --kc: #3d6fd6; --kbg: #dfe8f7; --kline: rgba(40, 80, 170, .26); }
+.rinfo[data-kind="green"], .slot.k-green { --kc: #3fa45b; --kbg: #dcf0dd; --kline: rgba(40, 120, 60, .28); }
+.rinfo[data-kind="prosecution"], .slot.k-prosecution { --kc: #8d8a9c; --kbg: #e6e4ea; --kline: rgba(80, 76, 100, .26); }
+.rinfo {
+  position: relative; display: grid; grid-template-columns: auto 1fr; grid-template-rows: minmax(0, 1fr) auto;
+  background: linear-gradient(#1a2a5c, #0b1430); border: 3px solid var(--gold);
+  box-shadow: 0 0 0 2px #2c1d05, 0 8px 30px rgba(0, 0, 0, .6);
+}
+.rinfo > .empty { grid-column: 1 / -1; grid-row: 1 / -1; align-self: center; text-align: center; color: #a99f86; }
+.rinfo .pic {
+  position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  background: radial-gradient(#9a958a, #6b675f); border: solid #f6f2e6;
+}
+.rinfo .pic.card-pic { background: radial-gradient(#22346a, #0b1430); }
+.rinfo .pic.can-zoom { cursor: zoom-in; }
+.rinfo .pic > img { width: 100%; height: 100%; object-fit: contain; }
+.rinfo .pic > .face { height: 100%; aspect-ratio: 1; }
+.rinfo .pic > .card { height: 96%; width: auto; }
+.rinfo .rside { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.rinfo .rname { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: .8em; background: linear-gradient(#2c2c36, #121218); border-bottom: solid var(--kc); }
+.rinfo .rname .nm { font-weight: 800; color: #fff; line-height: 1.25; word-break: keep-all; }
+.rinfo .rname .kd { margin-left: auto; color: #e0d4b0; white-space: nowrap; }
+.rinfo .rdesc {
+  --lh: 1.5em; flex: 1; min-height: 0; overflow-y: auto; line-height: var(--lh);
+  color: #2a1d0e; word-break: keep-all;
+  background-color: var(--kbg); background-attachment: local;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--lh) - 2px), var(--kline) calc(var(--lh) - 2px), var(--kline) var(--lh));
+}
+.rinfo .rdesc p { margin: 0; }
+.rinfo .rdesc .hl { color: #9a2410; font-weight: 800; }
+/* 실제 사진의 출처 띠: caption_source.png 의 띠 부분(x 21~1515, y 921~981)만 잘라 보인다 */
+.rinfo .src { grid-column: 1 / -1; position: relative; aspect-ratio: 1494 / 60; overflow: hidden; }
+.rinfo .src .band { position: absolute; left: -1.406%; top: -1535%; width: 102.81%; height: auto; }
+.rinfo .src span { position: absolute; left: 7.6%; right: 2%; top: 0; bottom: 0; display: flex; align-items: center; color: #f3e3b8; white-space: nowrap; overflow: hidden; }
+.rstrip { position: relative; display: flex; align-items: center; justify-content: center; }
+.rstrip .slots { display: flex; }
+.rstrip .arrow { border: 2px solid var(--gold); background: rgba(11, 20, 48, .9); color: var(--gold-light); cursor: pointer; padding: 0; }
+.rstrip .arrow:disabled { opacity: .3; cursor: default; }
+.rstrip .pg { color: var(--gold-light); font-weight: 800; text-align: center; text-shadow: 0 1px 3px #000; }
+.slot {
+  position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0;
+  background: radial-gradient(#9a958a, #6b675f); border: solid var(--kc); cursor: pointer;
+  transition: transform .12s, box-shadow .12s;
+}
+.slot img { width: 100%; height: 100%; object-fit: contain; }
+.slot .face { height: 100%; aspect-ratio: 1; }
+.slot .word { font-weight: 800; color: var(--gold-light); text-align: center; line-height: 1.2; word-break: keep-all; padding: 4%; }
+.slot.k-concept, .slot.item:not(:has(img)):not(:has(.face)) { background: radial-gradient(#22346a, #0b1430); }
+.slot.on { z-index: 1; transform: scale(1.07); box-shadow: 0 0 0 3px var(--gold-light), 0 0 18px 5px rgba(255, 215, 110, .85); }
+.slot.empty { background: rgba(150, 150, 150, .5); border-color: rgba(200, 200, 200, .45); cursor: default; }
+#app:has(.screen.record) #topbar { visibility: hidden; } /* 법정 기록이 열리면 위쪽 버튼(설정·법정 기록)은 숨긴다 */
+.rbtns { display: flex; justify-content: center; align-items: center; }
+.rbtns .bb img { width: 100%; height: auto; aspect-ratio: 364 / 81; object-fit: cover; object-position: 50% 51%; }
+
+/* 가로 화면: 장면 1536×1024 기준 단위(--u)로 놓는다. 대사창 이름표(y≈760) 위까지만 쓴다 */
+.land .rec {
+  left: var(--sx); top: var(--sy); width: var(--sw); height: calc(var(--sh) * .735);
+  padding: calc(var(--u) * 16) calc(var(--u) * 40); gap: calc(var(--u) * 14);
+  background: rgba(3, 6, 16, .8); border-radius: 0 0 calc(var(--u) * 24) calc(var(--u) * 24);
+}
+.land.tight .rec { height: var(--sh); border-radius: 0; background: rgba(3, 6, 16, .94); } /* 휴대폰 가로: 자리가 좁아 장면 전체를 쓴다 */
+.land .rhead { flex: 0 0 auto; min-height: calc(var(--u) * 66); gap: calc(var(--u) * 16); }
+.land .rhead h2 { font-size: max(15px, calc(var(--u) * 36)); }
+.land .rec .tabs { gap: calc(var(--u) * 12); }
+.land .rec .tabs .ui-btn, .land .rec .close { height: max(34px, calc(var(--u) * 62)); font-size: max(13px, calc(var(--u) * 28)); border-radius: calc(var(--u) * 14); }
+.land .rinfo { flex: 1 1 auto; min-height: 0; padding: calc(var(--u) * 16); column-gap: calc(var(--u) * 22); row-gap: calc(var(--u) * 12); border-radius: calc(var(--u) * 16); }
+.land .rinfo .pic { width: calc(var(--u) * 330); height: 100%; border-width: calc(var(--u) * 7); border-radius: calc(var(--u) * 6); }
+.land .rinfo .rside { gap: calc(var(--u) * 10); }
+.land .rinfo .rname { padding: calc(var(--u) * 8) calc(var(--u) * 22); border-bottom-width: calc(var(--u) * 5); border-radius: calc(var(--u) * 6); }
+.land .rinfo .rname .nm { font-size: max(16px, calc(var(--u) * 44)); }
+.land .rinfo .rname .kd { font-size: max(11px, calc(var(--u) * 24)); }
+.land .rinfo .rdesc { font-size: max(13px, calc(var(--u) * 33)); padding: 0 calc(var(--u) * 22); border-radius: calc(var(--u) * 6); }
+.land .rinfo .src span { font-size: max(10px, calc(var(--u) * 22)); }
+.land .rstrip { flex: 0 0 auto; gap: calc(var(--u) * 14); }
+.land .rstrip .slots { gap: calc(var(--u) * 12); }
+.land .slot { width: max(40px, calc(var(--u) * 126)); height: max(40px, calc(var(--u) * 126)); border-width: max(2px, calc(var(--u) * 5)); border-radius: calc(var(--u) * 10); }
+.land .slot .word { font-size: max(9px, calc(var(--u) * 20)); }
+.land .rstrip .arrow { width: max(30px, calc(var(--u) * 56)); height: max(40px, calc(var(--u) * 110)); border-radius: calc(var(--u) * 12); font-size: max(14px, calc(var(--u) * 28)); }
+.land .rstrip .pg { width: calc(var(--u) * 80); font-size: max(12px, calc(var(--u) * 26)); }
+.land .rbtns { flex: 0 0 auto; height: max(38px, calc(var(--u) * 80)); gap: calc(var(--u) * 30); }
+.land .rbtns .bb { height: max(38px, calc(var(--u) * 80)); width: calc(max(38px, calc(var(--u) * 80)) * 4.49); }
+
+/* 세로 화면: 화면 전체를 덮고 위에서 아래로 쌓는다 */
+.port .rec {
+  inset: 0; overflow-y: auto; gap: 10px; background: rgba(4, 8, 20, .96);
+  padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+}
+.port .rhead { flex-wrap: wrap; gap: 8px; }
+.port .rhead h2 { flex: 1; font-size: 19px; }
+.port .rec .close { order: 2; height: 42px; font-size: 16px; border-radius: 10px; }
+.port .rec .tabs { order: 3; flex: 0 0 100%; gap: 8px; }
+.port .rec .tabs .ui-btn { flex: 1; height: 42px; font-size: 15px; border-radius: 10px; }
+.port .rinfo {
+  flex: none; grid-template-columns: min(38vw, 230px) minmax(0, 1fr); grid-template-rows: auto auto auto;
+  grid-template-areas: "pic name" "desc desc" "src src"; gap: 10px; padding: 10px; border-radius: 12px;
+}
+.port .rinfo .rside { display: contents; }
+.port .rinfo .pic { grid-area: pic; width: 100%; aspect-ratio: 1; border-width: 5px; border-radius: 6px; }
+.port .rinfo .rname { grid-area: name; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; padding: 10px 12px; border-bottom-width: 4px; border-radius: 6px; }
+.port .rinfo .rname .nm { font-size: 20px; }
+.port .rinfo .rname .kd { margin-left: 0; font-size: 13px; white-space: normal; }
+.port .rinfo .rdesc { grid-area: desc; font-size: 16px; padding: 0 12px; border-radius: 6px; max-height: 34vh; }
+.port .rinfo .src { grid-area: src; }
+.port .rinfo .src span { font-size: 11px; }
+.port .rstrip { flex: none; flex-wrap: wrap; gap: 10px 14px; }
+.port .rstrip .slots { order: -1; flex: 0 0 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 auto; max-width: 440px; }
+.port .slot { width: auto; aspect-ratio: 1; border-width: 3px; border-radius: 8px; }
+.port .slot .word { font-size: 12px; }
+.port .rstrip .arrow { width: 56px; height: 42px; border-radius: 10px; font-size: 18px; }
+.port .rstrip .pg { min-width: 56px; font-size: 16px; }
+.port .rbtns { flex: none; gap: 12px; flex-wrap: wrap; }
+.port .rbtns .bb { height: 48px; width: calc(48px * 4.49); max-width: 46vw; }
+.port .rbtns .bb img { height: 100%; }
 
 /* 증거 카드 (카드 틀 그림 위에 증거 그림과 이름을 얹는다) */
 .card { position: relative; aspect-ratio: 480 / 640; overflow: hidden; container-type: inline-size; }
 .card > .frame { position: absolute; left: -16.667%; top: 0; width: 133.333%; height: 100%; }
 .card .win { position: absolute; left: 9.4%; width: 81.2%; top: 25%; height: 38.3%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .card .win img { width: 100%; height: 100%; object-fit: contain; }
+/* 겹친 증거 그림 (지도 + 점): 두 장을 같은 자리에 포갠다 */
+.ev-stack { position: relative; width: 100%; height: 100%; }
+.ev-stack > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .card .win.photo img { object-fit: cover; }
-.card .win .face { width: 100%; height: 100%; }
+.card .win .face { width: auto; height: 100%; aspect-ratio: 1; } /* 얼굴은 정사각형으로 가운데에 (칸이 옆으로 길어서 늘이면 얼굴이 반만 보인다) */
 .card .win.text { align-items: flex-start; }
 .card .win .mini { font-size: 10px; font-size: 5.8cqw; line-height: 1.35; color: #3b2a0e; padding: 7% 8% 0; text-align: left; word-break: keep-all; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.card.card-concept .win .mini, .card.card-red .win .mini { color: #f2ead4; }
+.card.card-concept .win .mini, .card.card-red .win .mini, .card.card-green .win .mini { color: #f2ead4; }
 .card .win .word { font-size: 14px; font-size: 10cqw; font-weight: 900; color: #3b2a0e; text-align: center; line-height: 1.2; padding: 4%; }
-.card.card-concept .win .word, .card.card-red .win .word { color: var(--gold-light); }
+.card.card-concept .win .word, .card.card-red .win .word, .card.card-green .win .word { color: var(--gold-light); }
 .card .nm { position: absolute; left: 9.4%; width: 81.2%; top: 69.5%; height: 20.3%; display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 800; line-height: 1.2; font-size: 13px; font-size: 8.4cqw; padding: 0 4%; word-break: keep-all; }
 .card.card-blue .nm { color: #2a2410; }
-.card.card-red .nm, .card.card-concept .nm { color: #fff; }
-
-.detail .panel { display: flex; gap: 18px; max-width: min(860px, 96vw); align-items: flex-start; }
-.detail .panel .card { flex: 0 0 min(260px, 36vw); }
-.detail .panel .info { flex: 1; min-width: 0; }
-.detail .panel .info h3 { margin: 0 0 4px; font-size: clamp(22px, 3.4vmin, 30px); color: var(--gold-light); }
-.detail .panel .kind { font-size: clamp(14px, 2vmin, 17px); color: #cdbf9a; margin-bottom: 10px; }
-.detail .panel .desc p { font-size: clamp(18px, 2.7vmin, 24px); line-height: 1.6; margin: 8px 0; word-break: keep-all; }
-.detail .panel .row { justify-content: flex-start; }
-/* 자세히 보기·증거 제시·닫기 버튼은 같은 크기 */
-.detail .row .same { flex: 1 1 0; min-width: 130px; max-width: 240px; padding: 0; display: flex; align-items: center; justify-content: center; aspect-ratio: 364 / 81; height: auto; min-height: 0; }
-.detail .row .same img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 51%; }
-.detail .row.first { flex-wrap: nowrap; }
-.detail .row.solo { justify-content: flex-start; }
-.detail .row.second .same { flex: 1 1 100%; max-width: 490px; }
-/* 그림 버튼은 테두리 바깥 여백이 있어서, 글자 버튼을 같은 크기로 보이게 조금 줄인다 */
-.detail .row .same.css { transform: scale(.95, .9); }
-.detail .row .same.css { border: 3px solid var(--gold); border-radius: 8px; background: linear-gradient(#1c3068, var(--navy-deep)); color: var(--gold-light); font-size: clamp(17px, 2.6vmin, 22px); font-weight: 800; box-shadow: 0 0 0 2px #2c1d05; }
-.port .detail .panel { flex-direction: column; align-items: center; }
-.port .detail .panel .card { flex: 0 0 auto; width: min(220px, 56vw); }
+.card.card-red .nm, .card.card-concept .nm, .card.card-green .nm, .card.card-prosecution .nm { color: #fff; } /* 남색·짙은 이름 칸은 흰 글씨 */
 
 .zoom { background: #000; flex-direction: column; }
 .zoom .wrap { position: relative; flex: 1; width: 100%; overflow: auto; display: flex; align-items: center; justify-content: center; }
@@ -482,3 +610,36 @@ img { -webkit-user-drag: none; }
 .log .line b { color: var(--gold-light); margin-right: .5em; }
 
 .toast { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); background: rgba(8, 14, 34, .92); border: 2px solid var(--gold); border-radius: 12px; padding: 8px 16px; color: var(--gold-light); font-weight: 700; pointer-events: none; animation: fadeHold 2.6s both; }
+
+/* ─────────────── 기억 노트 (게임 1이 끝난 뒤 쓰는 활동 화면, 기획서 11장) ─────────────── */
+.note .panel { width: min(760px, 96vw); max-height: 94vh; }
+.note .panel h2 { font-size: clamp(20px, 3.2vmin, 26px); }
+.note .q { font-size: clamp(17px, 2.8vmin, 23px); line-height: 1.6; text-align: center; margin: 6px 0 14px; word-break: keep-all; }
+.note .q b, .note .fb b { color: var(--gold-light); }
+.note .intro p { font-size: clamp(17px, 2.8vmin, 22px); text-align: center; }
+.note .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.note .fields label { margin: 0; }
+.note .fields .wide { grid-column: 1 / -1; }
+.note select, .note input.text {
+  width: 100%; min-height: 48px; font: inherit; font-size: 18px; padding: 6px 12px; border-radius: 10px;
+  border: 2px solid var(--gold); background: #0b1430; color: #f2ead4;
+}
+.note input.text::placeholder { color: #8f8a7a; }
+.note .msg { color: #ffb4a0; text-align: center; min-height: 1.4em; margin-top: 8px; }
+.note .opts { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.note .opts .ui-btn { flex: 1 1 180px; }
+.note .opts .ui-btn.on { background: linear-gradient(#e8b84a, #a57a1d); color: #1a1204; }
+.note .opts.col { flex-direction: column; }
+.note .opts.col .ui-btn { flex: none; }
+.note .faces { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; }
+.note .faces button { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; border-radius: 14px; border: 2px solid #5a5040; background: rgba(11, 20, 48, .9); color: #f2ead4; cursor: pointer; font: inherit; }
+.note .faces button.on { border-color: var(--gold-light); box-shadow: 0 0 0 3px var(--gold), 0 0 16px rgba(255, 215, 110, .7); }
+.note .faces .face { width: 92px; height: 92px; border-radius: 50%; border: 3px solid var(--gold); background-color: #1c2a55; }
+.note .faces b { font-size: 17px; }
+.note .faces small { color: #cdbf9a; font-size: 13px; }
+.note .picked { display: flex; justify-content: center; margin: 8px 0; }
+.note .picked .card { width: min(200px, 44vw); }
+.note .fb { background: rgba(232, 184, 74, .12); border: 1px solid rgba(232, 184, 74, .5); border-radius: 12px; padding: 12px 14px; line-height: 1.6; font-size: clamp(16px, 2.6vmin, 20px); word-break: keep-all; }
+.note .summary { font-size: 15px; line-height: 1.55; background: rgba(0, 0, 0, .3); border-radius: 10px; padding: 10px 14px; max-height: 40vh; overflow: auto; }
+.note .summary div { margin: 2px 0; }
+.note .summary b { color: var(--gold-light); }

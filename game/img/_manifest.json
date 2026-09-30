@@ -936,11 +936,11 @@
   ]
  },
  "evidence/ep1_hashima_photo.jpg": {
-  "hash": "7c75fdbfbc2c0387",
+  "hash": "f8be7f7056d78792",
   "webp": "evidence/ep1_hashima_photo.webp",
   "size": [
-   2048,
-   1361
+   1536,
+   1021
   ],
   "source": [
    4912,
@@ -1044,7 +1044,7 @@
   ]
  },
  "ui/banner_closing.png": {
-  "hash": "244365d51027994c",
+  "hash": "7fc3c3d88c112440",
   "webp": "ui/banner_closing.webp",
   "size": [
    1536,
@@ -1056,7 +1056,7 @@
   ]
  },
  "ui/banner_lethe_claim.png": {
-  "hash": "8c9cd5173c19d36d",
+  "hash": "99cf62c4614b4161",
   "webp": "ui/banner_lethe_claim.webp",
   "size": [
    1536,
@@ -1068,7 +1068,7 @@
   ]
  },
  "ui/banner_lethe_counter.png": {
-  "hash": "ca0ce47d8b44ac07",
+  "hash": "dc3a22d05542f219",
   "webp": "ui/banner_lethe_counter.webp",
   "size": [
    1536,
@@ -1080,7 +1080,7 @@
   ]
  },
  "ui/banner_listen.png": {
-  "hash": "fd56bce083ac22e9",
+  "hash": "7915ab5e7e244658",
   "webp": "ui/banner_listen.webp",
   "size": [
    1536,
@@ -1092,7 +1092,7 @@
   ]
  },
  "ui/banner_recess.png": {
-  "hash": "fcb545a4dd0d0d78",
+  "hash": "308c9ab4c163e3eb",
   "webp": "ui/banner_recess.webp",
   "size": [
    1536,
@@ -1164,7 +1164,7 @@
   ]
  },
  "ui/caption_source.png": {
-  "hash": "a2fd5d5f6d04ff68",
+  "hash": "176fcfee53bb10a8",
   "webp": "ui/caption_source.webp",
   "size": [
    1536,
@@ -1272,7 +1272,7 @@
   ]
  },
  "ui/gauge_frame.png": {
-  "hash": "e68ef5fe9964fd79",
+  "hash": "5031d588b876b760",
   "webp": "ui/gauge_frame.webp",
   "size": [
    1536,
@@ -1308,7 +1308,7 @@
   ]
  },
  "ui/popup_evidence_get.png": {
-  "hash": "26fdbe237e977a8c",
+  "hash": "57625b6d97e7d448",
   "webp": "ui/popup_evidence_get.webp",
   "size": [
    1536,
@@ -1320,7 +1320,7 @@
   ]
  },
  "ui/popup_green_get.png": {
-  "hash": "e7383fa5b98db9bf",
+  "hash": "8027d24f11ef8ec0",
   "webp": "ui/popup_green_get.webp",
   "size": [
    1536,
@@ -1332,7 +1332,7 @@
   ]
  },
  "ui/screen_next_episode.png": {
-  "hash": "85ad48995ea0b05d",
+  "hash": "7835db47fe9d5aea",
   "webp": "ui/screen_next_episode.webp",
   "size": [
    1536,
@@ -1344,7 +1344,7 @@
   ]
  },
  "ui/screen_trial_postponed.png": {
-  "hash": "a13d9e84a7018cb2",
+  "hash": "7bb56b1f67cfe059",
   "webp": "ui/screen_trial_postponed.webp",
   "size": [
    1536,
@@ -1356,7 +1356,7 @@
   ]
  },
  "ui/shout_holdit.png": {
-  "hash": "f637a91dbbaf5d7c",
+  "hash": "7cfb9df72d03ca68",
   "webp": "ui/shout_holdit.webp",
   "size": [
    1536,
@@ -1368,7 +1368,7 @@
   ]
  },
  "ui/shout_objection.png": {
-  "hash": "edb94e61a03c607b",
+  "hash": "93cf267cbd802edf",
   "webp": "ui/shout_objection.webp",
   "size": [
    1536,
@@ -1380,7 +1380,7 @@
   ]
  },
  "ui/shout_objection_green.png": {
-  "hash": "f46f60c8e44a068c",
+  "hash": "1928c364c95f1a55",
   "webp": "ui/shout_objection_green.webp",
   "size": [
    1536,
@@ -1392,7 +1392,7 @@
   ]
  },
  "ui/shout_takethat.png": {
-  "hash": "1d1c7a268e2be397",
+  "hash": "6f9ef6a0ea244bf0",
   "webp": "ui/shout_takethat.webp",
   "size": [
    1536,
@@ -1416,7 +1416,7 @@
   ]
  },
  "ui/text_guilty.png": {
-  "hash": "24fc6f31929fff03",
+  "hash": "c3dfdb4cf45ec832",
   "webp": "ui/text_guilty.webp",
   "size": [
    1536,
@@ -1428,7 +1428,7 @@
   ]
  },
  "ui/text_not_guilty.png": {
-  "hash": "d32e3419a7e1522e",
+  "hash": "baf46c43cbba79ec",
   "webp": "ui/text_not_guilty.webp",
   "size": [
    1536,
@@ -1440,7 +1440,7 @@
   ]
  },
  "ui/text_not_guilty_1.png": {
-  "hash": "9d303218e599150e",
+  "hash": "667c0c43db3edbe2",
   "webp": "ui/text_not_guilty_1.webp",
   "size": [
    1536,
@@ -1452,7 +1452,7 @@
   ]
  },
  "ui/text_not_guilty_2.png": {
-  "hash": "bfbe5cfc94d8f73b",
+  "hash": "0442c323e93434df",
   "webp": "ui/text_not_guilty_2.webp",
   "size": [
    1536,
@@ -1464,7 +1464,7 @@
   ]
  },
  "ui/text_testimony_start.png": {
-  "hash": "922dcc2f934dcd49",
+  "hash": "3f95d771e80c7ede",
   "webp": "ui/text_testimony_start.webp",
   "size": [
    1536,
@@ -1476,7 +1476,7 @@
   ]
  },
  "ui/textbox.png": {
-  "hash": "a9fe932e559eb0aa",
+  "hash": "5ce06e5a24501e79",
   "webp": "ui/textbox.webp",
   "size": [
    1536,
@@ -1488,7 +1488,7 @@
   ]
  },
  "ui/title_episode_bg.png": {
-  "hash": "a907ab4263e7e753",
+  "hash": "2268bf626a00581d",
   "webp": "ui/title_episode_bg.webp",
   "size": [
    1536,
@@ -1500,7 +1500,7 @@
   ]
  },
  "ui/title_logo.png": {
-  "hash": "ccd100970120d2fa",
+  "hash": "1fae78341debae4b",
   "webp": "ui/title_logo.webp",
   "size": [
    1536,
@@ -1512,7 +1512,7 @@
   ]
  },
  "ui/title_part_bg.png": {
-  "hash": "fa205f00901c6299",
+  "hash": "db8f9164dd05258e",
   "webp": "ui/title_part_bg.webp",
   "size": [
    1536,
@@ -1524,7 +1524,7 @@
   ]
  },
  "ui/window_hint.png": {
-  "hash": "7204a4e747778195",
+  "hash": "b6a5b0126b0fb1c6",
   "webp": "ui/window_hint.webp",
   "size": [
    1536,
@@ -1536,7 +1536,7 @@
   ]
  },
  "ui/window_tutorial.png": {
-  "hash": "696451688a1914e1",
+  "hash": "83a398acccc6e1aa",
   "webp": "ui/window_tutorial.webp",
   "size": [
    1536,
@@ -1776,7 +1776,7 @@
   ]
  },
  "characters/kimura_awkward.png": {
-  "hash": "c62c9f531b43c9a0",
+  "hash": "ca4837767974bc8b",
   "webp": "characters/kimura_awkward.webp",
   "size": [
    1024,
@@ -1788,7 +1788,7 @@
   ]
  },
  "characters/kimura_default.png": {
-  "hash": "9373a4bb5fb85dd7",
+  "hash": "61b126e68003caf7",
   "webp": "characters/kimura_default.webp",
   "size": [
    1024,
@@ -1800,7 +1800,7 @@
   ]
  },
  "characters/kimura_flustered.png": {
-  "hash": "251e5c4aba57ceb5",
+  "hash": "564988de2bbe8f54",
   "webp": "characters/kimura_flustered.webp",
   "size": [
    1024,
@@ -1812,7 +1812,7 @@
   ]
  },
  "characters/kimura_sorry.png": {
-  "hash": "cf944cc7511176f7",
+  "hash": "3bdc4171f3bf37e8",
   "webp": "characters/kimura_sorry.webp",
   "size": [
    1024,
@@ -1824,7 +1824,7 @@
   ]
  },
  "characters/ono_default.png": {
-  "hash": "ccbbf74c4eff7f27",
+  "hash": "a0a93a7766a40ec1",
   "webp": "characters/ono_default.webp",
   "size": [
    1024,
@@ -1836,7 +1836,7 @@
   ]
  },
  "characters/ono_determined.png": {
-  "hash": "c1759d9903645d92",
+  "hash": "97b0d6211f3553e5",
   "webp": "characters/ono_determined.webp",
   "size": [
    1024,
@@ -1848,7 +1848,7 @@
   ]
  },
  "characters/ono_serious.png": {
-  "hash": "ed40743fb3ea95a5",
+  "hash": "2be8d803beb3d425",
   "webp": "characters/ono_serious.webp",
   "size": [
    1024,
@@ -1860,7 +1860,7 @@
   ]
  },
  "characters/tanaka_angry.png": {
-  "hash": "682b24ef8f8b4959",
+  "hash": "051c28feec74ec2b",
   "webp": "characters/tanaka_angry.webp",
   "size": [
    1024,
@@ -1872,7 +1872,7 @@
   ]
  },
  "characters/tanaka_back.png": {
-  "hash": "345a0b19f8434ca7",
+  "hash": "513ea0cacec08c60",
   "webp": "characters/tanaka_back.webp",
   "size": [
    683,
@@ -1884,7 +1884,7 @@
   ]
  },
  "characters/tanaka_breakdown.png": {
-  "hash": "c27f69a015e9f10e",
+  "hash": "7ec291271e93bd67",
   "webp": "characters/tanaka_breakdown.webp",
   "size": [
    1024,
@@ -1896,7 +1896,7 @@
   ]
  },
  "characters/tanaka_default.png": {
-  "hash": "2305a8c893e613c1",
+  "hash": "2bfc0a65d1ab9cde",
   "webp": "characters/tanaka_default.webp",
   "size": [
    1024,
@@ -1908,7 +1908,7 @@
   ]
  },
  "characters/tanaka_flustered.png": {
-  "hash": "19a0c5adb1274c74",
+  "hash": "26088909eb42f4ef",
   "webp": "characters/tanaka_flustered.webp",
   "size": [
    1024,
@@ -1920,7 +1920,7 @@
   ]
  },
  "characters/tanaka_gentle.png": {
-  "hash": "f921ef4b5ae4d27b",
+  "hash": "2e7ac1b45e128cf9",
   "webp": "characters/tanaka_gentle.webp",
   "size": [
    1024,
@@ -2256,7 +2256,7 @@
   ]
  },
  "evidence/ep3_army_document_1938.png": {
-  "hash": "e22ef9d5f72c7ef4",
+  "hash": "17a5126dfbf4324c",
   "webp": "evidence/ep3_army_document_1938.webp",
   "size": [
    768,
@@ -2268,7 +2268,7 @@
   ]
  },
  "evidence/ep3_article_1991.png": {
-  "hash": "9fcc2495f29f1b95",
+  "hash": "d0824c89345b5880",
   "webp": "evidence/ep3_article_1991.webp",
   "size": [
    768,
@@ -2280,7 +2280,7 @@
   ]
  },
  "evidence/ep3_burn_order.png": {
-  "hash": "6e703136b34796f0",
+  "hash": "3e8a2c46479f3607",
   "webp": "evidence/ep3_burn_order.webp",
   "size": [
    768,
@@ -2292,7 +2292,7 @@
   ]
  },
  "evidence/ep3_burned_list.png": {
-  "hash": "6e703136b34796f0",
+  "hash": "ee918bae5cf3baae",
   "webp": "evidence/ep3_burned_list.webp",
   "size": [
    768,
@@ -2316,7 +2316,7 @@
   ]
  },
  "evidence/ep3_complaint.png": {
-  "hash": "6f24cf1ad4c8a08d",
+  "hash": "aac9c3efb01dcfd8",
   "webp": "evidence/ep3_complaint.webp",
   "size": [
    768,
@@ -2328,7 +2328,7 @@
   ]
  },
  "evidence/ep3_correction.png": {
-  "hash": "8055f9ee973ef5da",
+  "hash": "6c519b0fcd0e7d54",
   "webp": "evidence/ep3_correction.webp",
   "size": [
    768,
@@ -2352,7 +2352,7 @@
   ]
  },
  "evidence/ep3_hayashi_notebook.png": {
-  "hash": "ef35318cdf0da731",
+  "hash": "c9410428704eccdb",
   "webp": "evidence/ep3_hayashi_notebook.webp",
   "size": [
    768,
@@ -2364,7 +2364,7 @@
   ]
  },
  "evidence/ep3_kim_haksun_1991.jpg": {
-  "hash": "52ca24e40850db87",
+  "hash": "091ae3ab18682eac",
   "webp": "evidence/ep3_kim_haksun_1991.webp",
   "size": [
    300,
@@ -2376,7 +2376,7 @@
   ]
  },
  "evidence/ep3_kono_statement.png": {
-  "hash": "4ee9fcbef2d076ba",
+  "hash": "c3f8bf0391737080",
   "webp": "evidence/ep3_kono_statement.webp",
   "size": [
    768,
@@ -2388,7 +2388,7 @@
   ]
  },
  "evidence/ep3_station_map.png": {
-  "hash": "93be1802a26f2abb",
+  "hash": "ba78db8880ebea41",
   "webp": "evidence/ep3_station_map.webp",
   "size": [
    1536,
@@ -2405,6 +2405,18 @@
   "size": [
    1536,
    1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep3_station_map_dots.png": {
+  "hash": "c08a706d007528ac",
+  "webp": "evidence/ep3_station_map_dots.webp",
+  "size": [
+   768,
+   512
   ],
   "source": [
    1536,

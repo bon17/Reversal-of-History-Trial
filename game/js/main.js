@@ -184,7 +184,14 @@
     const resumeBtn = h('button', { class: 'ui-btn', disabled: !canResume, onclick: () => { G.ep = savedEp; startFrom(saved); } },
       canResume ? '이어하기 (제' + savedEp.번호 + '화 「' + savedEp.막[saved.막].이름 + '」부터)' : '이어하기');
     const codeBtn = h('button', { class: 'ui-btn sub', onclick: codeScreen, hidden: !hasCodes() }, '이어하기 코드 입력');
-    [startBtn, resumeBtn, codeBtn].forEach((b) => { b.disabled = true; menu.append(b); });
+    // 기억 노트만 바로 쓰기 (결석한 학생, 게임을 끝까지 못 한 학생). 끝나면 처음 화면으로 돌아온다
+    const noteSpec = DATA.ep3 && DATA.ep3.막.flatMap((m) => m.내용).find((c) => c.기억노트);
+    const noteBtn = h('button', { class: 'ui-btn sub', hidden: !noteSpec, onclick: async () => {
+      s.remove();
+      await G.memoryNote(noteSpec.기억노트);
+      location.reload();
+    } }, '기억 노트 쓰기');
+    [startBtn, resumeBtn, codeBtn, noteBtn].forEach((b) => { b.disabled = true; menu.append(b); });
 
     // 처음에 꼭 필요한 그림을 먼저 받는다
     const first = ['ui/textbox', 'ui/window_hint', 'ui/window_tutorial', 'ui/btn_press', 'ui/btn_present', 'ui/btn_record', 'ui/btn_move', 'ui/btn_examine',
@@ -198,7 +205,7 @@
       await Promise.race([document.fonts.load('20px "RIDIBatang"', '기억의 법정').catch(() => {}), G.sleep(4000)]);
     }
     loading.textContent = '';
-    startBtn.disabled = false; codeBtn.disabled = false; resumeBtn.disabled = !canResume;
+    startBtn.disabled = false; codeBtn.disabled = false; noteBtn.disabled = false; resumeBtn.disabled = !canResume;
   }
 
   // ─────────── 시작 ───────────

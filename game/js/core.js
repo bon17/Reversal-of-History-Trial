@@ -18,6 +18,8 @@
     }
     return e;
   };
+  // 글 안의 **강조** 만 굵은 글씨로 살린 HTML (나머지는 글자 그대로)
+  G.mdBold = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   G.sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   G.nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
@@ -106,6 +108,11 @@
     if (!url) { el.hidden = true; return; }
     el.src = url;
     el.hidden = false;
+  };
+  // 다른 그림으로 바꿀 때 옛 그림이 잠깐 보이지 않게 먼저 지우고 새 그림을 불러온다 (확대, 컷, 사진 칸)
+  G.swapImg = (el, key) => {
+    if (el.dataset.key !== (key || '')) { el.removeAttribute('src'); el.hidden = true; }
+    return G.setImg(el, key);
   };
   G.imgEl = (key, cls) => {
     const el = G.h('img', { class: cls || null, alt: '' });
@@ -228,6 +235,11 @@
     clear() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} },
     // 🟩 선택 기록 모음 (6화 기록 보관함용): { '2': ['treatment_record'], … }
     green() { try { return JSON.parse(localStorage.getItem('memory-court-green') || '{}'); } catch (e) { return {}; } },
+    // 한 번이라도 시작한 화 (기억 노트에서 2화를 했는지 볼 때 쓴다)
+    played() { try { return JSON.parse(localStorage.getItem('memory-court-played') || '[]'); } catch (e) { return []; } },
+    markPlayed(ep) {
+      try { const p = this.played(); if (!p.includes(ep)) { p.push(ep); localStorage.setItem('memory-court-played', JSON.stringify(p)); } } catch (e) {}
+    },
     addGreen(ep, id) {
       try {
         const g = this.green();

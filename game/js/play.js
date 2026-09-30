@@ -69,7 +69,13 @@
       case '컷':
         if (c.그림없음) console.info('[그림 없음, 빈 자리로 둠]', c.그림없음);
         G.stage.cut(c.컷); return;
-      case '자막': await G.stage.subtitle(c.자막); return;
+      case '자막': await G.stage.subtitle(c.자막, c); return;
+      case '기록글': await G.stage.subtitle(c.기록글, c); return; // 실제 역사 기록 화면의 글 (검은 화면)
+      case '지도점': G.box.hide(); await G.stage.mapDots(c.지도점, G.ep.지도점); return;
+      case '숫자화면': await G.stage.numbers(c.숫자화면); return;
+      case '뒷모습': await G.stage.walkAway(c.뒷모습); return;
+      case '기억노트': G.store.clear(); P.running = false; updateTopbar(); await G.memoryNote(c.기억노트); return;
+      case '끝': await G.input.waitAdvance(); location.reload(); throw new Quit(); // 게임 1 끝: 누르면 처음 화면으로
       case '외침': await shout(c.외침); return;
       case '띠': G.box.hide(); await G.stage.big({ '레테의 반격': 'ui/banner_lethe_counter', '레테의 주장': 'ui/banner_lethe_claim', '증언 듣기': 'ui/banner_listen', '휴정': 'ui/banner_recess', '최종 변론': 'ui/banner_closing' }[c.띠], 'slide', 1900); return;
       case '증거획득': gain(c.증거획득); await G.stage.evidencePopup(c.증거획득); return;
@@ -130,10 +136,20 @@
   async function effect(name) {
     switch (name) {
       case '흔들림': G.stage.shake(false); return;
+      case '재판장 놀람': { // 재판장이 놀라는 얼굴을 잠깐 보여 주고, 보던 인물로 돌아간다 (대사 없음)
+        const [name, expr] = [G.scene.char, G.scene.expr];
+        G.box.hide();
+        G.stage.showChar('재판장', '놀람');
+        await G.sleep(1100);
+        if (name && name !== '재판장') G.stage.showChar(name, expr);
+        return;
+      }
       case '크게 흔들림': G.stage.shake(true); await G.sleep(800); return;
       case '암전': G.stage.cut(null); G.stage.blackout(true); await G.sleep(900); return;
       case '휘청': G.stage.wobble(); await G.sleep(700); return;
       case '정적': G.box.hide(); await G.sleep(1800); return;
+      case '차분하게': G.stage.calm(true); return; // 🟥 피해 기록 연출: 화면이 어두워지고 차분해진다
+      case '차분함 끝': G.stage.calm(false); return;
       case '비': G.stage.rain(true); return;
       case '비 그침': G.stage.rain(false); return;
       case '어둡게': G.stage.dark(true); G.listening = true; updateTopbar(); return;
@@ -316,7 +332,7 @@
       controls.hidden = false;
       G.input.onKey = (e) => {
         if (e.key === 'ArrowLeft') { done('prev'); return true; }
-        if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { done('next'); return true; }
+        if (e.key === 'ArrowRight') { done('next'); return true; }
         return false;
       };
       G.onStageTap = () => { done('next'); return true; }; // 대사창을 누르면 다음 문장
@@ -334,6 +350,7 @@
         G.box.showStatic({ 이름: claim.말, 글: claim.대사 });
         await new Promise((resolve) => {
           clearControls();
+          if (step.질문) controls.append(h('span', { class: 'help' }, step.질문)); // 예: 이름 말고 이 사람을 가리키는 단서는?
           controls.append(h('div', { class: 'grow' }), imgButton('ui/btn_present', '증거 제시', () => { clearControls(); resolve(); }, 'act-btn only'));
           controls.hidden = false;
         });
@@ -477,9 +494,12 @@
       if (c.보이기) keys.add(G.charKey(c.보이기, c.표정));
       if (c.등장) keys.add(G.charKey(c.등장, c.표정));
       if (c.증인) keys.add(G.charKey(c.증인, c.표정));
-      if (c.증거획득 && G.ev[c.증거획득]) keys.add(G.ev[c.증거획득].그림);
+      if (c.증거획득 && G.ev[c.증거획득]) { keys.add(G.ev[c.증거획득].그림); keys.add(G.ev[c.증거획득].겹침); }
       if (c.컷) keys.add(c.컷);
       if (c.확대) keys.add(c.확대);
+      if (c.지도점) keys.add(c.지도점);
+      if (c.사진 && G.ev[c.사진]) keys.add(G.ev[c.사진].그림);
+      if (Array.isArray(c.뒷모습)) c.뒷모습.forEach((w) => keys.add(G.charKey(w.인물, '뒷모습')));
       if (c.장소) c.장소.forEach((l) => { const b = DATA.배경[l.배경]; if (b) keys.add(b.그림); });
     });
     return [...keys].filter(Boolean);
@@ -493,6 +513,7 @@
   // 게임 시작: from = { 막, 명령, 증거, 신뢰도, 조사 } (없으면 처음부터)
   G.startGame = async (from = {}) => {
     const ep = G.ep;
+    G.store.markPlayed(ep.번호);
     P.act = from.막 || 0;
     P.idx = from.명령 || 0;
     P.section = P.idx;

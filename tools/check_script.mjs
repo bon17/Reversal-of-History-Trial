@@ -46,12 +46,13 @@ const quoteBlock = (from) => { // from 다음 줄부터 이어지는 '> ' 줄들
 };
 let prevSpeaker = false; // 바로 앞 줄이 대사였는지 (대사 뒤의 '> ' 인용을 찾으려고)
 for (i = 0; i < lines.length; i++) {
-  const L = lines[i];
+  // 힌트 목록의 "- (1단계) **한나** (진지): …" 는 앞머리를 떼고 보통 대사로 읽는다
+  const L = lines[i].replace(/^- \(\d단계\)\s*(?=\*\*)/, '');
   let m;
   if (!L.trim()) continue;
   const wasSpeaker = prevSpeaker;
   prevSpeaker = false;
-  if ((m = L.match(/^## (.+)$/))) { section = m[1]; if (!['표기 안내', '공통 규칙', '등장인물과 표정', '이번 화의 특징'].includes(section)) add('구간', section, i + 1); continue; }
+  if ((m = L.match(/^## (.+)$/))) { section = m[1]; if (!['표기 안내', '공통 규칙', '등장인물과 표정', '이번 화의 특징', '이번 화의 원칙'].includes(section)) add('구간', section, i + 1); continue; }
   if (/^\|/.test(L) && section.startsWith('증언') ) {
     // 반대 심문 표: | 번호 | 증언 | 추궁 | 정답 증거 |
     const cells = L.split('|').slice(1, -1).map((c) => c.trim());
@@ -97,16 +98,18 @@ for (i = 0; i < lines.length; i++) {
     i = k - 1;
     continue;
   }
+  // 그 밖의 '> ' 줄 (연출 뒤의 화면 글: 신문 제목, 기록 한 줄씩, 판결 문구, 1부 끝 자막, 엔딩 글, 활동 화면 안내 등)
+  if (L.startsWith('>')) { const t = L.replace(/^>\s?/, '').trim(); if (t) add('자막', t, i + 1); continue; }
   if ((m = L.match(/^\*\*([^*\[\]]+?)\*\* \(([^)]+)\):\s*(.*)$/))) {
     const [, who, expr, text] = m;
     if (text.trim()) {
       // 레테의 반격 힌트는 두 단계 힌트가 한 줄에 " / (임금 반박 때) " 로 붙어 있다
       // 두 단계 힌트가 한 줄에 " / (임금 반박 때) ", " / (두 번째) " 로 붙어 있다
-      const parts = text.split(/\s*\/\s*\((?:임금 반박 때|두 번째)\)\s*/);
+      const parts = text.split(/\s*\/\s*\((?:임금 반박 때|두 번째|반격 때)\)\s*/);
       parts.forEach((t) => add('대사', t, i + 1, who, expr));
       // 바로 아래 목록(1. / - )은 같은 사람의 이어지는 대사
       let k = i + 1;
-      while (k < lines.length && /^(\d+\. |- )/.test(lines[k])) {
+      while (k < lines.length && /^(\d+\. |- )/.test(lines[k]) && !/^- \(\d단계\)/.test(lines[k])) {
         const t = lines[k].replace(/^- /, '');
         add('대사', t, k + 1, who, expr);
         k++;
@@ -138,7 +141,12 @@ function walk(list, where) {
     if (c.안내창) c.안내창.forEach((t) => put('안내창', t, null, null, where));
     if (c.자막) c.자막.forEach((t) => put('자막', t, null, null, where));
     if (c.선택지) { c.선택지.forEach((o) => { put('선택지', o.글, null, null, where); walk(o.결과, where); }); }
-    if (c.기록카드) { put('기록카드', c.기록카드.제목, null, null, where); c.기록카드.문단.forEach((t) => put('기록카드', t, null, null, where)); }
+    if (c.기록카드) { if (c.기록카드.제목) put('기록카드', c.기록카드.제목, null, null, where); c.기록카드.문단.forEach((t) => put('기록카드', t, null, null, where)); }
+    if (c.기록글) c.기록글.forEach((t) => put('기록카드', t, null, null, where));
+    if (c.숫자화면) [...c.숫자화면.줄, ...(c.숫자화면.뒤 || [])].forEach((t) => put('기록카드', t, null, null, where));
+    if (Array.isArray(c.뒷모습)) c.뒷모습.forEach((b) => put('자막', b.글, null, null, where));
+    if (c.기억노트) c.기억노트.안내.forEach((t) => put('자막', t, null, null, where));
+    if (c.판결) put('자막', '**' + c.판결 + '**', null, null, where);
     if (c.다음화) put('다음화', c.다음화, null, null, where);
     if (c.인용) put('인용', c.인용, null, null, where);
     if (c.증언) {
@@ -242,7 +250,7 @@ for (const c of allCmds) {
   if (c.효과음 && c.효과음 !== '멈춤' && !splitName(DATA.소리.효과음, c.효과음)) problems.push('효과음 이름이 소리 표에 없음: ' + c.효과음);
   if (c.배경 && !DATA.배경[c.배경]) problems.push('배경 이름이 표에 없음: ' + c.배경);
   const who = c.말 || c.보이기 || c.등장 || c.증인;
-  const nameOnly = (n) => /^\(목소리/.test(n) || /\(자막\)$/.test(n); // 그림 없이 이름만 나오는 말
+  const nameOnly = (n) => /^\([^)]*목소리/.test(n) || /\(자막\)$/.test(n); // 그림 없이 이름만 나오는 말
   const people = [[who, c.표정]];
   if (c.보기) people.push([c.보기, c.보기표정]);
   for (const [w, ex] of people) {
@@ -281,6 +289,11 @@ show('대본에 없는 글 (게임에만 있음)', extra, (x) => `[${x.종류}] 
 show('빠진 구간(## 제목)', secMissing, (s) => s);
 show('구간 안의 대사 순서가 다른 것', orderDiff, (s) => s);
 console.log('■ 구간 순서: ' + (secOrderOk ? '대본과 같음' : '대본과 다름'));
+// 재판장 놀람 연출: 대본의 「[연출] 재판장이 놀란다」 줄 수와 게임의 { 연출: '재판장 놀람' } 수가 같아야 한다
+const judgeWant = (md.match(/\[연출\] 재판장이 놀란다/g) || []).length;
+const judgeGot = (fs.readFileSync(dataFile, 'utf8').match(/연출: '재판장 놀람'/g) || []).length;
+if (judgeWant !== judgeGot) problems.push(`재판장 놀람 연출: 대본 ${judgeWant}곳, 게임 ${judgeGot}곳`);
+console.log('■ 재판장 놀람 연출: 대본 ' + judgeWant + '곳, 게임 ' + judgeGot + '곳');
 show('소리, 이름 문제', [...new Set(problems)], (s) => s);
 console.log('');
 show('아직 없는 그림 (게임에서는 "그림 준비 중"으로 보임, 이 이름으로 assets/ 에 올리면 됨)', [...missingImgs].sort(), (s) => 'assets/' + s + '.png');

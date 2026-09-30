@@ -26,14 +26,14 @@ function ruleFor(rel) {
   if (dir === 'backgrounds') return { max: null, q: 0.82 };
   if (dir === 'characters') return { max: 1024, q: 0.85 };
   if (dir === 'evidence') {
-    if (/\.jpe?g$/i.test(file)) return { max: 2048, q: 0.85 }; // 실제 사진
+    if (/\.jpe?g$/i.test(file)) return { max: 1536, q: 0.85 }; // 실제 사진 (화면 너비 1536보다 크게 둘 필요가 없다)
     if (/_(closeup|zoom|map)$/.test(name)) return { max: 1536, q: 0.85 }; // 화면 가득 띄우는 확대 그림과 지도
     return { max: 768, q: 0.86 };
   }
   if (dir === 'ui') {
     if (/^(btn_|icon_|cursor_|gauge_candle_|stamp_)/.test(name)) return { max: 384, q: 0.9 };
     if (/^card_/.test(name)) return { max: 640, q: 0.88 };
-    return { max: null, q: 0.86 };
+    return { max: null, q: 0.8 }; // 외침, 판결 글자, 제목 등 큰 그림. HTML 한 파일이 30MB 안에 들도록 조금 줄였다
   }
   return null;
 }

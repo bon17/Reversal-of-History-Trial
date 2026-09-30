@@ -29,6 +29,8 @@
       put(hud, 0, sh, vw, vh - sh);
     }
     app.style.setProperty('--u', sw / 1536 + 'px');
+    // 장면 자리: 법정 기록 창을 장면 위에 맞출 때 쓴다
+    for (const [k, v] of Object.entries({ '--sx': sx, '--sy': portrait ? 0 : sy, '--sw': sw, '--sh': sh })) app.style.setProperty(k, v + 'px');
     // 작은 가로 화면(휴대폰 가로 등)은 대사창 글자 칸을 촘촘하게
     app.classList.toggle('tight', !portrait && sw < 900);
     app.style.setProperty('--k', portrait ? (vw >= 700 ? 0.55 : 0.42) : 0.42);
@@ -116,7 +118,7 @@
       await G.sleep(700);
       this.hideChar(true);
     },
-    cut(key) { G.setImg(cutEl, key); },
+    cut(key) { G.swapImg(cutEl, key); },
     shake(big) {
       scene.classList.remove('shake', 'shake-big');
       void scene.offsetWidth;
@@ -133,8 +135,8 @@
     // 확대 화면 (흉터, 칼집 끝 등): 장면 위에 그림 한 장을 크게 띄운다
     closeup(key) {
       const c = $('#closeup');
-      if (!key) { c.classList.remove('on'); c.hidden = true; return; }
-      G.setImg($('img', c), key);
+      if (!key) { c.classList.remove('on'); c.hidden = true; c.querySelectorAll('.dots').forEach((d) => d.remove()); return; }
+      G.swapImg($('img', c), key);
       c.hidden = false;
       requestAnimationFrame(() => requestAnimationFrame(() => c.classList.add('on')));
     },
@@ -170,7 +172,7 @@
       const p = $('#photo');
       if (!evId) { p.classList.remove('on'); p.hidden = true; return; }
       const ev = G.ev[evId];
-      G.setImg($('#photo-img'), ev.그림);
+      G.swapImg($('#photo-img'), ev.그림);
       G.setImg($('.caption-band', p), 'ui/caption_source');
       $('.caption-text', p).textContent = ev.출처 || '';
       p.hidden = false;
@@ -178,19 +180,106 @@
       requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('on')));
     },
 
-    // 검은 화면 자막
-    async subtitle(lines) {
+    // 검은 화면 자막. 겹쳐: 장면(사진, 컷)을 어둡게 비친 채 그 위에 글을 띄운다. 크게: 한 문장을 크게. 길게: 긴 글 여러 문단
+    async subtitle(lines, opts = {}) {
       G.box.hide();
+      const black = $('#black');
+      black.classList.toggle('veil', !!opts.겹쳐);
       this.blackout(true);
       const sub = $('#subtitle');
+      sub.className = [opts.크게 && 'big', opts.길게 && 'long'].filter(Boolean).join(' ');
       sub.innerHTML = '';
-      const divs = lines.map((t) => h('div', {}, t));
+      const divs = lines.map((t) => { const d = h('div'); d.innerHTML = G.mdBold(t); return d; });
       sub.append(...divs);
-      for (const d of divs) { await G.sleep(250); d.classList.add('on'); await G.sleep(900); }
+      for (const d of divs) { await G.sleep(250); d.classList.add('on'); await G.sleep(opts.크게 ? 1400 : 900); }
       await G.input.waitAdvance();
       divs.forEach((d) => d.classList.remove('on'));
       await G.sleep(700);
       sub.innerHTML = '';
+      if (opts.겹쳐) { this.blackout(false); await G.sleep(300); black.classList.remove('veil'); }
+    },
+
+    // 3화 위안소 분포도: 지도를 화면 가득 띄우고 표시점을 북쪽부터 하나씩 켠다 (지도 그림 1536×1024 기준 좌표)
+    async mapDots(key, dots) {
+      this.closeup(key);
+      const c = $('#closeup');
+      c.querySelectorAll('.dots').forEach((d) => d.remove());
+      const layer = h('div', { class: 'dots' });
+      const pts = String(dots).trim().split(/\s+/).map((p) => p.split(',').map(Number));
+      const els = pts.map(([x, y]) => h('span', { style: `left:${(x / 1536) * 100}%;top:${(y / 1024) * 100}%` }));
+      layer.append(...els);
+      c.append(layer);
+      await G.sleep(900);
+      const step = 3200 / els.length; // 모두 켜지는 데 약 3초
+      for (let i = 0; i < els.length; i++) { els[i].classList.add('on'); if (i % 4 === 3) await G.sleep(step * 4); }
+      await G.sleep(600);
+    },
+
+    // 3화 실제 역사 기록: 숫자가 연도와 함께 줄어들고, 마지막 숫자만 남는다
+    async numbers(spec) {
+      G.box.hide();
+      this.blackout(true);
+      const sub = $('#subtitle');
+      sub.className = 'numbers';
+      sub.innerHTML = '';
+      const num = h('div', { class: 'num on' }, '');
+      const label = h('div', { class: 'label' });
+      sub.append(num, label);
+      let cur = 0;
+      for (const line of spec.줄) {
+        const target = +((line.replace(/\*\*/g, '').match(/(\d+)명/) || [])[1] || 0);
+        label.classList.remove('on');
+        await G.sleep(400);
+        label.innerHTML = G.mdBold(line);
+        label.classList.add('on');
+        const from = cur, t0 = performance.now(), dur = 1100;
+        await new Promise((res) => {
+          const tick = (now) => {
+            const k = Math.min(1, (now - t0) / dur);
+            num.textContent = Math.round(from + (target - from) * (1 - Math.pow(1 - k, 3)));
+            if (k < 1) requestAnimationFrame(tick); else res();
+          };
+          requestAnimationFrame(tick);
+        });
+        cur = target;
+        await G.sleep(1500);
+      }
+      // 마지막 숫자만 남고 음악이 멈춘다
+      label.classList.remove('on');
+      G.audio.bgm('멈춤');
+      await G.sleep(1600);
+      const after = (spec.뒤 || []).map((t) => { const d = h('div', { class: 'after' }); d.innerHTML = G.mdBold(t); return d; });
+      sub.append(...after);
+      for (const d of after) { await G.sleep(300); d.classList.add('on'); await G.sleep(1100); }
+      await G.input.waitAdvance();
+      [num, ...after].forEach((d) => d.classList.remove('on'));
+      await G.sleep(700);
+      sub.innerHTML = '';
+      sub.className = '';
+    },
+
+    // 3화 1부 마무리: 세 사람의 뒷모습이 차례로 법정 문 쪽으로 걸어 나간다. 한 사람마다 한 줄씩 글이 남는다
+    async walkAway(list) {
+      G.box.hide();
+      this.hideChar(true);
+      const big = $('#big');
+      const cap = h('div', { class: 'walk-cap' });
+      big.append(cap);
+      for (const w of list) {
+        const img = G.imgEl(G.charKey(w.인물, '뒷모습'), 'walker');
+        await G.loadImg(G.charKey(w.인물, '뒷모습'));
+        big.append(img);
+        const line = h('div');
+        line.innerHTML = G.mdBold(w.글);
+        cap.append(line);
+        requestAnimationFrame(() => line.classList.add('on'));
+        await G.sleep(3000);
+        img.remove();
+      }
+      await G.input.waitAdvance();
+      cap.classList.add('out');
+      await G.sleep(700);
+      cap.remove();
     },
 
     gauge(show) {
@@ -386,7 +475,8 @@
       this.show(skin);
       textEl.style.fontSize = '';
       // "(목소리, 일본어 억양)" → 목소리, "웨스트 대위의 기록 (자막)" → 웨스트 대위의 기록
-      const shownName = 표시이름 != null ? 표시이름 : /^\(목소리/.test(이름 || '') ? '목소리' : (이름 || '').replace(/\s*\(자막\)$/, '');
+      const voice = (이름 || '').match(/^\(([^,)]*목소리)/); // "(목소리, 일본어 억양)" → 목소리, "(전화 목소리)" → 전화 목소리
+      const shownName = 표시이름 != null ? 표시이름 : voice ? voice[1] : (이름 || '').replace(/\s*\(자막\)$/, '');
       this.setName(skin === 'normal' ? shownName : (skin === 'hint' ? '힌트' : '알아두기'));
       textEl.className = 증거 ? 'ev' : '';
       measure.classList.toggle('ev', 증거); // 증거 알림은 줄 간격을 줄이고 조금 위에서 시작한다 (나누기도 같은 기준으로)
@@ -402,8 +492,11 @@
       if (G.log.length > 300) G.log.shift();
       for (const [a, b] of pages) {
         nextIcon.classList.remove('on');
-        const waitTap = G.input.waitAdvance(() => { if (typing) { typing.finish(); return false; } return true; });
+        let shownAt = Infinity;
+        // 글자가 나오는 중에 누르면 한 번에 다 보여 준다. 다 보인 뒤 잠깐은 눌러도 넘기지 않는다 (연타로 읽기 전에 지나가지 않게)
+        const waitTap = G.input.waitAdvance(() => { if (typing) { typing.finish(); return false; } return performance.now() - shownAt >= G.input.HOLD; });
         await Promise.race([typePage(tokens, a, b), waitTap.started]);
+        shownAt = performance.now();
         nextIcon.classList.add('on');
         await waitTap;
       }
@@ -428,20 +521,21 @@
   };
 
   // ─────────── 입력 ───────────
-  // 누르기(마우스, 터치), Enter, 스페이스로 대사를 넘긴다. 버튼이나 창 위를 누른 것은 넘기지 않는다.
+  // 누르기(마우스, 터치)로만 대사를 넘긴다. 버튼이나 창 위를 누른 것은 넘기지 않는다.
   let waiter = null;
   G.input = {
+    HOLD: 400, // 새로 보인 것은 이 시간(ms) 동안 눌러도 넘기지 않는다
     // guard(): false를 돌려주면 이번 누름은 넘기지 않음 (글자 한 번에 보이기 등)
     waitAdvance(guard) {
       let resolveFn;
       const p = new Promise((r) => (resolveFn = r));
       p.started = new Promise(() => {}); // Promise.race 용 (끝나지 않음)
-      waiter = { guard, resolve: () => { waiter = null; resolveFn(); } };
+      waiter = { guard, since: performance.now(), resolve: () => { waiter = null; resolveFn(); } };
       return p;
     },
     tap() {
       if (!waiter) return;
-      if (waiter.guard && waiter.guard() === false) return;
+      if (waiter.guard ? waiter.guard() === false : performance.now() - waiter.since < G.input.HOLD) return;
       waiter.resolve();
     },
     onKey: null, // 반대 심문 등에서 방향키를 받는 곳
@@ -455,13 +549,14 @@
   document.addEventListener('keydown', (e) => {
     if (e.target.closest && e.target.closest('input')) return;
     if ($('#overlay').children.length) {
-      const top = $('#overlay').lastElementChild;
       if (e.key === 'Escape' && G.closeTopOverlay) G.closeTopOverlay();
-      else if ((e.key === 'Enter' || e.key === ' ') && top && top.matches('.episode-title')) { e.preventDefault(); top.click(); }
+      else if (G.overlayKey && G.overlayKey(e)) e.preventDefault(); // 법정 기록의 ← →
       return;
     }
     if (G.input.onKey && G.input.onKey(e)) { e.preventDefault(); return; }
-    if (e.key === 'Enter' || e.key === ' ' || e.key === 'z' || e.key === 'Z') { e.preventDefault(); G.input.tap(); }
+    // 엔터·스페이스로는 대사를 넘기지 않는다 (잘못 눌러 대사를 놓치지 않게). 스페이스로 화면이 내려가지 않게만 막는다
+    // 마우스로 누른 버튼에 남은 초점 때문에 엔터·스페이스가 그 버튼을 다시 누르지 않게도 막는다
+    if (e.key === ' ' || (e.key === 'Enter' && e.target.closest && e.target.closest('button'))) e.preventDefault();
   });
   window.addEventListener('resize', () => G.layout());
   window.addEventListener('orientationchange', () => setTimeout(G.layout, 150));
