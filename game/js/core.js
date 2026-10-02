@@ -243,9 +243,23 @@
   };
 
   // ─────────── 저장 ───────────
-  const SAVE_KEY = 'memory-court-save';
+  // 한 파일짜리 게임 1·2(tools/build_single_html.mjs)는 한 컴퓨터에서 저장소를 함께 쓰므로 진행 저장 자리를 나눈다.
+  // (🟩 기록과 해 본 화 목록은 게임 2의 기록 보관함과 기억 노트가 함께 보도록 나누지 않는다)
+  const SAVE_KEY = 'memory-court-save' + (window.GAME_PART ? '-' + window.GAME_PART : '');
   G.store = {
-    load() { try { return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { return null; } },
+    load() {
+      try {
+        // 나누기 전에 저장한 진행(memory-court-save)은 그 화가 든 게임 파일의 자리로 옮긴다
+        const OLD = 'memory-court-save';
+        const old = SAVE_KEY !== OLD && JSON.parse(localStorage.getItem(OLD) || 'null');
+        const ep = old && DATA['ep' + old.화];
+        if (ep && (ep.게임 || (ep.번호 <= 3 ? 1 : 2)) === window.GAME_PART) {
+          if (!localStorage.getItem(SAVE_KEY)) localStorage.setItem(SAVE_KEY, JSON.stringify(old));
+          localStorage.removeItem(OLD);
+        }
+        return JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      } catch (e) { return null; }
+    },
     write(data) { try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch (e) {} },
     clear() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} },
     // 🟩 선택 기록 모음 (6화 기록 보관함용): { '2': ['treatment_record'], … }
