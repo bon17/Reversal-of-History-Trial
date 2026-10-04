@@ -135,8 +135,8 @@
           const desc = h('div', { class: 'rdesc' });
           ev.설명.forEach((t) => { const p = h('p'); p.innerHTML = descHtml(t); desc.append(p); });
           info.append(pic, h('div', { class: 'rside' }, h('div', { class: 'rname' }, h('div', { class: 'nm' }, ev.이름), kind), desc));
-          if (ev.사진) {
-            // 실제 사진: 출처 표기 띠를 함께 띄운다
+          if (ev.사진 && ev.출처) {
+            // 실제 사진: 출처 표기 띠를 함께 띄운다 (출처 문구가 없는 사진은 띠 없이)
             info.append(h('div', { class: 'src' }, G.imgEl('ui/caption_source', 'band'), h('span', {}, ev.출처)));
           }
           if (ev.그림) btns.append(h('button', { class: 'img-btn bb', 'aria-label': '자세히 보기', onclick: () => zoom(sel) }, G.imgEl('ui/btn_examine')));
@@ -187,7 +187,8 @@
           if (ev.사진) {
             // 실제 사진: 출처 표기 띠를 함께 띄운다
             const pb = h('div', { class: 'photo-box' });
-            pb.append(G.imgEl(ev.그림), h('div', { class: 'caption' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text', style: 'font-size:clamp(11px,2.2vmin,20px)' }, ev.출처)));
+            pb.append(G.imgEl(ev.그림));
+            if (ev.출처) pb.append(h('div', { class: 'caption' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text', style: 'font-size:clamp(11px,2.2vmin,20px)' }, ev.출처)));
             wrap.append(pb);
           } else {
             if (ev.겹침) wrap.append(h('div', { class: 'photo-box' }, G.evImg(ev))); // 지도 + 점처럼 겹친 그림은 3:2 칸에 함께

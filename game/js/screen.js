@@ -342,7 +342,7 @@
     },
     hideCards() { $('#cards').innerHTML = ''; },
 
-    // 실제 사진은 늘 출처 띠와 함께 띄운다. faces: 사진이 떠 있는 동안 말하는 사람을 얼굴로 보여 준다
+    // 실제 사진은 출처 띠와 함께 띄운다 (출처 문구가 없는 사진은 띠 없이). faces: 사진이 떠 있는 동안 말하는 사람을 얼굴로 보여 준다
     photo(evId, opts = {}) {
       const p = $('#photo');
       S.photoFaces = !!(evId && opts.faces);
@@ -351,6 +351,7 @@
       G.swapImg($('#photo-img'), ev.그림);
       G.setImg($('.caption-band', p), 'ui/caption_source');
       $('.caption-text', p).textContent = ev.출처 || '';
+      $('.caption', p).hidden = !ev.출처;
       p.hidden = false;
       p.classList.toggle('with-box', true);
       requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('on')));
@@ -495,8 +496,8 @@
       const thumb = h('div', { class: 'thumb' + (ev.사진 ? ' photo' : '') + (green ? ' green' : '') });
       thumb.append(ev.그림 || ev.얼굴 ? G.cardInner(id) : h('div', { class: 'word' }, G.wordName(ev.이름)));
       pop.append(thumb);
-      // 실제 사진은 출처 표기 띠를 함께 띄운다
-      if (ev.사진) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, ev.출처)));
+      // 실제 사진은 출처 표기 띠를 함께 띄운다 (출처 문구가 없는 사진은 띠 없이)
+      if (ev.사진 && ev.출처) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, ev.출처)));
       // 증거 갱신: 알림 위에 "갱신" 도장을 찍는다
       if (opts.updated) {
         pop.append(G.imgEl('ui/stamp_updated', 'upd-stamp'));
