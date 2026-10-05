@@ -170,13 +170,16 @@ function walk(list, where) {
       });
       (T.보조정답 || []).forEach((a) => walk(a.장면, where));
       walk(T.증언후, where); walk(T.반대심문전, where); walk(T.정답장면, where);
-      (T.단계 || []).forEach((st) => { walk(st.앞, where); walk(st.정답장면, where); if (st.힌트) walk([st.힌트], where); if (st.확대) walk([st.확대.대사], where); });
+      (T.단계 || []).forEach((st) => {
+        walk(st.앞, where); walk(st.정답장면, where); if (st.힌트) walk([st.힌트], where);
+        if (st.확대) { walk([st.확대.대사], where); (st.확대.자막 || []).forEach((t) => put('자막', t, null, null, where)); } // 5화: 뒷면을 보면 그림 아래에 띄우는 글
+      });
       if (Array.isArray(T.일반오답)) walk(T.일반오답, where);
       if (Array.isArray(T.피해오답)) walk(T.피해오답, where);
       if (T.힌트) walk([T.힌트], where);
     }
     if (c.반격) {
-      c.반격.단계.forEach((s) => { walk(s.앞, where); walk(s.정답장면, where); walk([s.힌트], where); });
+      c.반격.단계.forEach((s) => { walk(s.앞, where); walk(s.정답장면, where); walk([s.힌트], where); (s.따로오답 || []).forEach((o) => walk(o.장면, where)); });
     }
     if (c.조사파트) {
       c.조사파트.장소.forEach((l) => { put('소제목', l.소제목, null, null, where); walk(l.도착, where); l.포인트.forEach((p) => walk(p.내용, where)); });
@@ -287,6 +290,12 @@ for (const c of allCmds) {
   // 4화 연출 그림과 인물
   const needImg = (k) => { if (k && !imgExists(k)) missingImgs.add(k); };
   [c.겹치기, c.사진컷].forEach(needImg);
+  // 5화 연출 그림
+  if (typeof c.그림 === 'string') needImg(c.그림);
+  if (c.나란히겹치기) c.나란히겹치기.forEach((p) => needImg(p.그림));
+  if (c.아이콘지도) { needImg(c.아이콘지도.지도); needImg(c.아이콘지도.아이콘); }
+  if (c.훑어보기) needImg(c.훑어보기.그림);
+  if (c.장소) c.장소.forEach((l) => { if (l.조사배경) { const b = DATA.배경[l.조사배경]; if (!b) problems.push('배경 이름이 표에 없음: ' + l.조사배경); else if (b.그림 && !imgExists(b.그림)) missingImgs.add(b.그림); } });
   if (c.지도넓히기) { needImg(c.지도넓히기.처음); needImg(c.지도넓히기.전체); }
   if (c.창문그림자) { needImg(c.창문그림자.바탕); c.창문그림자.그림자.forEach(needImg); }
   const faces = [];
@@ -304,8 +313,11 @@ for (const [id, ev] of Object.entries(EP.증거)) {
   if (ev.그림 && !imgExists(ev.그림)) missingImgs.add(ev.그림);
   if (ev.확대 && !imgExists(ev.확대)) missingImgs.add(ev.확대);
   if (ev.자세히 && !imgExists(ev.자세히)) missingImgs.add(ev.자세히);
+  if (ev.겹침 && !imgExists(ev.겹침)) missingImgs.add(ev.겹침);
+  if (ev.뒤집기) ev.뒤집기.그림.forEach((k) => { if (!imgExists(k)) missingImgs.add(k); });
   if (ev.가져오기 && !(DATA[ev.가져오기] || {}).증거) problems.push('빌려 올 화의 데이터를 읽지 않음: ' + id + ' → ' + ev.가져오기);
 }
+if (EP.지도점 && typeof EP.지도점 === 'object' && EP.지도점.겹침 && !imgExists(EP.지도점.겹침)) missingImgs.add(EP.지도점.겹침);
 for (const z of Object.values(DATA.법정자리)) { if (!imgExists(z.배경)) missingImgs.add(z.배경); if (z.책상 && !imgExists(z.책상)) missingImgs.add(z.책상); }
 
 

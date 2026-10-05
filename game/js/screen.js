@@ -139,7 +139,12 @@
     closeup(key, opts = {}) {
       const c = $('#closeup');
       S.overlayFaces = !!(key && opts.faces);
-      if (!key) { c.classList.remove('on'); c.hidden = true; c.querySelectorAll('.dots, .extra').forEach((d) => d.remove()); $('img', c).style.opacity = ''; return; }
+      if (!key) {
+        c.classList.remove('on'); c.hidden = true; c.querySelectorAll('.dots, .extra').forEach((d) => d.remove());
+        const im = $('img', c);
+        im.style.opacity = ''; im.style.transform = ''; im.style.transition = ''; // 훑어보기(5화)에서 옮긴 그림도 제자리로
+        return;
+      }
       G.swapImg($('img', c), key);
       c.hidden = false;
       requestAnimationFrame(() => requestAnimationFrame(() => c.classList.add('on')));
@@ -229,11 +234,12 @@
     },
 
     // 손에 든 사진처럼 장면 한쪽에 사진 한 장을 띄운다 (4화 레비 가족사진). key가 없으면 치운다
-    heldPhoto(key) {
+    // object: 사진 액자 없이 물건 그림만 띄운다 (5화 천에 싼 은식기)
+    heldPhoto(key, opts = {}) {
       const old = $('.held-photo', stage);
       if (old) { old.classList.remove('on'); setTimeout(() => old.remove(), 700); }
       if (!key) return;
-      const p = h('div', { class: 'held-photo' }, G.imgEl(key));
+      const p = h('div', { class: 'held-photo' + (opts.object ? ' object' : '') }, G.imgEl(key));
       stage.append(p);
       G.loadImg(key).then(() => requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('on'))));
     },
@@ -346,14 +352,28 @@
     photo(evId, opts = {}) {
       const p = $('#photo');
       S.photoFaces = !!(evId && opts.faces);
+      p.querySelectorAll('.photo-next').forEach((e) => e.remove());
       if (!evId) { p.classList.remove('on'); p.hidden = true; return; }
       const ev = G.ev[evId];
-      G.swapImg($('#photo-img'), ev.그림);
+      // key: 같은 증거의 다른 사진 (5화 신발 → 가방). 이미 사진이 떠 있으면 새 사진을 위에 겹쳐 천천히 나타나게 한다
+      // push: 사진에 천천히 다가간다 (가방 하나가 클로즈업된다)
+      const img = $('#photo-img');
+      const key = opts.key || ev.그림;
+      img.classList.remove('push');
+      if (p.classList.contains('on') && !img.hidden && img.dataset.key && img.dataset.key !== key) {
+        const nx = h('img', { class: 'photo-next', alt: '' });
+        img.after(nx);
+        G.loadImg(key).then((url) => { nx.src = url; requestAnimationFrame(() => requestAnimationFrame(() => { nx.classList.add('on'); if (opts.push) nx.classList.add('push'); })); });
+      } else {
+        G.swapImg(img, key).then(() => { if (opts.push) requestAnimationFrame(() => img.classList.add('push')); });
+      }
       G.setImg($('.caption-band', p), 'ui/caption_source');
-      $('.caption-text', p).textContent = ev.출처 || '';
-      $('.caption', p).hidden = !ev.출처;
+      const src = G.sourceOf(ev, key); // 사진마다 출처가 다르면 지금 띄우는 사진의 출처
+      $('.caption-text', p).textContent = src;
+      $('.caption', p).hidden = !src;
       p.hidden = false;
       p.classList.toggle('with-box', true);
+      p.classList.toggle('faces', !!opts.faces); // 얼굴이 나오면 출처 띠를 얼굴 위로 올린다 (css)
       requestAnimationFrame(() => requestAnimationFrame(() => p.classList.add('on')));
     },
 
@@ -377,19 +397,134 @@
     },
 
     // 3화 위안소 분포도: 지도를 화면 가득 띄우고 표시점을 북쪽부터 하나씩 켠다 (지도 그림 1536×1024 기준 좌표)
-    async mapDots(key, dots) {
-      this.closeup(key);
+    // dots: "x,y x,y …" 글, 또는 { 점: 그 글, 강조: [x, y], 겹침: 그림 } (5화 수용소 분포도)
+    //   강조: 마지막에 한 곳을 크게 켠다 (아우슈비츠). 겹침: 끝나면 이름이 적힌 점 그림으로 천천히 바꾼다
+    // faces: 지도가 떠 있는 동안 말하는 사람을 얼굴로 보여 준다
+    async mapDots(key, dots, opts = {}) {
+      const spec = dots && typeof dots === 'object' ? dots : { 점: dots };
+      this.closeup(key, { faces: opts.faces });
       const c = $('#closeup');
       c.querySelectorAll('.dots').forEach((d) => d.remove());
       const layer = h('div', { class: 'dots' });
-      const pts = String(dots).trim().split(/\s+/).map((p) => p.split(',').map(Number));
-      const els = pts.map(([x, y]) => h('span', { style: `left:${(x / 1536) * 100}%;top:${(y / 1024) * 100}%` }));
+      const at = ([x, y]) => `left:${(x / 1536) * 100}%;top:${(y / 1024) * 100}%`;
+      const pts = String(spec.점).trim().split(/\s+/).map((p) => p.split(',').map(Number));
+      const els = pts.map((p) => h('span', { style: at(p) }));
       layer.append(...els);
       c.append(layer);
       await G.sleep(900);
       const step = 3200 / els.length; // 모두 켜지는 데 약 3초
-      for (let i = 0; i < els.length; i++) { els[i].classList.add('on'); if (i % 4 === 3) await G.sleep(step * 4); }
+      const batch = els.length > 40 ? 4 : 1; // 점이 많으면 네 개씩, 적으면 하나씩
+      for (let i = 0; i < els.length; i++) { els[i].classList.add('on'); if (i % batch === batch - 1) await G.sleep(step * batch); }
+      if (spec.강조) {
+        const big = h('span', { class: 'big', style: at(spec.강조) });
+        layer.append(big);
+        await G.nextFrame();
+        big.classList.add('on');
+        await G.sleep(1100);
+      }
+      if (spec.겹침) {
+        const art = h('img', { class: 'extra dots-art', alt: '' });
+        art.src = await G.loadImg(spec.겹침);
+        c.append(art);
+        await G.nextFrame();
+        art.classList.add('on');
+        layer.classList.add('fade');
+        await G.sleep(1000);
+      }
       await G.sleep(600);
+    },
+
+    // ─────────── 5화 연출 ───────────
+    // 나란히 겹치기: 두 그림에서 같은 글자(번호)가 있는 곳만 잘라 나란히 띄웠다가, 가운데로 모아 겹친다 (다비드의 문신과 압수 목록의 104732)
+    // parts: [{ 그림, 점: [x, y] 글자의 가운데, 너비: 칸에 보일 원본의 가로 폭, 기울기: 글자를 바로 세울 각도, 기준: [원본 가로, 세로] }, …] (원본 1536×1024 기준)
+    // 칸 안의 그림 자리는 모두 칸 크기에 대한 %로 정해서, 화면을 돌려도 어긋나지 않는다
+    async sideBySide(parts) {
+      G.box.hide();
+      await G.preload(parts.map((p) => p.그림));
+      this.closeup(parts[0].그림, { faces: true });
+      const c = $('#closeup');
+      $('img', c).style.opacity = '0'; // 바탕은 검게, 두 칸만 보인다
+      const layer = h('div', { class: 'extra sbs' });
+      const panels = [];
+      for (const [i, p] of parts.entries()) {
+        const [bw, bh] = p.기준 || [1536, 1024];
+        const [x, y] = p.점;
+        const img = h('img', { alt: '' });
+        img.src = await G.loadImg(p.그림);
+        // 칸은 4:3. 글자가 칸 가운데에 오고, 칸에 원본 가로 '너비'만큼 보이게
+        Object.assign(img.style, {
+          width: (bw / p.너비) * 100 + '%',
+          left: 50 - (x / p.너비) * 100 + '%',
+          top: 50 - (y / (p.너비 * 0.75)) * 100 + '%',
+          transformOrigin: (x / bw) * 100 + '% ' + (y / bh) * 100 + '%',
+          transform: 'rotate(' + (p.기울기 || 0) + 'deg)',
+        });
+        const panel = h('div', { class: 'sbs-panel ' + (i === 0 ? 'left' : 'right') }, img);
+        panels.push(panel);
+        layer.append(panel);
+      }
+      c.append(layer);
+      await G.nextFrame();
+      panels[0].classList.add('on');
+      await G.sleep(900);
+      panels[1].classList.add('on');
+      await G.sleep(2000);
+      layer.classList.add('meet'); // 가운데로 모여 겹친다
+      await G.sleep(2900);
+      layer.classList.add('glow');
+      await G.sleep(900);
+    },
+
+    // 희생 기록: 지도 위에 사람 아이콘 셋이 하나씩 나타나고, 그중 둘이 천천히 사라진다 (아이콘 그림 한 장에 셋이 나란히 있다)
+    // spec: { 지도, 아이콘, 남김: 남는 아이콘 번호(1~3) }
+    async iconMap(spec) {
+      G.box.hide();
+      await G.preload([spec.지도, spec.아이콘]);
+      this.closeup(spec.지도, { faces: true });
+      const url = await G.loadImg(spec.아이콘);
+      const row = h('div', { class: 'extra icon-row' });
+      const icons = [0, 1, 2].map((k) => {
+        const s = h('span', { class: 'icon' });
+        s.style.backgroundImage = 'url("' + url + '")';
+        s.style.backgroundPosition = k * 50 + '% 0';
+        row.append(s);
+        return s;
+      });
+      $('#closeup').append(row);
+      await G.sleep(1100);
+      for (const s of icons) { s.classList.add('on'); await G.sleep(800); }
+      await G.sleep(1500);
+      icons.forEach((s, k) => { if (k !== (spec.남김 || 1) - 1) s.classList.add('gone'); });
+      await G.sleep(3200);
+    },
+
+    // 훑어보기: 그림 한 장을 화면 가득 띄우고, 정한 곳을 차례로 크게 본 뒤 전체로 돌아온다 (5화 시계 수집품의 시계들)
+    // spec: { 그림, 점: [[x, y], …] 원본 기준, 크기: [원본 가로, 세로], 배율, 머무름 }
+    //   머무름: 마지막 곳을 크게 본 채로 둔다 (5화 에필로그의 "베를린 IV B4과" 도장이 대사창에 가리지 않게)
+    async pan(spec) {
+      G.box.hide();
+      await G.preload([spec.그림]);
+      this.closeup(spec.그림, { faces: true });
+      const img = $('#closeup img');
+      await G.sleep(1300);
+      // 그림이 3:2 칸 안에 contain 으로 놓인 자리 (칸에 대한 %)
+      const [nw, nh] = spec.크기;
+      const a = nw / nh;
+      const dw = a <= 1.5 ? (a / 1.5) * 100 : 100, dh = a <= 1.5 ? 100 : (1.5 / a) * 100;
+      const ox = (100 - dw) / 2, oy = (100 - dh) / 2;
+      const s = spec.배율 || 2.4;
+      img.style.transition = 'transform 1.4s cubic-bezier(.45, 0, .3, 1)';
+      // 크게 본 그림이 칸 밖으로 밀려 검은 빈 곳이 생기지 않게, 그림이 칸을 덮을 수 있는 만큼만 옮긴다
+      const clamp = (v, a, b) => (a > b ? (a + b) / 2 : Math.min(b, Math.max(a, v)));
+      for (const [x, y] of spec.점) {
+        const X = clamp(ox + (x / nw) * dw, ox + 50 / s, ox + dw - 50 / s);
+        const Y = clamp(oy + (y / nh) * dh, oy + 50 / s, oy + dh - 50 / s);
+        img.style.transform = `translate(${(50 - X) * s}%, ${(50 - Y) * s}%) scale(${s})`;
+        await G.sleep(1900);
+      }
+      if (spec.머무름) return;
+      img.style.transform = '';
+      await G.sleep(1500);
     },
 
     // 3화 실제 역사 기록: 숫자가 연도와 함께 줄어들고, 마지막 숫자만 남는다
@@ -497,7 +632,8 @@
       thumb.append(ev.그림 || ev.얼굴 ? G.cardInner(id) : h('div', { class: 'word' }, G.wordName(ev.이름)));
       pop.append(thumb);
       // 실제 사진은 출처 표기 띠를 함께 띄운다 (출처 문구가 없는 사진은 띠 없이)
-      if (ev.사진 && ev.출처) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, ev.출처)));
+      const src = ev.사진 && G.sourceOf(ev);
+      if (src) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, src)));
       // 증거 갱신: 알림 위에 "갱신" 도장을 찍는다
       if (opts.updated) {
         pop.append(G.imgEl('ui/stamp_updated', 'upd-stamp'));

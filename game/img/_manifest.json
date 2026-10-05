@@ -2986,5 +2986,629 @@
    1024,
    1024
   ]
+ },
+ "backgrounds/cut_ep5_becker_hand_watch.png": {
+  "hash": "a6610842d4dbcb4c",
+  "webp": "backgrounds/cut_ep5_becker_hand_watch.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep5_search_silhouette.png": {
+  "hash": "34caf3492a9c2a75",
+  "webp": "backgrounds/cut_ep5_search_silhouette.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep5_watch_in_blanket.png": {
+  "hash": "944414a2a22711d4",
+  "webp": "backgrounds/cut_ep5_watch_in_blanket.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep5_becker_shop.png": {
+  "hash": "d2401965bfc6b76a",
+  "webp": "backgrounds/ep5_becker_shop.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep5_refugee_barracks.png": {
+  "hash": "92d9a06708dc5613",
+  "webp": "backgrounds/ep5_refugee_barracks.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep5_refugee_camp_outside.png": {
+  "hash": "5cbef491b4f4cd0a",
+  "webp": "backgrounds/ep5_refugee_camp_outside.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep5_refugee_office.png": {
+  "hash": "3ee9e73280d08279",
+  "webp": "backgrounds/ep5_refugee_office.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "characters/becker_angry.png": {
+  "hash": "2978ee2ebc8db7d7",
+  "webp": "characters/becker_angry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/becker_breakdown.png": {
+  "hash": "5c47b12d4f17b7d2",
+  "webp": "characters/becker_breakdown.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/becker_default.png": {
+  "hash": "e0b18ffb4ab7f221",
+  "webp": "characters/becker_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/becker_flustered.png": {
+  "hash": "169945dea150c810",
+  "webp": "characters/becker_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/becker_gentle.png": {
+  "hash": "2dda18da945f1ede",
+  "webp": "characters/becker_gentle.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/becker_sad.png": {
+  "hash": "2dfe3949f243c6c2",
+  "webp": "characters/becker_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/becker_serious.png": {
+  "hash": "b3316cc94ed06d10",
+  "webp": "characters/becker_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/becker_watch_ear.png": {
+  "hash": "5e06ae17726e2eb0",
+  "webp": "characters/becker_watch_ear.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david_default.png": {
+  "hash": "cd4ce7f6b2422c8d",
+  "webp": "characters/david_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david_determined.png": {
+  "hash": "ea8342ad2603ca37",
+  "webp": "characters/david_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david_faint_smile.png": {
+  "hash": "038f713f4bbfb228",
+  "webp": "characters/david_faint_smile.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david_relieved.png": {
+  "hash": "35789d93494eca69",
+  "webp": "characters/david_relieved.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david_sad.png": {
+  "hash": "b5b66f9957d22a60",
+  "webp": "characters/david_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david_tired.png": {
+  "hash": "c95a7055e7f0d95b",
+  "webp": "characters/david_tired.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david_wary.png": {
+  "hash": "30f7f88dcc271759",
+  "webp": "characters/david_wary.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/fritz_determined.png": {
+  "hash": "65f0e1e938502c6f",
+  "webp": "characters/fritz_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/fritz_nervous.png": {
+  "hash": "32afce5feaae45c4",
+  "webp": "characters/fritz_nervous.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/fritz_scared.png": {
+  "hash": "65c14e4fba35e895",
+  "webp": "characters/fritz_scared.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/fritz_sorry.png": {
+  "hash": "f4188fc7f73e43d3",
+  "webp": "characters/fritz_sorry.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/greycoat_silhouette.png": {
+  "hash": "0e97e9958ff31573",
+  "webp": "characters/greycoat_silhouette.webp",
+  "size": [
+   683,
+   1024
+  ],
+  "source": [
+   1024,
+   1536
+  ]
+ },
+ "characters/jakob_default.png": {
+  "hash": "f9b9d2777353b1e1",
+  "webp": "characters/jakob_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/jakob_pensive.png": {
+  "hash": "6590d76696785b0e",
+  "webp": "characters/jakob_pensive.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/jakob_sad.png": {
+  "hash": "bfb15779a20e4e5e",
+  "webp": "characters/jakob_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/jakob_serious.png": {
+  "hash": "349a6a2ec25f1794",
+  "webp": "characters/jakob_serious.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "evidence/ep5_auschwitz_gate.jpg": {
+  "hash": "4e688d71fddfa046",
+  "webp": "evidence/ep5_auschwitz_gate.webp",
+  "size": [
+   480,
+   346
+  ],
+  "source": [
+   480,
+   346
+  ]
+ },
+ "evidence/ep5_bags.jpg": {
+  "hash": "b77abc5f4203a820",
+  "webp": "evidence/ep5_bags.webp",
+  "size": [
+   1536,
+   864
+  ],
+  "source": [
+   2560,
+   1440
+  ]
+ },
+ "evidence/ep5_blanket_donation.png": {
+  "hash": "c51d0aed13988636",
+  "webp": "evidence/ep5_blanket_donation.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_camp_map.png": {
+  "hash": "6f7da94482bb434c",
+  "webp": "evidence/ep5_camp_map.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep5_camp_map_dots.png": {
+  "hash": "2833e4f621193c64",
+  "webp": "evidence/ep5_camp_map_dots.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep5_confiscation_list.png": {
+  "hash": "a606e2763cc32cd8",
+  "webp": "evidence/ep5_confiscation_list.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_confiscation_list_zoom.png": {
+  "hash": "09f917830f415b09",
+  "webp": "evidence/ep5_confiscation_list_zoom.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep5_delivery_slip.png": {
+  "hash": "f8ab4c214baa226c",
+  "webp": "evidence/ep5_delivery_slip.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_entry_log.png": {
+  "hash": "8f731c984904bd5e",
+  "webp": "evidence/ep5_entry_log.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_gold_watch.png": {
+  "hash": "075f3bf33f430dff",
+  "webp": "evidence/ep5_gold_watch.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_gold_watch_back.png": {
+  "hash": "bf7315679065824f",
+  "webp": "evidence/ep5_gold_watch_back.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep5_gold_watch_front.png": {
+  "hash": "2af0da5b11d4c3fc",
+  "webp": "evidence/ep5_gold_watch_front.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep5_search_record.png": {
+  "hash": "187721d3ffa18be5",
+  "webp": "evidence/ep5_search_record.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_shoes.jpg": {
+  "hash": "3d1db568c83ea9d2",
+  "webp": "evidence/ep5_shoes.webp",
+  "size": [
+   539,
+   355
+  ],
+  "source": [
+   539,
+   355
+  ]
+ },
+ "evidence/ep5_ss_personnel.png": {
+  "hash": "1e8802cce0553e2d",
+  "webp": "evidence/ep5_ss_personnel.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_tattoo.png": {
+  "hash": "4d5788508ed61023",
+  "webp": "evidence/ep5_tattoo.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_tattoo_closeup.png": {
+  "hash": "7d101c7f8438f36b",
+  "webp": "evidence/ep5_tattoo_closeup.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep5_theft_report.png": {
+  "hash": "5304944a44fa3d20",
+  "webp": "evidence/ep5_theft_report.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep5_victims_icons.png": {
+  "hash": "08befb7d912e0f0b",
+  "webp": "evidence/ep5_victims_icons.webp",
+  "size": [
+   1536,
+   512
+  ],
+  "source": [
+   1536,
+   512
+  ]
+ },
+ "evidence/ep5_victims_map.png": {
+  "hash": "0e2d1b001018a1a7",
+  "webp": "evidence/ep5_victims_map.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep5_watch_collection.png": {
+  "hash": "f88b3797cca8b6b8",
+  "webp": "evidence/ep5_watch_collection.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1254,
+   1254
+  ]
  }
 }

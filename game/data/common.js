@@ -51,6 +51,12 @@ DATA.인물 = {
   '마르타':        { 파일: 'marta',     자리: '피고석', 얼굴: [512, 200, 150] },
   '슈나이더':      { 파일: 'schneider', 자리: '증언대', 얼굴: [512, 250, 150] },
   '슈바르츠 부인': { 파일: 'schwarz',   자리: '증언대', 얼굴: [512, 180, 150] },
+  // 5화
+  '다비드':  { 파일: 'david',  자리: '피고석', 얼굴: [512, 182, 145] },
+  '베커':    { 파일: 'becker', 자리: '증언대', 얼굴: [512, 172, 150] },
+  '프리츠':  { 파일: 'fritz',  자리: '증언대', 얼굴: [512, 182, 150] },
+  '야코프':  { 파일: 'jakob',  자리: '증언대', 얼굴: [512, 172, 150] },
+  '회색 외투의 남자': { 파일: 'greycoat', 자리: '증언대', 얼굴: [512, 150, 120] }, // 말하지 않는다. 야코프의 이야기 동안 실루엣으로만 선다
 };
 
 // 대본 반대 심문 표에서 줄여 쓴 이름 → 인물 이름
@@ -98,6 +104,12 @@ DATA.배경 = {
   '빵집 뒤편 부엌':      { 그림: 'backgrounds/ep4_bakery_kitchen' },
   '옆집 시계방':         { 그림: 'backgrounds/ep4_clock_shop' },
   '빵집 건너편 거리':    { 그림: 'backgrounds/ep4_street_across' },
+  // 5화
+  '난민 수용소 막사':     { 그림: 'backgrounds/ep5_refugee_barracks' },
+  '오래된 시계점':        { 그림: 'backgrounds/ep5_becker_shop' },
+  '전쟁 뒤의 난민 수용소': { 그림: 'backgrounds/ep5_refugee_camp_outside' },
+  '난민 수용소 사무실':   { 그림: 'backgrounds/ep5_refugee_office' },
+  '피고석 (어둡게)':      { 그림: 'backgrounds/court_defendant', 책상: 'backgrounds/court_defendant_desk' }, // 증언 듣기: 법정 밖 배경으로 두어 다비드만 비추고, 재판장은 얼굴로
   '검은 화면':           { 그림: null },
 };
 
@@ -115,6 +127,9 @@ DATA.컷 = {
   'backgrounds/cut_ep4_window_shadows': '2층 창문',
   'backgrounds/cut_ep4_levi_family_photo': '레비 가족사진',
   'backgrounds/cut_ep4_s_compare': '밀고 편지의 S와 슈나이더 서명의 S',
+  'backgrounds/cut_ep5_search_silhouette': '막사에서 가방을 뒤지는 경찰 실루엣',
+  'backgrounds/cut_ep5_watch_in_blanket': '담요에 싸인 금시계',
+  'backgrounds/cut_ep5_becker_hand_watch': '회중시계를 귀에 댄 베커의 손',
 };
 
 // 소리: 대본의 이름 → 파일 (assets/audio/ 아래, 확장자 없이).
@@ -181,6 +196,14 @@ DATA.소리 = {
     '나무 판자 들어 올리는 소리': 'se/plank_lift',
     '발소리': 'se/footsteps',
     '종이 넘기는 소리': 'se/paper',
+    // 5화
+    '문 열리는 소리': 'se/door_open',
+    '가방 뒤지는 소리': 'se/bag_rummage',
+    '가게 문 종소리': 'se/shop_bell',
+    '서류 넘기는 소리': 'se/paper', // 4화 종이 넘기는 소리와 같은 파일
+    '회중시계 째깍 소리': 'se/watch_tick',
+    '시계의 째깍 소리': 'se/watch_tick',
+    '급한 발소리': 'se/footsteps_hurry',
   },
   // 이름 뒤 괄호 속 꾸밈말 → 음량 (0~1). 따로 된 음악 파일이 생기면 위 표에 이름을 더하면 된다.
   꾸밈음량: {
@@ -188,5 +211,6 @@ DATA.소리 = {
     '크게': 1, '가장 크게': 1, '튜토리얼에서는 약하게': 0.35,
     '느림, 낮게': 0.5, '초록빛 연출': 0.9,
     '아주 작게': 0.3, '다시, 아주 작게': 0.3, '아주 작게, 반복': 0.3,
+    '작게': 0.4, '하나만, 작게': 0.4,
   },
 };

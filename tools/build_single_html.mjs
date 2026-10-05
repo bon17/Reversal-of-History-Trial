@@ -47,7 +47,12 @@ function imagesOf(part) {
   const keys = new Set();
   const people = new Set(); // 게임 1은 그 게임 인물의 표정을 모두 넣는다 (기억 노트 얼굴 버튼 등)
   const addBg = (name) => { const b = DATA.배경[name]; if (b) { keys.add(b.그림); keys.add(b.책상); } };
-  const addEv = (ev) => { if (ev) ['그림', '겹침', '확대', '자세히'].forEach((k) => keys.add(ev[k])); if (ev && ev.얼굴) keys.add(charKey(ev.얼굴[0], ev.얼굴[1])); };
+  const addEv = (ev) => {
+    if (!ev) return;
+    ['그림', '겹침', '확대', '자세히'].forEach((k) => keys.add(ev[k]));
+    if (ev.얼굴) keys.add(charKey(ev.얼굴[0], ev.얼굴[1]));
+    if (ev.뒤집기) ev.뒤집기.그림.forEach((k) => keys.add(k)); // 5화 [자세히 보기]의 뒤집기 (금시계 앞·뒷면, 신발·가방 사진)
+  };
   const seen = new Set();
   const isImgKey = (x) => typeof x === 'string' && /^(backgrounds|evidence|characters|ui)\/[a-z0-9_]+$/.test(x);
   function visit(v) {
@@ -66,11 +71,13 @@ function imagesOf(part) {
     if (typeof v.보기 === 'string') keys.add(charKey(v.보기, v.보기표정));
     if (typeof v.퇴장 === 'string' && v.뒷모습) keys.add(charKey(v.퇴장, '뒷모습'));
     if (typeof v.배경 === 'string') addBg(v.배경);
+    if (typeof v.조사배경 === 'string') addBg(v.조사배경); // 5화 조사 장소: 도착 뒤 조사 포인트를 찾는 배경
     for (const x of Object.values(v)) visit(x);
   }
   for (const ep of episodes.filter((e) => partOf(e) === part)) {
     visit(ep.막);
     visit([ep.오답.일반, ep.오답.피해]);
+    if (ep.지도점 && typeof ep.지도점 === 'object') keys.add(ep.지도점.겹침); // 5화 수용소 분포도의 이름 적힌 점 그림
     for (const [id, ev] of Object.entries(ep.증거)) addEv(ev.가져오기 ? (DATA[ev.가져오기] || { 증거: {} }).증거[ev.원래 || id] : ev);
   }
   // 늘 쓰는 것: UI 전부, 법정 자리, 처음 화면 배경, 고정 인물의 모든 표정, 재판장 놀람

@@ -99,6 +99,8 @@ img { -webkit-user-drag: none; }
 }
 /* 가로 화면에서는 대사창에 가리지 않게 출처 띠를 대사창 바로 위로 올린다 */
 .land #photo.with-box .caption { transform: translateY(calc(var(--u) * -236)); }
+/* 사진 위에 말하는 사람 얼굴이 나올 때는 얼굴(대사창 왼쪽 위의 동그라미)에 "출처" 글자가 가리지 않게 한 번 더 올린다 */
+.land #photo.with-box.faces .caption { transform: translateY(calc(var(--u) * -400)); }
 
 /* 2화: 비, 확대 화면, 🟩 초록빛 */
 #rain { z-index: 2; pointer-events: none; opacity: 0; transition: opacity 1s;
@@ -786,3 +788,65 @@ img { -webkit-user-drag: none; }
 .zoom-thought.on { opacity: 1; transform: none; }
 .zoom-thought .face { flex: none; width: 56px; height: 56px; border-radius: 50%; box-shadow: 0 0 0 2px var(--gold); background-color: var(--navy-deep); }
 .zoom-thought .tx { color: var(--thought); font-size: clamp(15px, 2.4vmin, 20px); line-height: 1.5; word-break: keep-all; }
+
+/* ─────────────── 5화 ─────────────── */
+/* 증언 듣기: 어두운 피고석 (법정 밖 배경이라 재판장은 얼굴로만 나온다). 인물은 피고석 자리 크기 그대로 */
+#stage[data-bg="피고석 (어둡게)"] #char { left: 21.667%; width: 56.667%; top: 11.2%; height: 85%; }
+
+/* 실제 사진: 같은 증거의 다른 사진으로 천천히 바뀌고(신발 → 가방), 사진에 천천히 다가간다 */
+#photo .photo-next { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; opacity: 0; transition: opacity 1.2s; } /* 바탕을 검게: 비율이 다른 사진(가로로 긴 가방 사진)이어도 아래 사진이 위아래로 비치지 않게 */
+#photo .photo-next.on { opacity: 1; }
+#photo-img.push, #photo .photo-next.push { animation: photoPush 9s ease-out both; }
+@keyframes photoPush { from { transform: scale(1); } to { transform: scale(1.22); } }
+
+/* 물건만 띄우기 (천에 싼 은식기): 액자 없이 그림자만 */
+.held-photo.object { width: 30%; aspect-ratio: 1; box-shadow: none; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .75)); }
+.held-photo.object img { object-fit: contain; }
+
+/* 수용소 분포도: 마지막에 크게 켜지는 한 곳, 이름이 적힌 점 그림으로 바뀜 */
+#closeup .dots span.big { width: max(9px, calc(var(--u) * 30)); height: max(9px, calc(var(--u) * 30)); margin: calc(var(--u) * -15) 0 0 calc(var(--u) * -15); transform: scale(3); animation: dotPulse 1.4s ease-in-out .4s 2; }
+#closeup .dots span.big.on { transform: scale(1); }
+@keyframes dotPulse { 50% { box-shadow: 0 0 calc(var(--u) * 40) calc(var(--u) * 10) rgba(255, 60, 40, .9); } }
+#closeup .dots { transition: opacity .9s; }
+#closeup .dots.fade { opacity: 0; }
+#closeup img.dots-art { opacity: 0; transition: opacity .9s; }
+#closeup img.dots-art.on { opacity: 1; }
+
+/* 번호 겹치기: 두 칸(4:3)이 나란히 나타났다가 가운데로 모여 겹친다 */
+#closeup .sbs { position: absolute; inset: 0; pointer-events: none; isolation: isolate; }
+.sbs-panel {
+  position: absolute; top: 27.5%; width: 40%; aspect-ratio: 4 / 3; overflow: hidden; background: #000;
+  border: max(2px, calc(var(--u) * 5)) solid var(--gold); border-radius: max(6px, calc(var(--u) * 14));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .8); opacity: 0; transform: translateY(6%);
+  transition: opacity .9s, transform .9s, left 2.6s cubic-bezier(.45, 0, .3, 1), box-shadow .9s;
+}
+.sbs-panel.left { left: 6%; }
+.sbs-panel.right { left: 54%; }
+.sbs-panel.on { opacity: 1; transform: none; }
+.sbs-panel img { position: absolute; height: auto; max-width: none; }
+.sbs.meet .sbs-panel { left: 30%; }
+.sbs.meet .sbs-panel.right { opacity: .9; mix-blend-mode: multiply; border-color: transparent; background: transparent; box-shadow: none; } /* 종이와 팔이 함께 비쳐 두 번호가 한 자리에 겹친다 */
+.sbs.glow .sbs-panel.left { box-shadow: 0 0 0 max(2px, calc(var(--u) * 5)) var(--gold-light), 0 0 calc(var(--u) * 70) rgba(255, 226, 154, .8); }
+
+/* 희생 기록: 지도 위 사람 아이콘 셋 (아이콘 그림 한 장을 셋으로 나눠 쓴다) */
+#closeup .icon-row { position: absolute; left: 20%; width: 60%; top: 30%; aspect-ratio: 3 / 1; display: flex; pointer-events: none; }
+#closeup .icon-row .icon { flex: 1; background-size: 300% 100%; background-repeat: no-repeat; opacity: 0; transform: translateY(8%); transition: opacity .9s, transform .9s; filter: drop-shadow(0 0 calc(var(--u) * 14) rgba(255, 255, 255, .35)); }
+#closeup .icon-row .icon.on { opacity: 1; transform: none; }
+#closeup .icon-row .icon.gone { opacity: 0; transition: opacity 3s ease-in; }
+
+/* [자세히 보기]의 뒤집기 (금시계 앞면 ↔ 뒷면), 뒷면을 보면 그림 아래에 나오는 글 */
+#app .zoom .wrap img.flip-face { transition: transform .26s ease-in; }
+#app .zoom .wrap img.flip-face.turn { transform: scaleX(0); }
+.zoom-caption { width: min(900px, 96vw); margin: 0 auto 8px; text-align: center; color: var(--gold-light); font-size: clamp(16px, 2.8vmin, 24px); line-height: 1.5; opacity: 0; transition: opacity .6s; }
+.zoom-caption.on { opacity: 1; }
+.zoom-caption b { font-weight: 900; font-size: 1.2em; }
+#closeup .sbs-panel img { right: auto; bottom: auto; height: auto; object-fit: fill; } /* #closeup img(화면 가득)보다 앞서게 */
+/* 회색 외투의 남자 (전신 실루엣): 다른 인물보다 멀리, 수용소 안쪽에 선 것처럼 조금 작게 */
+#char[data-key="characters/greycoat_silhouette"] { top: 20%; height: 72%; filter: brightness(.85); }
+/* 실제 역사 기록 카드: 휴대폰 가로처럼 낮은 화면에서는 글을 줄여 [계속]까지 한 화면에 보이게 (5화는 문단이 6개) */
+@media (max-height: 500px) {
+  .history-card .panel { max-width: 96vw; padding: 12px 18px; }
+  .history-card .panel h2 { font-size: 18px; margin-bottom: 6px; }
+  .history-card .panel p { font-size: 13px; line-height: 1.45; margin: 4px 0; }
+  .history-card .panel .row { margin-top: 8px; }
+}

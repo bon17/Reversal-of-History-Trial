@@ -22,6 +22,13 @@
     return h('div', { class: 'ev-stack' }, main, G.imgEl(ev.겹침));
   };
 
+  // 실제 사진의 출처 문구 (없으면 ''). 사진이 여러 장(뒤집기)이고 장마다 출처가 다르면 뒤집기.출처에서 그 장의 것을 고른다 (5화 신발 → 가방)
+  G.sourceOf = (ev, key) => {
+    const f = ev.뒤집기;
+    if (f && f.출처) return f.출처[Math.max(0, f.그림.indexOf(key || ev.그림))] || '';
+    return ev.출처 || '';
+  };
+
   // 그림 없는 카드의 이름 글자: 줄을 나눌 곳을 정해 준다 (일본군/'위안부'처럼 띄어 쓰지 않는 이름도 두 줄로)
   G.wordName = (name) => name.replace("일본군'", "일본군\u200b'");
 
@@ -135,9 +142,10 @@
           const desc = h('div', { class: 'rdesc' });
           ev.설명.forEach((t) => { const p = h('p'); p.innerHTML = descHtml(t); desc.append(p); });
           info.append(pic, h('div', { class: 'rside' }, h('div', { class: 'rname' }, h('div', { class: 'nm' }, ev.이름), kind), desc));
-          if (ev.사진 && ev.출처) {
+          const src = ev.사진 && G.sourceOf(ev);
+          if (src) {
             // 실제 사진: 출처 표기 띠를 함께 띄운다 (출처 문구가 없는 사진은 띠 없이)
-            info.append(h('div', { class: 'src' }, G.imgEl('ui/caption_source', 'band'), h('span', {}, ev.출처)));
+            info.append(h('div', { class: 'src' }, G.imgEl('ui/caption_source', 'band'), h('span', {}, src)));
           }
           if (ev.그림) btns.append(h('button', { class: 'img-btn bb', 'aria-label': '자세히 보기', onclick: () => zoom(sel) }, G.imgEl('ui/btn_examine')));
           if (present && ev.색 !== '개념') btns.append(h('button', { class: 'img-btn bb', 'aria-label': '증거 제시', onclick: () => close(sel) }, G.imgEl('ui/btn_present')));
@@ -184,33 +192,77 @@
           const shut = () => { z.remove(); G.closeTopOverlay = back; };
           G.closeTopOverlay = shut;
           const wrap = h('div', { class: 'wrap' });
+          // 뒤집기: 그림 여러 장을 버튼으로 차례로 본다 (5화 금시계 앞면 → 뒷면, 신발 → 가방 사진)
+          const faces = ev.뒤집기 ? ev.뒤집기.그림 : null;
+          if (faces) G.preload(faces); // 넘겨 볼 그림을 미리 받는다 (처음 넘길 때 빈 칸이 오래 보이지 않게)
+          let face = 0, faceImg = null, capText = null;
           if (ev.사진) {
-            // 실제 사진: 출처 표기 띠를 함께 띄운다
+            // 실제 사진: 출처 표기 띠를 함께 띄운다 (사진을 넘기면 그 사진의 출처로 바꾼다)
             const pb = h('div', { class: 'photo-box' });
-            pb.append(G.imgEl(ev.그림));
-            if (ev.출처) pb.append(h('div', { class: 'caption' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text', style: 'font-size:clamp(11px,2.2vmin,20px)' }, ev.출처)));
+            faceImg = G.imgEl(faces ? faces[0] : ev.그림);
+            pb.append(faceImg);
+            const src = G.sourceOf(ev, faces ? faces[0] : ev.그림);
+            capText = h('span', { class: 'caption-text', style: 'font-size:clamp(11px,2.2vmin,20px)' }, src);
+            const cap = h('div', { class: 'caption' }, G.imgEl('ui/caption_source', 'caption-band'), capText);
+            cap.hidden = !src;
+            pb.append(cap);
             wrap.append(pb);
           } else {
             if (ev.겹침) wrap.append(h('div', { class: 'photo-box' }, G.evImg(ev))); // 지도 + 점처럼 겹친 그림은 3:2 칸에 함께
+            else if (faces) wrap.append((faceImg = G.imgEl(faces[0], 'flip-face')));
             else wrap.append(G.imgEl(ev.자세히 || ev.그림)); // 자세히: [자세히 보기]에서 따로 보여 줄 확대 그림 (4화 매각 기록의 서명)
             wrap.addEventListener('click', () => wrap.classList.toggle('big'));
           }
-          z.append(wrap, h('div', { class: 'bar' }, h('button', { class: 'ui-btn', onclick: shut }, '닫기')));
-          scr.append(z);
           // 확대해야 알 수 있는 단서: 확대하면 신중한의 생각이 아래에 나오고, 그 뒤로는 제시하면 정답이 된다 (4화 증언 3)
+          // 면이 정해져 있으면 그 면을 볼 때 나온다 (5화 금시계 뒷면). 자막이 있으면 그림 아래에 함께 띄운다 ("J. Levi 1920")
           const hook = G.play.zoomHook;
-          if (hook && hook.증거 === id) {
-            const face = h('div', { class: 'face' });
-            G.applyFace(face, hook.대사.말, hook.대사.표정);
-            const line = h('div', { class: 'zoom-thought' }, face, h('div', { class: 'tx' }, hook.대사.대사));
-            setTimeout(() => { if (!z.isConnected) return; z.insertBefore(line, z.lastChild); requestAnimationFrame(() => line.classList.add('on')); }, 900);
-            if (!hook.done) { hook.done = true; G.log.push({ 이름: hook.대사.말, 글: hook.대사.대사 }); }
+          let shown = false;
+          // 확대(또는 그 면을 본 것)는 보는 순간 인정한다. 생각 글은 조금 뒤에 띄운다 (창을 바로 닫아도 4화처럼 정답이 된다)
+          const markDone = () => { if (!hook.done) { hook.done = true; G.log.push({ 이름: hook.대사.말, 글: hook.대사.대사 }); } };
+          const showHook = () => {
+            if (shown || !z.isConnected) return;
+            shown = true;
+            if (hook.자막) {
+              const cap = h('div', { class: 'zoom-caption' }, ...hook.자막.map((t) => { const d = h('div'); d.innerHTML = G.mdBold(t); return d; }));
+              z.insertBefore(cap, z.lastChild);
+              requestAnimationFrame(() => cap.classList.add('on'));
+            }
+            const fc = h('div', { class: 'face' });
+            G.applyFace(fc, hook.대사.말, hook.대사.표정);
+            const line = h('div', { class: 'zoom-thought' }, fc, h('div', { class: 'tx' }, hook.대사.대사));
+            z.insertBefore(line, z.lastChild);
+            requestAnimationFrame(() => line.classList.add('on'));
+          };
+          const hookHere = hook && hook.증거 === id;
+          const bar = h('div', { class: 'bar' });
+          if (faces) {
+            bar.append(h('button', {
+              class: 'ui-btn flip-btn',
+              onclick: async (e) => {
+                e.stopPropagation();
+                face = (face + 1) % faces.length;
+                const f = face; // 빨리 두 번 눌러도 이번 누름의 면으로 처리한다
+                faceImg.classList.add('turn');
+                await G.sleep(260);
+                if (face !== f) return;
+                await G.swapImg(faceImg, faces[f]);
+                if (face !== f) return; // 그림을 받는 사이에 또 눌렀으면 나중 누름이 처리한다 (출처 띠가 다른 사진 것으로 남지 않게)
+                faceImg.classList.remove('turn');
+                if (capText) { const s = G.sourceOf(ev, faces[f]); capText.textContent = s; capText.parentNode.hidden = !s; }
+                if (hookHere && hook.면 === f) { markDone(); setTimeout(() => { if (face === hook.면) showHook(); }, 500); }
+              },
+            }, ev.뒤집기.버튼 || '뒤집기'));
           }
+          bar.append(h('button', { class: 'ui-btn', onclick: shut }, '닫기'));
+          z.append(wrap, bar);
+          scr.append(z);
+          if (hookHere && hook.면 == null) { markDone(); setTimeout(showHook, 900); }
         };
         scr.append(rec);
         // 그림을 먼저 받아 두고 창을 띄운다 (빈 칸만 있는 창이 잠깐 번쩍이지 않게). 오래 걸리면 1.2초 뒤에는 그냥 띄운다
         const keys = ['ui/btn_examine', 'ui/btn_present', 'ui/caption_source'];
         all.forEach(([, ev]) => { keys.push(ev.그림, ev.겹침, ev.자세히); if (ev.얼굴) keys.push(G.charKey(ev.얼굴[0], ev.얼굴[1])); });
+        // 뒤집어 보는 그림은 [자세히 보기]를 열 때 받는다 (창을 여는 데 오래 걸리지 않게)
         Promise.race([G.preload(keys.filter(Boolean)), G.sleep(1200)]).then(() => { ov.append(scr); draw(); });
       });
     },
