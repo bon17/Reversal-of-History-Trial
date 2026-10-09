@@ -1,5 +1,6 @@
 // 게임 전체(코드, 데이터, WebP 그림)를 HTML 파일 하나로 묶는다.
-// 이 파일 하나만 있으면 인터넷 없이 더블클릭으로 실행할 수 있다. game/fonts/ 의 글꼴도 함께 넣는다. (소리 파일은 들어가지 않는다)
+// 이 파일 하나만 있으면 인터넷 없이 더블클릭으로 실행할 수 있다. game/fonts/ 의 글꼴도 함께 넣는다.
+// assets/audio/ 에 소리 파일이 있으면 그 게임에서 쓰는 BGM과 모든 효과음도 넣는다 (tools/embed_audio.mjs).
 //
 // 게임 1(1~3화)과 게임 2(4~6화)를 따로 만든다. 한 파일에 다 넣으면 30MB를 넘기 때문이다.
 //   - 게임 1 파일: [처음부터]가 1화. 이어하기 코드는 1~3화만 받는다. 기억 노트 쓰기가 있다.
@@ -12,6 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { audioFiles, embedAudio } from './embed_audio.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const args = process.argv.slice(2);
@@ -89,6 +91,27 @@ function imagesOf(part) {
   return new Set([...keys].filter((k) => k && allImgs.includes(k)));
 }
 
+// ─────────── 게임마다 쓰는 소리 모으기 ───────────
+// assets/audio/ 에 있는 파일 중, BGM은 그 게임의 화에 이름이 나오는 것만, 효과음은 모두 넣는다
+function soundsOf(part) {
+  const B = DATA.소리.BGM;
+  const used = new Set();
+  const seen = new Set();
+  (function visit(v) {
+    if (typeof v === 'string') {
+      const m = v.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+      const p = B[v] || (m && B[m[1]]);
+      if (p) used.add(p);
+      return;
+    }
+    if (!v || typeof v !== 'object' || seen.has(v)) return;
+    seen.add(v);
+    Object.values(v).forEach(visit);
+  })(episodes.filter((e) => partOf(e) === part));
+  const all = audioFiles(path.join(ROOT, 'assets', 'audio'));
+  return Object.fromEntries(Object.entries(all).filter(([key]) => !key.startsWith('bgm/') || used.has(key)));
+}
+
 // ─────────── HTML 한 파일 만들기 ───────────
 const inline = (s) => s.replace(/<\/script/gi, '<\\/script');
 function build(part, out) {
@@ -111,10 +134,12 @@ function build(part, out) {
   html = html.replace(/<title>([^<]*)<\/title>/, '<title>$1 게임 ' + part + '</title>');
   html = html.replace(/<script src="([^"]+)"><\/script>/g, (m, src) => '<script>\n' + inline(fs.readFileSync(path.join(ROOT, src), 'utf8')) + '\n</script>');
   html = html.replace('<script>', '<script>window.GAME_PART = ' + part + '; window.EMBED_IMG = ' + JSON.stringify(embed) + ';</script>\n<script>');
+  const sounds = soundsOf(part);
+  html = embedAudio(html, sounds);
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, html);
   const mb = fs.statSync(out).size / 1048576;
-  console.log(`${path.relative(ROOT, out)} 만듦 (게임 ${part}): 그림 ${used.size}장, ${mb.toFixed(1)}MB${mb > 30 ? '  ※ 30MB가 넘습니다' : ''}`);
+  console.log(`${path.relative(ROOT, out)} 만듦 (게임 ${part}): 그림 ${used.size}장, 소리 ${Object.keys(sounds).length}개, ${mb.toFixed(1)}MB${mb > 30 ? '  ※ 30MB가 넘습니다' : ''}`);
 }
 
 for (const part of onlyGame ? [onlyGame] : [1, 2]) {

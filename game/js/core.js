@@ -155,12 +155,27 @@
   // ─────────── 소리 ───────────
   // 소리 파일은 아직 없다. assets/audio/ 에 DATA.소리 표의 이름으로 파일을 넣으면 그대로 쓰인다.
   // 파일이 없으면 아무 소리 없이 넘어간다.
-  // 파일 찾기: mp3 → ogg → wav → m4a 순서로 틀어 보고, 없는 파일은 기억해 두었다가 다시 찾지 않는다.
+  // 파일 찾기: 파일 안에 넣은 소리 → mp3 → ogg → wav → m4a 순서로 틀어 보고, 없는 파일은 기억해 두었다가 다시 찾지 않는다.
   const audioExt = {}; // path → 찾은 주소, 또는 false(없음)
+  // 한 파일짜리 게임은 소리도 파일 안에 넣을 수 있다 (window.EMBED_AUDIO: 'bgm/memory' → data: 주소, tools/embed_audio.mjs).
+  // 처음 틀 때 blob 주소로 바꿔 둔다. 긴 data: 주소를 틀 때마다 다시 읽지 않게 하려는 것이다.
+  function embeddedAudio(path) {
+    const E = window.EMBED_AUDIO;
+    if (!E || !E[path]) return null;
+    if (E[path].startsWith('data:')) {
+      const [head, b64] = E[path].split(',');
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      E[path] = URL.createObjectURL(new Blob([bytes], { type: head.slice(5).split(';')[0] }));
+    }
+    return E[path];
+  }
   function playAudio(path, volume, loop) {
     return new Promise((resolve) => {
       if (audioExt[path] === false) { resolve(null); return; }
-      const tries = audioExt[path] ? [audioExt[path]] : ['mp3', 'ogg', 'wav', 'm4a'].map((x) => 'assets/audio/' + path + '.' + x);
+      const inFile = embeddedAudio(path);
+      const tries = audioExt[path] ? [audioExt[path]] : inFile ? [inFile] : ['mp3', 'ogg', 'wav', 'm4a'].map((x) => 'assets/audio/' + path + '.' + x);
       const next = () => {
         const url = tries.shift();
         if (!url) { audioExt[path] = false; resolve(null); return; }
