@@ -89,7 +89,8 @@ for (i = 0; i < lines.length; i++) {
     while (k < lines.length && /^- ▶/.test(lines[k])) { add('선택지', lines[k].replace(/^- ▶\s*/, ''), k + 1); k++; }
     continue;
   }
-  if (section === '실제 역사 기록' && L.startsWith('>')) {
+  // 실제 역사 기록 구간이라도 대사 바로 뒤의 '> ' 줄은 인용이다 (4화: 기록 카드 앞의 안네 프랑크 일기 인용)
+  if (section === '실제 역사 기록' && L.startsWith('>') && !wasSpeaker) {
     const t = L.replace(/^>\s?/, '').trim();
     if (!t) continue;
     if (/^\*\*실제 역사 기록\*\*$/.test(t)) add('기록카드', '실제 역사 기록', i + 1);

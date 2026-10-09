@@ -15,7 +15,10 @@
   };
 
   // 증거 그림 한 장. 겹침: 위에 겹쳐 그릴 그림 (3화 지도 위의 위안소 점). 채움(카드 칸만): 칸을 꽉 채우고 이 위치를 기준으로 자른다 (세로 사진의 얼굴이 보이게)
+  // 실제 사진이 여러 장인 증거(5화 신발과 가방 더미): 법정 기록 칸, 큰 그림, 카드, 획득 알림에서는 사진을 모두 함께 보여 준다
+  // (넓은 칸은 옆으로, 좁은 칸은 위아래로 나란히. 한 장씩 크게 보는 것은 [자세히 보기]의 [다음 사진])
   G.evImg = (ev, fill) => {
+    if (ev.사진 && ev.뒤집기 && ev.뒤집기.그림.length > 1) return h('div', { class: 'ev-duo' }, h('div', { class: 'duo-in' }, ...ev.뒤집기.그림.map((k) => G.imgEl(k))));
     const main = G.imgEl(ev.그림);
     if (fill && ev.채움) { main.style.objectFit = 'cover'; main.style.objectPosition = ev.채움; }
     if (!ev.겹침) return main;
@@ -28,6 +31,12 @@
     if (f && f.출처) return f.출처[Math.max(0, f.그림.indexOf(key || ev.그림))] || '';
     return ev.출처 || '';
   };
+  // 사진을 모두 함께 보여 줄 때(법정 기록, 획득 알림)의 출처: 장마다 다르면 모두 적는다 (5화 신발 → 가방: 두 곳)
+  G.sourcesAll = (ev) => {
+    const f = ev.뒤집기;
+    if (f && f.출처) return [...new Set(f.출처.filter(Boolean))].join(' · ');
+    return ev.출처 || '';
+  };
 
   // 그림 없는 카드의 이름 글자: 줄을 나눌 곳을 정해 준다 (일본군/'위안부'처럼 띄어 쓰지 않는 이름도 두 줄로)
   G.wordName = (name) => name.replace("일본군'", "일본군\u200b'");
@@ -36,7 +45,7 @@
   G.cardInner = (id) => {
     const ev = G.ev[id];
     if (ev.그림) return G.evImg(ev, true);
-    if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1]); return f; }
+    if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1], { whole: true }); return f; } // 네모난 칸: 머리 끝까지
     // 그림이 없는 카드(개념 카드 등): 대본의 설명 글을 작게 넣는다
     return h('div', { class: 'mini' }, ev.설명.join(' ').replace(/\*\*/g, ''));
   };
@@ -77,14 +86,14 @@
   // 작은 칸 안: 그림 / 얼굴 / 이름 글자
   function slotInner(ev) {
     if (ev.그림) return G.evImg(ev);
-    if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1]); return f; }
+    if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1], { whole: true }); return f; } // 네모난 칸: 머리 끝까지
     return h('div', { class: 'word' }, G.wordName(ev.이름));
   }
   // 큰 그림 칸 안: 그림 / 얼굴 / 그림 없는 카드는 카드 모양 그대로
   function picInner(id) {
     const ev = G.ev[id];
     if (ev.그림) return G.evImg(ev);
-    if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1]); return f; }
+    if (ev.얼굴) { const f = h('div', { class: 'face' }); G.applyFace(f, ev.얼굴[0], ev.얼굴[1], { whole: true }); return f; } // 네모난 칸: 머리 끝까지
     return G.renderCard(id);
   }
   // 설명이 칸보다 길면 글자를 조금씩 줄인다 (줄 간격에 맞춰 밑줄도 함께)
@@ -142,7 +151,7 @@
           const desc = h('div', { class: 'rdesc' });
           ev.설명.forEach((t) => { const p = h('p'); p.innerHTML = descHtml(t); desc.append(p); });
           info.append(pic, h('div', { class: 'rside' }, h('div', { class: 'rname' }, h('div', { class: 'nm' }, ev.이름), kind), desc));
-          const src = ev.사진 && G.sourceOf(ev);
+          const src = ev.사진 && G.sourcesAll(ev);
           if (src) {
             // 실제 사진: 출처 표기 띠를 함께 띄운다 (출처 문구가 없는 사진은 띠 없이)
             info.append(h('div', { class: 'src' }, G.imgEl('ui/caption_source', 'band'), h('span', {}, src)));

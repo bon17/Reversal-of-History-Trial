@@ -99,8 +99,9 @@ img { -webkit-user-drag: none; }
 }
 /* 가로 화면에서는 대사창에 가리지 않게 출처 띠를 대사창 바로 위로 올린다 */
 .land #photo.with-box .caption { transform: translateY(calc(var(--u) * -236)); }
-/* 사진 위에 말하는 사람 얼굴이 나올 때는 얼굴(대사창 왼쪽 위의 동그라미)에 "출처" 글자가 가리지 않게 한 번 더 올린다 */
-.land #photo.with-box.faces .caption { transform: translateY(calc(var(--u) * -400)); }
+/* 사진 위에 말하는 사람 얼굴이 나올 때는 얼굴(대사창 왼쪽 위의 동그라미)에 "출처" 글자가 가리지 않게, 띠를 같은 높이에 두고 얼굴 오른쪽에서 시작한다
+   (예전에는 띠를 화면 가운데까지 올려서 어색했다) */
+.land #photo.with-box.faces .caption { left: max(calc(var(--u) * 196), calc(var(--u) * 40 + 62px)); }
 
 /* 2화: 비, 확대 화면, 🟩 초록빛 */
 #rain { z-index: 2; pointer-events: none; opacity: 0; transition: opacity 1s;
@@ -126,6 +127,7 @@ img { -webkit-user-drag: none; }
 }
 #cards .shown.slow { animation: cardIn 1.8s ease-out both; }
 #cards .shown.center { width: max(120px, calc(var(--u) * 360)); right: calc(var(--u) * 110); top: calc(var(--u) * 110); }
+#cards .shown.left { top: max(calc(var(--u) * 200), 50px); } /* 왼쪽 카드: 신뢰도 촛불(왼쪽 위) 아래에 */
 @keyframes cardIn { from { opacity: 0; transform: translateY(-10px) scale(.92); } to { opacity: 1; transform: none; } }
 #big img.stamp { inset: auto; right: calc(var(--u) * 60); top: calc(var(--u) * 520); width: max(70px, calc(var(--u) * 190)); height: auto; animation: shoutPop 1.2s both; }
 
@@ -162,6 +164,8 @@ img { -webkit-user-drag: none; }
 }
 #popup .thumb img { width: 100%; height: 100%; object-fit: contain; }
 #popup .thumb.photo img { object-fit: contain; }
+/* 실제 사진과 칸을 꽉 채우는 세로 사진(채움)은 칸 끝까지 차서 테두리를 덮으므로, 칸을 사방으로 조금 줄여 테두리 안쪽에 남색 여백을 둔다 */
+#popup .thumb.photo, #popup .thumb.fill, #popup .thumb.green.photo, #popup .thumb.green.fill { left: 7.1%; top: 40.3%; width: 12.8%; height: 17.8%; }
 #popup .source { position: absolute; inset: 0; transform: translateY(calc(var(--u) * -262)); }
 #popup .source .caption-band { position: absolute; inset: 0; width: 100%; height: 100%; }
 #popup .thumb .face { width: 100%; height: 100%; }
@@ -335,7 +339,7 @@ img { -webkit-user-drag: none; }
 .land.tight #text, .land.tight #text-measure { left: calc(var(--u) * 74); top: calc(var(--u) * 822); width: calc(var(--u) * 1392); height: calc(var(--u) * 180); line-height: 1.45; }
 .land.tight #box.skin-hint #text, .land.tight #box.skin-hint #text-measure,
 .land.tight #box.skin-tutorial #text, .land.tight #box.skin-tutorial #text-measure { left: calc(var(--u) * 370); top: calc(var(--u) * 796); width: calc(var(--u) * 1050); height: calc(var(--u) * 190); }
-.land #box.skin-hint #face { display: block; left: calc(var(--u) * 64); top: calc(var(--u) * 768); width: calc(var(--u) * 216); height: calc(var(--u) * 216); box-shadow: none; }
+.land #box.skin-hint #face { display: block; left: calc(var(--u) * 92); top: calc(var(--u) * 776); width: calc(var(--u) * 216); height: calc(var(--u) * 216); box-shadow: none; } /* window_hint 그림의 동그란 칸 안쪽(가로 92~307, 세로 437~651)에 아래로 339 내린 만큼 맞춘다 */
 .land #box.skin-tutorial #face { display: none; }
 
 .land #topbar { right: calc(var(--u) * 16); top: calc(var(--u) * 14); }
@@ -587,9 +591,15 @@ img { -webkit-user-drag: none; }
 .card { position: relative; aspect-ratio: 480 / 640; overflow: hidden; container-type: inline-size; }
 .card > .frame { position: absolute; left: -16.667%; top: 0; width: 133.333%; height: 100%; }
 .card .win { position: absolute; left: 9.4%; width: 81.2%; top: 25%; height: 38.3%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.card.card-green .win { left: 12.04%; width: 76.02%; top: 20.65%; height: 40.83%; } /* 초록 테두리(card_green)는 그림 창이 빨간 테두리보다 조금 위에 있고 좁다 (창: 가로 270~984, 세로 259~771 / 1254) */
 .card .win img { width: 100%; height: 100%; object-fit: contain; }
 /* 겹친 증거 그림 (지도 + 점): 두 장을 같은 자리에 포갠다 */
 .ev-stack { position: relative; width: 100%; height: 100%; }
+/* 사진 여러 장을 함께 (5화 신발과 가방 더미): 칸이 넓으면 옆으로, 좁으면 위아래로 나란히 */
+.ev-duo { width: 100%; height: 100%; container-type: size; }
+.ev-duo .duo-in { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 3px; background: #000; }
+@container (min-aspect-ratio: 3 / 2) { .ev-duo .duo-in { flex-direction: row; } }
+.ev-duo .duo-in > img { flex: 1 1 0; min-width: 0; min-height: 0; width: 100%; height: 100%; object-fit: cover !important; }
 .ev-stack > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .card .win.photo img { object-fit: cover; }
 .card .win .face { width: auto; height: 100%; aspect-ratio: 1; } /* 얼굴은 정사각형으로 가운데에 (칸이 옆으로 길어서 늘이면 얼굴이 반만 보인다) */
@@ -694,6 +704,11 @@ img { -webkit-user-drag: none; }
   animation: recallFace 2.8s ease-in-out both;
 }
 @keyframes recallFace { 0% { opacity: 0; transform: translateX(-5%) scale(1.05); } 30% { opacity: .85; } 65% { opacity: .85; } 100% { opacity: 0; transform: translateX(5%) scale(1); } }
+/* 마지막 얼굴: 나타난 뒤 그대로 남는다. 자막이 사라질 때 .out 으로 천천히 지운다 */
+.recall-faces .rf.hold { animation: recallFaceHold 1.8s ease-out both; }
+@keyframes recallFaceHold { 0% { opacity: 0; transform: translateX(-3%) scale(1.05); } 100% { opacity: .85; transform: none; } }
+.recall-faces { transition: opacity 1.4s; }
+.recall-faces.out { opacity: 0; }
 
 /* 세계 지도: 동아시아에서 세계로 넓어진다, 두 불길 */
 #closeup img.map-zoom { transform-origin: 0 0; opacity: 0; transition: opacity .6s; }
@@ -769,9 +784,10 @@ img { -webkit-user-drag: none; }
 .past-card .who { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .past-card .who small { color: #cdbf9a; font-size: 13px; }
 .past-card .face { width: 96px; height: 96px; border-radius: 50%; border: 3px solid var(--gold); background-color: #1c2a55; }
-.past-card .culprits { display: flex; gap: 6px; }
-.past-card .sil { width: 72px; height: 96px; overflow: hidden; border-radius: 12px 12px 0 0; background: radial-gradient(circle at 50% 40%, #3b3325, #14100a); border: 2px solid #6b5a3a; }
-.past-card .sil img { display: block; width: 150%; margin-left: -25%; margin-top: -6%; filter: brightness(0); opacity: .92; }
+.past-card .culprits { display: flex; gap: 8px; align-items: flex-end; }
+/* 진범 얼굴: 피고처럼 둥근 칸에 색으로. 최종 진범(맨 마지막)은 크게, 금색 테두리 */
+.past-card .cface { width: clamp(48px, 10vmin, 68px); height: clamp(48px, 10vmin, 68px); border-radius: 50%; border: 2px solid #8a7550; background-color: #1c2a55; }
+.past-card .cface.final { width: clamp(64px, 14vmin, 96px); height: clamp(64px, 14vmin, 96px); border: 3px solid var(--gold); }
 .past-card p { font-size: clamp(15px, 2.4vmin, 19px); line-height: 1.6; margin: 6px 0; word-break: keep-all; }
 .past-card p.ttl { text-align: center; font-size: clamp(18px, 3vmin, 24px); color: var(--gold-light); font-weight: 800; }
 .past-card .hl { color: var(--gold-light); font-weight: 800; }
