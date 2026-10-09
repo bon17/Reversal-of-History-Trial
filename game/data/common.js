@@ -128,7 +128,7 @@ DATA.컷 = {
   'backgrounds/cut_ep4_levi_family_photo': '레비 가족사진',
   'backgrounds/cut_ep4_s_compare': '밀고 편지의 S와 슈나이더 서명의 S',
   'backgrounds/cut_ep5_search_silhouette': '막사에서 가방을 뒤지는 경찰 실루엣',
-  'backgrounds/cut_ep5_watch_in_blanket': '담요에 싸인 금시계',
+  'backgrounds/cut_ep5_watch_in_blanket_last': '담요에 싸인 금시계',
   'backgrounds/cut_ep5_becker_hand_watch': '회중시계를 귀에 댄 베커의 손',
 };
 
