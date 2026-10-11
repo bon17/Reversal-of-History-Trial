@@ -29,9 +29,9 @@ const PHOTO_PNG = new Set(['ep4_schindler']);
 //   테두리: 투명한 곳에 바로 붙은 반투명 점의 색을 안쪽 이웃 점의 색으로 바꾼다 (흰 배경이 비쳐 밝게 남은 가는 테두리 없애기)
 const FRINGE = [
   [/^characters\/marta_cry\.png$/, { 아래: 395 }], // 4화 마르타 우는 모습: 머리 둘레의 흰 조각
-  [/^characters\/becker_/, { 아래: 400 }], // 5화 베커: 머리 둘레
-  [/^characters\/fritz_/, { 아래: 300 }], // 5화 프리츠: 머리 둘레
-  [/^characters\/jakob_/, { 아래: 300 }], // 5화 야코프: 머리 둘레
+  [/^characters\/becker_/, { 아래: 300 }], // 5화 베커: 머리 둘레 (목 뒤 흰 셔츠 깃이 y 333부터라 그 위까지만)
+  [/^characters\/fritz_/, { 아래: 300, 거리: 18 }], // 5화 프리츠: 머리 둘레 (머리 위 조각이 두꺼워 18점까지)
+  [/^characters\/jakob_/, { 아래: 300, 거리: 18 }], // 5화 야코프: 머리 둘레 (머리 위 조각이 두꺼워 18점까지)
   [/^characters\/david_/, { 아래: 330, 거리: 3, 밝기: 130, 선: false, 구멍: true, 테두리: true }], // 5화 다비드: 머리카락 끝의 밝은 테두리, 몸 둘레의 밝은 선, 팔과 몸 사이의 흰 틈
   [/^characters\/greycoat_silhouette\.png$/, { 아래: 0, 구멍: true }], // 5화 회색 외투의 남자: 두 다리 사이의 흰 틈
 ];
@@ -183,6 +183,7 @@ for (const t of todo) {
     // 2) 그 조각 바깥에 남는 3점 이하 두께의 가는 선도 함께 지운다 (투명한 곳과 지운 곳 사이에 낀 선. 선: false 이면 안 함)
     // 3) 구멍: 몸 안쪽에 갇힌 아주 흰 틈을 지운다
     // 4) 지운 곳 바로 옆 점은 조금 투명하게 해서 끝이 매끄럽게 한다
+    // 5) 지우고 나서 몸과 떨어져 떠 있는 아주 작은 점(60점 미만, 지운 곳 가까이)은 함께 지운다 (흰 조각을 둘렀던 검은 선의 부스러기)
     let fringed = 0;
     if (fringe) {
       const W = img.naturalWidth, H = img.naturalHeight, N = W * H;
@@ -258,6 +259,30 @@ for (const t of todo) {
             }
           }
           if (!touch && members.length >= 150 && sum / members.length >= 246) for (const p of members) clear[p] = 3;
+        }
+      }
+      // 몸과 떨어진 작은 부스러기: 지운 뒤에도 남는 불투명한 점들의 덩어리 가운데 작은 것
+      {
+        const left = (p) => !clear[p] && d[p * 4 + 3] >= 20;
+        const seen = new Uint8Array(N), stack = new Int32Array(N);
+        const dNear = distTo(clear);
+        for (let s0 = 0; s0 < N; s0++) {
+          if (seen[s0] || !left(s0)) continue;
+          let top = 0, near = false;
+          const members = [];
+          stack[top++] = s0; seen[s0] = 1;
+          while (top && members.length < 60) {
+            const p = stack[--top];
+            members.push(p);
+            if (dNear[p] <= 6) near = true;
+            const x = p % W;
+            for (const q of [x > 0 ? p - 1 : -1, x < W - 1 ? p + 1 : -1, p - W, p + W]) {
+              if (q < 0 || q >= N || seen[q] || !left(q)) continue;
+              seen[q] = 1; stack[top++] = q;
+            }
+          }
+          if (top === 0 && members.length < 60 && near) for (const p of members) clear[p] = 4;
+          while (top) { const p = stack[--top]; const x = p % W; for (const q of [x > 0 ? p - 1 : -1, x < W - 1 ? p + 1 : -1, p - W, p + W]) { if (q < 0 || q >= N || seen[q] || !left(q)) continue; seen[q] = 1; stack[top++] = q; } } // 큰 덩어리는 끝까지 표시만
         }
       }
       const dClear2 = distTo(clear);
