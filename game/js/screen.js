@@ -65,6 +65,7 @@
       this.hideCards();
       this.photo(null);
       this.heldPhoto(null);
+      this.releaseRecallFaces(true);
       this.calm(false);
       if (S.court) this.camera('전경');
       else {
@@ -177,26 +178,38 @@
 
     // 회상: 화면 가장자리가 흐려진다 (on) / 또렷해진다 (off)
     recall(on) {
+      if (!on) this.releaseRecallFaces();
       let v = $('.recall-veil', stage);
       if (on && !v) { v = h('div', { class: 'layer recall-veil' }); stage.append(v); requestAnimationFrame(() => requestAnimationFrame(() => v.classList.add('on'))); }
       if (!on && v) { v.classList.remove('on'); setTimeout(() => v.remove(), 1300); }
     },
     // 회상 속 얼굴이 차례로 스쳐 간다: [[인물, 표정], …]
+    // 얼굴 그림은 화면 너비의 약 61%라서, 왼쪽 끝 자리를 0~38% 안에 두어야 얼굴이 화면 밖으로 잘리지 않는다 (왼쪽, 오른쪽, 왼쪽, 가운데)
+    // 마지막 얼굴은 사라지지 않고 흐릿하게 남았다가, 바로 이어지는 자막("어쩔 수 없었다.")과 함께 천천히 사라진다 (releaseRecallFaces)
     async recallFaces(list) {
       G.box.hide();
+      this.releaseRecallFaces(true);
       const keys = list.map(([n, e]) => G.charKey(n, e));
       await G.preload(keys);
       const wrap = h('div', { class: 'layer recall-faces' });
       stage.append(wrap);
-      const xs = [18, 58, 30, 66];
+      const xs = [3, 35, 9];
       for (let i = 0; i < keys.length; i++) {
-        const im = G.imgEl(keys[i], 'rf');
-        im.style.left = xs[i % xs.length] + '%';
+        const last = i === keys.length - 1;
+        const im = G.imgEl(keys[i], 'rf' + (last ? ' hold' : ''));
+        im.style.left = (last ? 19.3 : xs[i % xs.length]) + '%';
         wrap.append(im);
-        await G.sleep(1150);
+        await G.sleep(last ? 1900 : 1150);
       }
-      await G.sleep(1900);
-      wrap.remove();
+    },
+    // 남겨 둔 회상 얼굴을 천천히 지운다 (now: 바로 지움)
+    releaseRecallFaces(now) {
+      stage.querySelectorAll('.recall-faces').forEach((w) => {
+        if (now) { w.remove(); return; }
+        if (w.classList.contains('out')) return;
+        w.classList.add('out');
+        setTimeout(() => w.remove(), 1500);
+      });
     },
 
     // 4화 지도: 동아시아 지도에서 세계 지도로 넓어진다. 자리 = 세계 지도(1536×1024) 안에서 동아시아 지도가 잘린 곳 [x, y, 너비]
@@ -337,10 +350,14 @@
     showCards(ids, opts = {}) {
       this.hideCards();
       const box = $('#cards');
+      // 3장 이상이면 오른쪽에 한 줄로 놓을 때 가운데 인물(재판장, 증인, 신중한)의 얼굴을 가리므로, 앞쪽 카드를 화면 왼쪽(신뢰도 촛불 아래)에 놓는다
+      // 3장: 왼쪽 1 + 오른쪽 2, 4장: 왼쪽 2 + 오른쪽 2. 왼쪽부터 차례로 읽힌다
+      const nLeft = !opts.center && ids.length >= 3 ? Math.floor(ids.length / 2) : 0;
       ids.forEach((id, i) => {
         const card = G.renderCard(id);
         card.classList.add('shown');
         if (opts.center) card.classList.add('center');
+        else if (i < nLeft) { card.classList.add('left'); card.style.left = 'calc(var(--u) * ' + (24 + i * 270) + ')'; }
         else card.style.right = 'calc(var(--u) * ' + (24 + (ids.length - 1 - i) * 270) + ')';
         if (opts.slow) card.classList.add('slow');
         box.append(card);
@@ -391,6 +408,7 @@
       for (const d of divs) { await G.sleep(250); d.classList.add('on'); await G.sleep(opts.크게 ? 1400 : 900); }
       await G.input.waitAdvance();
       divs.forEach((d) => d.classList.remove('on'));
+      this.releaseRecallFaces(); // 회상의 마지막 얼굴도 자막과 함께 사라진다
       await G.sleep(700);
       sub.innerHTML = '';
       if (opts.겹쳐) { this.blackout(false); await G.sleep(300); black.classList.remove('veil'); }
@@ -628,11 +646,11 @@
       const green = ev.색 === '초록';
       pop.innerHTML = '';
       pop.append(G.imgEl(green ? 'ui/popup_green_get' : 'ui/popup_evidence_get', 'band'));
-      const thumb = h('div', { class: 'thumb' + (ev.사진 ? ' photo' : '') + (green ? ' green' : '') });
+      const thumb = h('div', { class: 'thumb' + (ev.사진 ? ' photo' : '') + (ev.채움 ? ' fill' : '') + (green ? ' green' : '') });
       thumb.append(ev.그림 || ev.얼굴 ? G.cardInner(id) : h('div', { class: 'word' }, G.wordName(ev.이름)));
       pop.append(thumb);
       // 실제 사진은 출처 표기 띠를 함께 띄운다 (출처 문구가 없는 사진은 띠 없이)
-      const src = ev.사진 && G.sourceOf(ev);
+      const src = ev.사진 && G.sourcesAll(ev); // 사진이 여러 장이면 모두 보여 주므로 출처도 모두
       if (src) pop.append(h('div', { class: 'source' }, G.imgEl('ui/caption_source', 'caption-band'), h('span', { class: 'caption-text' }, src)));
       // 증거 갱신: 알림 위에 "갱신" 도장을 찍는다
       if (opts.updated) {

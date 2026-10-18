@@ -52,7 +52,8 @@
           h('div', { class: 'art-frame' }, G.imgEl('ui/title_part_bg', 'art'), text)));
       });
     },
-    // 지난 기록: 카드 한 장마다 피고 얼굴(색)과 진범 실루엣, 글 네 줄. [다음]으로 넘긴다
+    // 지난 기록: 카드 한 장마다 피고 얼굴과 진범 얼굴(모두 색), 글 네 줄. [다음]으로 넘긴다
+    // 진범은 대본에 적힌 순서대로 놓고, 맨 마지막 사람(최종 진범: 1화 모리 차관)을 크게, 금색 테두리로 보여 준다
     pastRecords(cards) {
       return new Promise((resolve) => {
         let i = 0;
@@ -61,7 +62,11 @@
           const c = cards[i];
           const face = h('div', { class: 'face' });
           G.applyFace(face, c.피고[0], c.피고[1]);
-          const culprits = h('div', { class: 'culprits' }, c.진범.map(([n, e]) => h('div', { class: 'sil' }, G.imgEl(G.charKey(n, e)))));
+          const culprits = h('div', { class: 'culprits' }, c.진범.map(([n, e], k) => {
+            const f = h('div', { class: 'cface' + (k === c.진범.length - 1 ? ' final' : '') });
+            G.applyFace(f, n, e);
+            return f;
+          }));
           const lines = c.글.map((t, k) => { const p = h('p', { class: k === 0 ? 'ttl' : null }); p.innerHTML = G.mdBold(t).replace(/<b>/g, '<span class="hl">').replace(/<\/b>/g, '</span>'); return p; });
           const last = i === cards.length - 1;
           const panel = h('div', { class: 'panel past-card' },

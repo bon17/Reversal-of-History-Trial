@@ -134,11 +134,17 @@
   };
 
   // 얼굴만 동그랗게 잘라 보여 주기 (인물 이야기 카드, 힌트 창, 화면 밖 인물)
-  G.applyFace = (el, name, expr) => {
+  // whole: 네모난 칸(증거 카드, 법정 기록 칸, 획득 알림)에서는 정수리가 잘려 보이지 않게, 머리 꼭대기(인물.머리)부터 턱 아래까지 넓게 자른다
+  G.applyFace = (el, name, expr, opts = {}) => {
     const c = DATA.인물[name];
     const key = G.charKey(name, expr);
     if (!c || !key) { el.style.backgroundImage = ''; return; }
-    const [cx, cy, r] = c.얼굴 || [512, 260, 180];
+    let [cx, cy, r] = c.얼굴 || [512, 260, 180];
+    if (opts.whole && c.머리 != null) {
+      const top = Math.max(0, c.머리 - 14), bottom = cy + r;
+      const r2 = Math.min(500, Math.max(r, (bottom - top) / 2));
+      cy = top + r2; r = r2;
+    }
     el.style.backgroundSize = (1024 / (2 * r)) * 100 + '%';
     el.style.backgroundPosition = ((cx - r) / (1024 - 2 * r)) * 100 + '% ' + ((cy - r) / (1024 - 2 * r)) * 100 + '%';
     el.style.backgroundRepeat = 'no-repeat';

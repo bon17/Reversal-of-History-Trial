@@ -41,7 +41,18 @@
 
   function oops(kind) { return kind === '일반' ? G.ep.오답.일반 : kind === '피해' ? G.ep.오답.피해 : kind; }
 
+  // 🟥 차분한 화면과 🟩 초록빛은 기록을 내놓은 신중한(과 자기 이야기를 하는 피고)이 말하는 동안만 둔다.
+  // 한나, 레테, 증인, 재판장처럼 다른 사람이 말하기 시작하면 그 대사부터 천천히 걷힌다 (흐려졌다가 다시 밝아지게)
+  function liftMood(name) {
+    if (name === '신중한') return;
+    const c = DATA.인물[name];
+    if (c && c.자리 === '피고석') return;
+    if (G.scene.calm) G.stage.calm(false);
+    G.stage.green(false);
+  }
+
   async function line(c) {
+    liftMood(c.말);
     // 보기: 말하는 사람 대신 다른 인물을 화면에 두고, 말하는 사람은 작은 얼굴로 보여 준다
     if (c.보기) { G.stage.showChar(c.보기, c.보기표정); G.box.face(c.말, c.표정); }
     else if ((G.scene.overlayFaces || G.scene.photoFaces) && DATA.인물[c.말]) G.box.face(c.말, c.표정); // 지도·사진이 화면을 덮고 있을 때
