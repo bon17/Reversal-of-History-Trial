@@ -177,15 +177,25 @@
   const audioExt = {}; // path → 찾은 주소, 또는 false(없음)
   // 한 파일짜리 게임은 소리도 파일 안에 넣을 수 있다 (window.EMBED_AUDIO: 'bgm/memory' → data: 주소, tools/embed_audio.mjs).
   // 처음 틀 때 blob 주소로 바꿔 둔다. 긴 data: 주소를 틀 때마다 다시 읽지 않게 하려는 것이다.
+  const embedBytes = {}; // 바로 틀 효과음의 파일 내용 { bytes, type }. Web Audio로 풀 때 다시 쓰므로 간직한다
+  function embeddedBytes(path) {
+    if (embedBytes[path]) return embedBytes[path];
+    const E = window.EMBED_AUDIO;
+    if (!E || !E[path] || !E[path].startsWith('data:')) return null;
+    const [head, b64] = E[path].split(',');
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const d = { bytes, type: head.slice(5).split(';')[0] };
+    if (quickPaths().has(path)) embedBytes[path] = d;
+    return d;
+  }
   function embeddedAudio(path) {
     const E = window.EMBED_AUDIO;
     if (!E || !E[path]) return null;
     if (E[path].startsWith('data:')) {
-      const [head, b64] = E[path].split(',');
-      const bin = atob(b64);
-      const bytes = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      E[path] = URL.createObjectURL(new Blob([bytes], { type: head.slice(5).split(';')[0] }));
+      const d = embeddedBytes(path);
+      E[path] = URL.createObjectURL(new Blob([d.bytes], { type: d.type }));
     }
     return E[path];
   }
@@ -208,6 +218,98 @@
       next();
     });
   }
+
+  // ── 바로 틀 효과음 (외침처럼 그림과 같은 순간에 나야 하는 소리. 목록은 DATA.소리.바로틀기) ──
+  // <audio>는 틀 때마다 파일을 새로 열고 풀어서, 그림이 뜬 뒤에 소리가 늦게 난다.
+  // 그래서 학생이 처음 화면을 누를 때 Web Audio로 미리 풀어 두었다가 그림과 함께 바로 튼다.
+  // 파일 앞의 소리 없는 부분도 건너뛴다 (그만큼 늦게 들리므로).
+  // 미리 풀지 못하면(폴더째 열어서 파일을 직접 읽을 수 없을 때 등) 미리 불러 둔 <audio>를 다시 쓴다.
+  let actx = null;
+  const buffers = {}; // path → { buf: 풀어 둔 소리, start: 소리가 시작되는 초 } 또는 false (푸는 중이면 Promise)
+  const spare = {}; // path → 미리 불러 둔 <audio>
+  function quickPaths() {
+    const S = window.DATA && DATA.소리;
+    return new Set(((S && S.바로틀기) || []).map((n) => S.효과음[n]).filter(Boolean));
+  }
+  function audioContext() {
+    if (actx) return actx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    try { actx = new AC(); } catch (e) { actx = null; }
+    return actx;
+  }
+  async function soundBytes(path) {
+    const d = embeddedBytes(path);
+    if (d) return d.bytes.slice().buffer; // decodeAudioData가 받은 것을 비워 버리므로 복사본을 넘긴다
+    if (location.protocol === 'file:' || audioExt[path] === false) return null; // 폴더째 열면 fetch로 파일을 읽을 수 없다
+    const tries = typeof audioExt[path] === 'string' ? [audioExt[path]] : ['mp3', 'ogg', 'wav', 'm4a'].map((x) => 'assets/audio/' + path + '.' + x);
+    for (const url of tries) {
+      try { const r = await fetch(url); if (r.ok) return await r.arrayBuffer(); } catch (e) {}
+    }
+    return null;
+  }
+  // 옛 사파리는 decodeAudioData가 Promise를 돌려주지 않아서 콜백으로 받는다
+  const decode = (c, data) => new Promise((ok, no) => { const r = c.decodeAudioData(data, ok, no); if (r && r.catch) r.catch(no); });
+  // 소리가 처음 시작되는 곳 (초). 아주 작은 소리(약 -40dB 아래)는 없는 것으로 보고, 첫머리가 잘리지 않게 0.01초 앞에서 튼다
+  function soundStart(buf) {
+    let first = buf.length;
+    for (let ch = 0; ch < buf.numberOfChannels; ch++) {
+      const x = buf.getChannelData(ch);
+      for (let i = 0; i < first; i++) if (Math.abs(x[i]) > 0.01) { first = i; break; }
+    }
+    return first >= buf.length ? 0 : Math.max(0, first / buf.sampleRate - 0.01);
+  }
+  function loadBuffer(path) {
+    if (path in buffers) return Promise.resolve(buffers[path]);
+    const c = audioContext();
+    if (!c) return Promise.resolve((buffers[path] = false));
+    buffers[path] = soundBytes(path)
+      .then((data) => (data ? decode(c, data) : null))
+      .then((buf) => (buf ? { buf, start: soundStart(buf) } : false), () => false)
+      .then((v) => (buffers[path] = v));
+    return buffers[path];
+  }
+  function readySpare(path) {
+    if (audioExt[path] === false) return;
+    const inFile = embeddedAudio(path);
+    const tries = audioExt[path] ? [audioExt[path]] : inFile ? [inFile] : ['mp3', 'ogg', 'wav', 'm4a'].map((x) => 'assets/audio/' + path + '.' + x);
+    const next = () => {
+      const url = tries.shift();
+      if (!url) return;
+      const a = new Audio();
+      a.preload = 'auto';
+      a.addEventListener('error', next, { once: true });
+      a.addEventListener('canplaythrough', () => { audioExt[path] = url; spare[path] = a; }, { once: true });
+      a.src = url;
+      a.load();
+    };
+    next();
+  }
+  // 미리 준비한 소리를 바로 튼다. 준비된 것이 없으면 null (그때는 예전처럼 <audio>를 새로 만들어 튼다)
+  function playQuick(path, volume) {
+    const v = Math.max(0, Math.min(1, volume));
+    const b = buffers[path];
+    if (b && b.buf && actx && actx.state === 'running') {
+      const src = actx.createBufferSource();
+      src.buffer = b.buf;
+      const g = actx.createGain();
+      g.gain.value = v;
+      src.connect(g);
+      g.connect(actx.destination);
+      src.start(0, b.start);
+      src.pause = () => { try { src.stop(); } catch (e) {} }; // 효과음 '멈춤'에서 <audio>와 똑같이 멈추게
+      return src;
+    }
+    const a = spare[path];
+    if (a && (a.paused || a.ended)) {
+      a.currentTime = 0;
+      a.volume = v;
+      a.play().catch(() => {});
+      return a;
+    }
+    return null;
+  }
+
   // '조사 테마 (잔잔하게)' → { 이름: '조사 테마', 꾸밈: '잔잔하게' }
   function splitName(table, full) {
     if (table[full]) return { 이름: full, 꾸밈: null };
@@ -245,10 +347,10 @@
       const vol = (꾸밈 && DATA.소리.꾸밈음량[꾸밈]) || 0.85;
       const times = 꾸밈 && /땅!\s*땅!/.test(꾸밈) ? 2 : 1;
       for (let i = 0; i < times; i++) {
-        const a = await playAudio(path, vol * G.settings.se, false);
+        const a = playQuick(path, vol * G.settings.se) || (await playAudio(path, vol * G.settings.se, false));
         if (!a) return;
         this.playing.add(a);
-        a.addEventListener('ended', () => this.playing.delete(a));
+        a.addEventListener('ended', () => this.playing.delete(a), { once: true });
         if (i < times - 1) await G.sleep(420);
       }
     },
@@ -267,6 +369,16 @@
       this.loopEl = a;
     },
     stopLoop() { this.loopName = null; if (this.loopEl) { this.loopEl.pause(); this.loopEl = null; } },
+    // 학생이 화면을 누를 때마다 부른다. 브라우저는 한 번 누른 뒤에야 소리를 내게 해 주므로,
+    // 이때 소리 장치(Web Audio)를 켜고, 처음 한 번은 바로 틀 효과음을 미리 풀어 둔다
+    unlock() {
+      const c = audioContext();
+      if (c && c.state !== 'running' && c.resume) { const r = c.resume(); if (r && r.catch) r.catch(() => {}); }
+      if (this.warmed) return;
+      this.warmed = true;
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {} // 아이폰 무음 스위치를 켜도 <audio>처럼 소리가 나게
+      quickPaths().forEach((path) => loadBuffer(path).then((b) => { if (!b) readySpare(path); }));
+    },
     blip() {
       // 대사 글자음 (파일이 있을 때만)
       const path = DATA.소리.효과음['대사 글자음'];
@@ -274,6 +386,8 @@
       else if (audioExt[path] === undefined && !this.probed) { this.probed = true; playAudio(path, 0, false); }
     },
   };
+  // 손가락으로 누르는 기기는 손을 뗄 때(pointerup, touchend) 소리 허락이 난다
+  ['pointerdown', 'pointerup', 'touchend', 'keydown'].forEach((t) => document.addEventListener(t, () => G.audio.unlock(), { capture: true, passive: true }));
 
   // ─────────── 저장 ───────────
   // 한 파일짜리 게임 1·2(tools/build_single_html.mjs)는 한 컴퓨터에서 저장소를 함께 쓰므로 진행 저장 자리를 나눈다.
