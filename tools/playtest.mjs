@@ -9,6 +9,8 @@
 //              아직 차례가 아닌 정답도 내 본다 (벌칙 없이 힌트가 나와야 한다)
 //   --fast N : 기다리는 시간을 1/N로 줄인다 (기본 8)
 //   --html 파일 : index.html 대신 HTML 한 파일(dist/…게임2.html)을 시험한다
+//   --rebuttal : 처음 화면의 [친구에게 답장하기]로 반박문 쓰기만 해 본다
+//   (반박문 쓰기는 두 번 쓴다: 기억 노트가 있는 학생 → [짝도 쓰기] → 기억 노트가 없는 학생. 구글 시트로 가는 요청은 가짜 응답으로 가로챈다)
 //   --start 막:명령 : 그 화의 이 자리부터 시작한다 (막은 0부터. 예: --from 6 --start 5:0). --fast 1 과 함께 쓰면 연출을 제 속도로 찍는다
 import { createRequire } from 'node:module';
 import http from 'node:http';
@@ -25,6 +27,7 @@ const PROBE = process.argv.includes('--probe');
 const PORTRAIT = process.argv.includes('--portrait');
 const HTML = arg('--html', null);
 const [SA, SC] = String(arg('--start', '0:0')).split(':').map(Number);
+const REBUTTAL_ONLY = process.argv.includes('--rebuttal');
 fs.mkdirSync(OUT, { recursive: true });
 
 // ─────────── 작은 정적 서버 ───────────
@@ -51,6 +54,17 @@ page.on('pageerror', (e) => logs.push('[pageerror] ' + e.message));
 const expected404 = (u) => /^\/(assets\/audio|game\/fonts)\//.test(decodeURIComponent(new URL(u).pathname));
 let quiet404 = 0;
 page.on('response', (r) => { if (r.status() >= 400) { if (expected404(r.url())) quiet404++; else logs.push('[' + r.status() + '] ' + decodeURIComponent(new URL(r.url()).pathname)); } });
+// 구글 시트(GAS)로 가는 요청: 실제 시트에 답이 쌓이지 않게 가짜로 답한다. 보낸 답은 모아서 끝에 보여 준다
+const sheetPosts = [];
+let sheetGets = 0;
+await page.route(/script\.google(usercontent)?\.com/, (route) => {
+  const req = route.request();
+  const cors = { 'access-control-allow-origin': '*', 'content-type': 'application/json' };
+  if (req.method() === 'POST') { sheetPosts.push(req.postData()); return route.fulfill({ status: 200, headers: cors, body: '{"ok":true}' }); }
+  sheetGets++;
+  const body = sheetGets === 1 ? { ok: true, 선택: '맞다, 어쩔 수 없었을 것 같다', 이유: '(시험) 명령이라서' } : { ok: true, 없음: true };
+  return route.fulfill({ status: 200, headers: cors, body: JSON.stringify(body) });
+});
 await page.goto(url);
 await page.waitForFunction(() => window.G && G.startGame && document.querySelector('.title-screen'), null, { timeout: 30000 });
 
@@ -175,12 +189,45 @@ await page.evaluate(({ FROM, FAST, PROBE }) => {
       if ($('.name-tag.on')) want.push('nametag_' + $('.name-tag b').textContent);
       if (shown($('#box.skin-hint')) || $('#box').classList.contains('skin-hint') && shown($('#box'))) want.push('hint');
       if (S.exploring) want.push('explore_' + S.exploring);
+      const rb = $('.rebuttal .panel');
+      if (rb) want.push('reb' + (T.reb ? T.reb.n : 0) + '_' + clean((rb.querySelector('.q') || {}).textContent || '').slice(0, 14) + (rb.querySelector('.ev-open') ? '_펼침' : '') + ($('.record') ? '_고르기' : ''));
       want.push('sec_' + G.play.section);
     } else {
       want.push('sec_' + G.ep.번호 + '_' + G.play.section);
     }
     for (const w of want) if (!T.shots.has(ep + w)) { T.shots.add(ep + w); return ep + w; }
     return null;
+  }
+
+  // 반박문 쓰기: 첫 학생은 메시지 ①(첫 증거), [짝도 쓰기] 뒤 둘째 학생은 메시지 ④(셋째 증거)
+  function rebuttalStep(top) {
+    const p = top.querySelector('.panel');
+    const R = (T.reb = T.reb || { n: 0 });
+    const by = (t) => [...p.querySelectorAll('button')].find((b) => b.textContent === t);
+    const k = R.n ? 3 : 0;
+    if (/불러오는 중|저장하는 중/.test(p.textContent)) return { did: 'reb-wait' };
+    if (by('짝도 쓰기')) {
+      if (R.n === 0) { R.n = 1; by('짝도 쓰기').click(); return { did: 'reb 짝도 쓰기' }; }
+      T.ended = true;
+      return { did: 'end', text: clean(p.textContent).slice(0, 160) };
+    }
+    const sels = p.querySelectorAll('select');
+    if (sels.length) {
+      sels[0].value = '2'; sels[1].value = String(7 + R.n);
+      p.querySelector('input.text').value = R.n ? '시험 짝' : '시험 학생';
+      by('다음').click();
+      return { did: 'reb 반·번호·이름' };
+    }
+    const opts = p.querySelectorAll('.opts button');
+    if (opts.length) { if (!p.querySelector('.opts button.on')) { opts[2].click(); return { did: 'reb 선택' }; } by('다음').click(); return { did: 'reb 다음' }; }
+    const picks = p.querySelectorAll('.chat-pick');
+    if (picks.length) { if (!picks[k].classList.contains('on')) { picks[k].click(); return { did: 'reb 메시지 ' + (k + 1) }; } by('다음').click(); return { did: 'reb 다음' }; }
+    if (by('증거 제시하기')) { T.want = { ev: DATA.ep6.반박문.메시지[k].증거[R.n ? 2 : 0], pick: true }; by('증거 제시하기').click(); return { did: 'reb 증거 고르기' }; }
+    if (p.querySelector('.ev-open') && by('다음')) { by('다음').click(); return { did: 'reb 다음' }; }
+    if (by('저장하기')) { const ins = p.querySelectorAll('input.text'); ins[0].value = '(시험) 증거가 보여 주는 사실'; ins[1].value = '(시험) 내 생각'; by('저장하기').click(); return { did: 'reb 저장' }; }
+    const inp = p.querySelector('input.text');
+    if (inp && by('다음')) { inp.value = '(시험) 지금 이유'; by('다음').click(); return { did: 'reb 이유' }; }
+    return { did: 'reb ?', text: clean(p.textContent).slice(0, 80), bad: true };
   }
 
   window.__step = () => {
@@ -211,7 +258,7 @@ await page.evaluate(({ FROM, FAST, PROBE }) => {
           return Object.assign(info, { did: 'zoom-close' });
         }
         const ev = G.ev[w.ev];
-        if (!ev || !P.evidence.includes(w.ev)) { close.click(); T.want = null; return Object.assign(info, { did: 'record-close(no evidence ' + w.ev + ')', bad: true }); }
+        if (!ev || (!w.pick && !P.evidence.includes(w.ev))) { close.click(); T.want = null; return Object.assign(info, { did: 'record-close(no evidence ' + w.ev + ')', bad: true }); }
         const nm = top.querySelector('.rname .nm');
         if (!nm || nm.textContent !== ev.이름) {
           const slot = [...top.querySelectorAll('.slot.item')].find((b) => b.getAttribute('aria-label') === ev.이름);
@@ -226,6 +273,7 @@ await page.evaluate(({ FROM, FAST, PROBE }) => {
         T.want = null;
         return Object.assign(info, { did: 'present ' + w.ev + (w.probe ? ' (' + w.probe + ')' : '') });
       }
+      if (c.contains('rebuttal')) return Object.assign(info, rebuttalStep(top));
       if (c.contains('episode-title')) { top.click(); return Object.assign(info, { did: 'episode-title' }); }
       if (c.contains('part-title')) { top.click(); return Object.assign(info, { did: 'part-title' }); }
       if (c.contains('history-card') || c.contains('table-screen') || c.contains('past-records')) { top.querySelector('.row .ui-btn').click(); return Object.assign(info, { did: 'continue' }); }
@@ -281,11 +329,16 @@ await page.evaluate(({ FROM, FAST, PROBE }) => {
 await page.evaluate((TO) => { window.__TO = TO; }, TO);
 
 // 시작
-await page.evaluate(([ep, a, c]) => {
-  document.getElementById('overlay').innerHTML = '';
-  G.ep = DATA['ep' + ep];
-  G.startGame({ 막: a, 명령: c });
-}, [FROM, SA, SC]);
+if (REBUTTAL_ONLY) {
+  await page.waitForFunction(() => [...document.querySelectorAll('.title-screen button')].some((b) => b.textContent === '친구에게 답장하기' && !b.disabled), null, { timeout: 30000 });
+  await page.evaluate(() => { G.ep = DATA.ep6; [...document.querySelectorAll('.title-screen button')].find((b) => b.textContent === '친구에게 답장하기').click(); });
+} else {
+  await page.evaluate(([ep, a, c]) => {
+    document.getElementById('overlay').innerHTML = '';
+    G.ep = DATA['ep' + ep];
+    G.startGame({ 막: a, 명령: c });
+  }, [FROM, SA, SC]);
+}
 
 const t0 = Date.now();
 let last = '', same = Date.now(), shots = 0;
@@ -315,6 +368,10 @@ console.log(`■ 신뢰도 감소 ${T.penalties}번, 재판 연기 ${T.postponed
 console.log(`■ 없는 그림: ${T.missing.length ? T.missing.join(', ') : '없음'}`);
 console.log(`■ 힌트 ${T.hints.length}번`);
 T.hints.forEach((h) => console.log('   ' + h));
+if (sheetPosts.length || sheetGets) {
+  console.log(`■ 구글 시트로 보낸 답 ${sheetPosts.length}건 (불러오기 ${sheetGets}번, 모두 가짜 응답으로 가로챔)`);
+  sheetPosts.forEach((b) => console.log('   ' + b));
+}
 const uniq = [...new Set(logs)];
 console.log(`■ 콘솔 경고·오류 ${uniq.length}가지 (아직 없는 소리·글꼴 파일 404 ${quiet404}번은 뺌)`);
 uniq.slice(0, 40).forEach((l) => console.log('   ' + l));
