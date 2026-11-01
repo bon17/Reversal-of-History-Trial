@@ -42,7 +42,7 @@
   const S = (G.scene = { bgName: null, court: false, seat: null, offscreen: [], char: null, expr: null, trial: false });
 
   function isOffscreen(name) {
-    const c = DATA.인물[name];
+    const c = G.who(name);
     if (!c) return true;
     const b = DATA.배경[S.bgName];
     if (b && b.그림 === null) return true; // 검은 화면에서는 아무도 서지 않는다
@@ -66,6 +66,7 @@
       this.photo(null);
       this.heldPhoto(null);
       this.releaseRecallFaces(true);
+      stage.querySelectorAll('.bricks, .montage').forEach((e) => e.remove()); // 6화 기억의 벽, 몽타주
       this.calm(false);
       if (S.court) this.camera('전경');
       else {
@@ -80,28 +81,30 @@
       this.green(false);
       G.box.face(null);
     },
-    camera(seat) {
+    // desk: 책상 앞그림을 이 그림으로 바꿔 보여 준다 (6화: 불 꺼진 방탄유리 부스)
+    camera(seat, desk) {
       const z = DATA.법정자리[seat];
       S.seat = seat;
       stage.dataset.seat = seat;
       G.setImg(bgEl, z.배경);
-      G.setImg(deskEl, z.책상);
+      G.setImg(deskEl, desk || z.책상);
     },
     // 말하는 사람을 화면에 맞게 보여 준다 (법정은 자리로 화면 전환, 화면 밖 인물은 얼굴만)
     speaker(name, expr) {
       // 이름만 있고 그림이 없는 말(목소리, 기록 자막 등)은 지금 화면을 그대로 둔다
-      if (!name || !DATA.인물[name]) { G.box.face(null); return; }
+      if (!name || !G.who(name)) { G.box.face(null); return; }
       if (isOffscreen(name)) { G.box.face(name, expr); return; }
       G.box.face(null);
       this.showChar(name, expr);
     },
     showChar(name, expr, opts = {}) {
       if (S.court) {
-        const seat = DATA.인물[name].자리;
+        const seat = G.seatOf(name);
         if (S.seat !== seat) this.camera(seat);
       }
       S.char = name; S.expr = expr;
       charEl.classList.remove('fade-out', 'back', 'fade-in', 'wobble');
+      charEl.classList.toggle('flip', !!(G.who(name) || {}).뒤집기); // 6화 하야시: 변호인석에서 신중한 옆에 설 때 그림을 좌우로 뒤집는다
       if (opts.fadeIn) { void charEl.offsetWidth; charEl.classList.add('fade-in'); }
       G.setImg(charEl, G.charKey(name, expr));
     },
@@ -152,8 +155,9 @@
     },
 
     // 4화 등장인물 이름표: 한글 이름 + 알파벳 (처음 나올 때 잠깐)
-    async nameTag([ko, en]) {
-      const t = h('div', { class: 'name-tag' }, h('b', {}, ko), en ? h('small', {}, en) : null);
+    // note: 이름 아래 한 줄 더 (6화: "1961년 예루살렘 재판 기록 속 인물", "3화에서 무죄를 받은 기자")
+    async nameTag([ko, en, note]) {
+      const t = h('div', { class: 'name-tag' }, h('b', {}, ko), en ? h('small', {}, en) : null, note ? h('small', { class: 'note' }, note) : null);
       stage.append(t);
       requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('on')));
       await G.sleep(1300);
@@ -202,6 +206,55 @@
         await G.sleep(last ? 1900 : 1150);
       }
     },
+    // 6화 몽타주: 어두운 화면에 얼굴(한 줄에 여럿일 수 있다)과 글이 한 줄씩 차례로 떠올랐다가 사라진다. 마지막 줄은 누를 때까지 남는다
+    // list: [{ 얼굴: [[이름, 표정], …], 글 }]
+    async montage(list) {
+      G.box.hide();
+      const keys = list.flatMap((m) => m.얼굴.map(([n, e]) => G.charKey(n, e)));
+      await G.preload(keys);
+      const wrap = h('div', { class: 'layer montage' });
+      stage.append(wrap);
+      requestAnimationFrame(() => requestAnimationFrame(() => wrap.classList.add('on')));
+      await G.sleep(700);
+      for (const [k, m] of list.entries()) {
+        const faces = h('div', { class: 'm-faces' }, m.얼굴.map(([n, e]) => { const f = h('div', { class: 'm-face' }); G.applyFace(f, n, e); return f; }));
+        const cap = h('div', { class: 'm-cap' });
+        cap.innerHTML = G.mdBold(m.글);
+        const row = h('div', { class: 'm-row' }, faces, cap);
+        wrap.append(row);
+        requestAnimationFrame(() => requestAnimationFrame(() => row.classList.add('on')));
+        if (k < list.length - 1) {
+          await G.sleep(2600);
+          row.classList.remove('on');
+          await G.sleep(600);
+          row.remove();
+        }
+      }
+      await G.sleep(900);
+      await G.input.waitAdvance();
+      wrap.classList.remove('on');
+      await G.sleep(800);
+      wrap.remove();
+    },
+
+    // 6화 기억의 벽: 이름이 새겨진 벽돌이 하나씩 날아와 쌓인다 (글: "이름 · 이름 · …"). 다음 배경이 나올 때까지 남는다
+    async bricks(text) {
+      G.box.hide();
+      await G.preload(['backgrounds/cut_ep6_wall_bricks']);
+      const url = await G.loadImg('backgrounds/cut_ep6_wall_bricks');
+      const wall = h('div', { class: 'layer bricks' });
+      stage.append(wall);
+      for (const name of text.split(/\s*·\s*/)) {
+        const b = h('div', { class: 'brick' + (name.length > 9 ? ' long' : '') }, h('span', {}, name));
+        if (url) b.style.backgroundImage = 'url("' + url + '")';
+        wall.append(b);
+        requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('on')));
+        await G.sleep(750);
+      }
+      await G.sleep(600);
+      await G.input.waitAdvance();
+    },
+
     // 남겨 둔 회상 얼굴을 천천히 지운다 (now: 바로 지움)
     releaseRecallFaces(now) {
       stage.querySelectorAll('.recall-faces').forEach((w) => {

@@ -58,6 +58,10 @@ DATA.인물 = {
   '프리츠':  { 파일: 'fritz',  자리: '증언대', 얼굴: [512, 182, 150], 머리: 11 },
   '야코프':  { 파일: 'jakob',  자리: '증언대', 얼굴: [512, 172, 150], 머리: 11 },
   '회색 외투의 남자': { 파일: 'greycoat', 자리: '증언대', 얼굴: [512, 150, 120] }, // 말하지 않는다. 야코프의 이야기 동안 실루엣으로만 선다
+  // 6화 (6화에서만 자리가 바뀌는 한나·하야시·다비드는 game/data/ep6.js 의 인물 표에 적는다)
+  '아이히만': { 파일: 'eichmann', 자리: '방탄유리 부스', 얼굴: [502, 190, 150], 머리: 20 },
+  '히틀러':   { 파일: 'hitler',   자리: '증언대', 얼굴: [502, 350, 110], 머리: 219 }, // 흑백, 의자에 앉은 작은 모습 (그림 안에서 작게)
+  '크라우제': { 파일: 'krause',   자리: '증언대', 얼굴: [498, 185, 150], 머리: 19 },
 };
 
 // 대본 반대 심문 표에서 줄여 쓴 이름 → 인물 이름
@@ -70,6 +74,8 @@ DATA.법정자리 = {
   '증언대':   { 배경: 'backgrounds/court_witness',    책상: 'backgrounds/court_witness_desk' },
   '피고석':   { 배경: 'backgrounds/court_defendant',  책상: 'backgrounds/court_defendant_desk' },
   '재판장석': { 배경: 'backgrounds/court_judge',      책상: null },
+  // 6화 아이히만: 증언대 배경 앞에 방탄유리 부스 앞틀을 겹친다 (유리 칸은 반투명. 부스 그림에서 유리만 옅게 만든 그림)
+  '방탄유리 부스': { 배경: 'backgrounds/court_witness', 책상: 'backgrounds/cut_ep6_glass_booth_front' },
   '전경':     { 배경: 'backgrounds/court_wide',       책상: null },
 };
 
@@ -111,6 +117,14 @@ DATA.배경 = {
   '전쟁 뒤의 난민 수용소': { 그림: 'backgrounds/ep5_refugee_camp_outside' },
   '난민 수용소 사무실':   { 그림: 'backgrounds/ep5_refugee_office' },
   '피고석 (어둡게)':      { 그림: 'backgrounds/court_defendant', 책상: 'backgrounds/court_defendant_desk' }, // 증언 듣기: 법정 밖 배경으로 두어 다비드만 비추고, 재판장은 얼굴로
+  // 6화
+  '1961년 예루살렘의 법정': { 그림: 'backgrounds/ep6_jerusalem_court' },
+  '예루살렘 법정 기자석':  { 그림: 'backgrounds/ep6_press_seats' },
+  '증거 보관실':           { 그림: 'backgrounds/ep6_evidence_room' },
+  '베를린의 기록 보관소':  { 그림: 'backgrounds/ep6_berlin_archive' },
+  '기억의 법정 기록 보관함': { 그림: 'backgrounds/ep6_record_drawers' },
+  '방청석 (어둡게)':       { 그림: 'backgrounds/court_wide' }, // 증언 듣기: 법정 밖 배경으로 두어 1961년의 다비드만 비춘다 ({ 연출: '어둡게' })
+  '기억의 벽':             { 그림: 'backgrounds/ep6_memory_wall' },
   '검은 화면':           { 그림: null },
 };
 
@@ -131,6 +145,7 @@ DATA.컷 = {
   'backgrounds/cut_ep5_search_silhouette': '막사에서 가방을 뒤지는 경찰 실루엣',
   'backgrounds/cut_ep5_watch_in_blanket': '담요에 싸인 금시계',
   'backgrounds/cut_ep5_becker_hand_watch': '회중시계를 귀에 댄 베커의 손',
+  'backgrounds/cut_ep6_eichmann_glasses': '안경을 닦는 아이히만',
 };
 
 // 소리: 대본의 이름 → 파일 (assets/audio/ 아래, 확장자 없이).
@@ -205,6 +220,15 @@ DATA.소리 = {
     '회중시계 째깍 소리': 'se/watch_tick',
     '시계의 째깍 소리': 'se/watch_tick',
     '급한 발소리': 'se/footsteps_hurry',
+    // 6화
+    '기록 상자 여는 소리': 'se/box_open',
+    '타자기 소리': 'se/typewriter',
+    '수군거리는 소리': 'se/whisper',
+    '카메라 셔터 소리': 'se/camera_shutter',
+    '오래된 필름이 돌아가는 소리': 'se/film_reel',
+    '낮게 울리는 소리': 'se/low_drone', // 히틀러가 나오는 동안 음악 대신 (웅장한 음악은 쓰지 않는다)
+    '의자 끄는 소리': 'se/chair_scrape',
+    '붉은 줄 긋는 소리': 'se/red_line', // 깨진 증언 문장에 붉은 줄을 그을 때 (대본 정리표 「새로 필요한 효과음」)
   },
   // 이름 뒤 괄호 속 꾸밈말 → 음량 (0~1). 따로 된 음악 파일이 생기면 위 표에 이름을 더하면 된다.
   꾸밈음량: {
@@ -213,5 +237,6 @@ DATA.소리 = {
     '느림, 낮게': 0.5, '초록빛 연출': 0.9,
     '아주 작게': 0.3, '다시, 아주 작게': 0.3, '아주 작게, 반복': 0.3,
     '작게': 0.4, '하나만, 작게': 0.4,
+    '마지막 소절': 0.7, '멀리서 울리듯': 0.45, '작게, 한 번': 0.4, '한 번, 조용하게': 0.45,
   },
 };

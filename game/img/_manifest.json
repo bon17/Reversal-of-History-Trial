@@ -3694,5 +3694,461 @@
    1536,
    1024
   ]
+ },
+ "backgrounds/cut_ep6_eichmann_glasses.png": {
+  "hash": "1de74707ad6066e0",
+  "webp": "backgrounds/cut_ep6_eichmann_glasses.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep6_glass_booth_off.png": {
+  "hash": "61f1b61fb70589f7",
+  "webp": "backgrounds/cut_ep6_glass_booth_off.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep6_glass_booth_on.png": {
+  "hash": "a430222eaf51d327",
+  "webp": "backgrounds/cut_ep6_glass_booth_on.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep6_wall_bricks.png": {
+  "hash": "298803e2e8fa45a7",
+  "webp": "backgrounds/cut_ep6_wall_bricks.webp",
+  "size": [
+   1024,
+   512
+  ],
+  "source": [
+   1024,
+   512
+  ]
+ },
+ "backgrounds/ep6_berlin_archive.png": {
+  "hash": "6c8a1b17400b40bb",
+  "webp": "backgrounds/ep6_berlin_archive.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep6_evidence_room.png": {
+  "hash": "6db70b458362ca53",
+  "webp": "backgrounds/ep6_evidence_room.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep6_jerusalem_court.png": {
+  "hash": "a333c0d65cfe0f6d",
+  "webp": "backgrounds/ep6_jerusalem_court.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep6_memory_wall.png": {
+  "hash": "aeec5a70f44f616d",
+  "webp": "backgrounds/ep6_memory_wall.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep6_press_seats.png": {
+  "hash": "3b55a77f5ad6c211",
+  "webp": "backgrounds/ep6_press_seats.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "backgrounds/ep6_record_drawers.png": {
+  "hash": "ee32072191235385",
+  "webp": "backgrounds/ep6_record_drawers.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "characters/david1961_determined.png": {
+  "hash": "eaa2723c5ba2c2d3",
+  "webp": "characters/david1961_determined.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/david1961_sad.png": {
+  "hash": "9541e6a1ee440a2d",
+  "webp": "characters/david1961_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/eichmann_blank.png": {
+  "hash": "8bf476ffce315c06",
+  "webp": "characters/eichmann_blank.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/eichmann_default.png": {
+  "hash": "cd248c37a5bd44cf",
+  "webp": "characters/eichmann_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/eichmann_flustered.png": {
+  "hash": "b4ebdc6fa8b038f3",
+  "webp": "characters/eichmann_flustered.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/eichmann_stiff.png": {
+  "hash": "049f4e447f883efc",
+  "webp": "characters/eichmann_stiff.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hitler_blank.png": {
+  "hash": "6b04a565835c45bd",
+  "webp": "characters/hitler_blank.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/hitler_stiff.png": {
+  "hash": "cf3023aeedaa5858",
+  "webp": "characters/hitler_stiff.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/krause_anguish.png": {
+  "hash": "52e871b37f2662c7",
+  "webp": "characters/krause_anguish.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/krause_default.png": {
+  "hash": "6e0d582eeee95a07",
+  "webp": "characters/krause_default.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "characters/krause_sad.png": {
+  "hash": "b6e357837549327d",
+  "webp": "characters/krause_sad.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "source": [
+   1254,
+   1254
+  ]
+ },
+ "evidence/ep6_1939_speech.png": {
+  "hash": "a8a2c249ac66c20d",
+  "webp": "evidence/ep6_1939_speech.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_battalion101.png": {
+  "hash": "3f583dd57d56a584",
+  "webp": "evidence/ep6_battalion101.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_eichmann_trial_witness.jpg": {
+  "hash": "2cf0e8e84c086549",
+  "webp": "evidence/ep6_eichmann_trial_witness.webp",
+  "size": [
+   1024,
+   732
+  ],
+  "source": [
+   1024,
+   732
+  ]
+ },
+ "evidence/ep6_enabling_act.png": {
+  "hash": "c0b5d97337ba6d73",
+  "webp": "evidence/ep6_enabling_act.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_hanna_article.png": {
+  "hash": "4c9508de02c22aed",
+  "webp": "evidence/ep6_hanna_article.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_hanna_notebook.png": {
+  "hash": "2cd96e46a503798a",
+  "webp": "evidence/ep6_hanna_notebook.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_hungary_transport.png": {
+  "hash": "2dbc2d62d59ce61a",
+  "webp": "evidence/ep6_hungary_transport.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_irving_verdict.png": {
+  "hash": "8f0f98f2793aa911",
+  "webp": "evidence/ep6_irving_verdict.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_nazi_economy.png": {
+  "hash": "dd8420da0537e173",
+  "webp": "evidence/ep6_nazi_economy.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_nero_order.png": {
+  "hash": "d12b921f950ba9ce",
+  "webp": "evidence/ep6_nero_order.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_order_search_result.png": {
+  "hash": "4d9968221a010818",
+  "webp": "evidence/ep6_order_search_result.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_t4_order.jpg": {
+  "hash": "3317dff4ea45fad8",
+  "webp": "evidence/ep6_t4_order.webp",
+  "size": [
+   546,
+   800
+  ],
+  "source": [
+   546,
+   800
+  ]
+ },
+ "evidence/ep6_t4_order_zoom.jpg": {
+  "hash": "9bce1a9aef12dcd8",
+  "webp": "evidence/ep6_t4_order_zoom.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
+ },
+ "evidence/ep6_textbook_change.png": {
+  "hash": "ed19b9df17cbe785",
+  "webp": "evidence/ep6_textbook_change.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_wannsee.png": {
+  "hash": "ccb35c4259ea524a",
+  "webp": "evidence/ep6_wannsee.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "evidence/ep6_wisliceny.png": {
+  "hash": "9dcc6f1b18254c31",
+  "webp": "evidence/ep6_wisliceny.webp",
+  "size": [
+   768,
+   768
+  ],
+  "source": [
+   1024,
+   1024
+  ]
+ },
+ "backgrounds/cut_ep6_glass_booth_front.png": {
+  "hash": "b48b9b7dfb9e3b2f",
+  "webp": "backgrounds/cut_ep6_glass_booth_front.webp",
+  "size": [
+   1536,
+   1024
+  ],
+  "source": [
+   1536,
+   1024
+  ]
  }
 }

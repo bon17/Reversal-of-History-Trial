@@ -867,3 +867,43 @@ img { -webkit-user-drag: none; }
   .history-card .panel p { font-size: 13px; line-height: 1.45; margin: 4px 0; }
   .history-card .panel .row { margin-top: 8px; }
 }
+
+/* ─────────── 6화 ─────────── */
+/* 하야시: 변호인석에서 신중한 옆에 설 때 그림을 좌우로 뒤집는다 (transform을 쓰는 등장·흔들림 효과와 겹치지 않게 scale로) */
+#char.flip { scale: -1 1; }
+/* 방탄유리 부스 (아이히만): 증언대 배경 앞에 부스 앞틀(유리는 반투명, cut_ep6_glass_booth_front)을 겹친다.
+   유리 칸(y 7%~58%) 너머로 머리부터 서류를 든 손까지 보이게 조금 작게 세운다 */
+#stage[data-seat="방탄유리 부스"] #char { left: 26.667%; width: 46.667%; top: 9%; height: 70%; }
+/* 깨진 증언 문장: 붉은 줄 (절반만 깨졌을 때는 점선) */
+.cross-text.struck { text-decoration: line-through; text-decoration-color: #e0413a; text-decoration-thickness: .14em; }
+.cross-text.struck.half { text-decoration-style: dashed; }
+/* 유죄 (6화 히틀러): 나누지 않고 한 번에 조용히 */
+#big .verdict-quiet { animation: fadeIn 2.4s ease-out both; }
+/* 이름표 아래 한 줄 더 */
+.name-tag small.note { font-family: inherit; font-style: normal; letter-spacing: 0; }
+
+/* 몽타주: 어두운 화면에 얼굴과 글이 한 줄씩 */
+.montage { z-index: 12; background: rgba(0, 0, 0, .86); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .8s; pointer-events: none; }
+.montage.on { opacity: 1; }
+.montage .m-row { position: absolute; display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 36); opacity: 0; transform: translateY(2%); transition: opacity .9s, transform .9s; width: 100%; }
+.montage .m-row.on { opacity: 1; transform: none; }
+.montage .m-faces { display: flex; gap: calc(var(--u) * 40); justify-content: center; }
+.montage .m-face { width: calc(var(--u) * 300); height: calc(var(--u) * 300); border-radius: 50%; filter: sepia(.6) grayscale(.35); box-shadow: 0 0 calc(var(--u) * 40) rgba(0, 0, 0, .6); }
+.montage .m-cap { color: #eee; font-size: max(16px, calc(var(--u) * 48)); text-align: center; padding: 0 6%; word-break: keep-all; line-height: 1.5; }
+.montage .m-cap b { color: var(--gold-light); font-weight: 800; }
+
+/* 기억의 벽: 이름이 새겨진 벽돌 (cut_ep6_wall_bricks, 1024×512 안에 벽돌 하나) */
+.bricks { z-index: 6; display: flex; flex-wrap: wrap; align-content: flex-start; justify-content: center; gap: calc(var(--u) * 6) calc(var(--u) * 10); padding: 4% 6% 0; pointer-events: none; }
+.bricks .brick { width: calc(var(--u) * 430); aspect-ratio: 2 / 1; background: center / 100% 100% no-repeat; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(-40%) scale(1.2); transition: opacity .6s, transform .6s cubic-bezier(.2, 1.3, .5, 1); }
+.bricks .brick.on { opacity: 1; transform: none; }
+.bricks .brick span { color: #2e1c10; font-weight: 800; font-size: max(11px, calc(var(--u) * 36)); text-shadow: 0 1px 0 rgba(255, 230, 200, .35); text-align: center; padding: 0 12%; word-break: keep-all; line-height: 1.2; }
+.bricks .brick.long span { font-size: max(10px, calc(var(--u) * 28)); }
+
+/* 표 화면 (두 나라의 결말) */
+.table-screen .panel { max-width: min(920px, 96vw); }
+.table-screen .tbl-wrap { overflow-x: auto; }
+.table-screen table { border-collapse: collapse; width: 100%; font-size: clamp(13px, 2.1vmin, 18px); line-height: 1.5; }
+.table-screen th, .table-screen td { border: 1px solid rgba(255, 226, 154, .35); padding: .55em .7em; vertical-align: top; text-align: left; }
+.table-screen thead th { text-align: center; color: var(--gold-light); }
+.table-screen tbody th { color: var(--gold-light); white-space: nowrap; }
+.table-screen .hl { color: var(--gold-light); font-weight: 800; }

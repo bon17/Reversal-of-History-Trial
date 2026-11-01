@@ -45,8 +45,7 @@
   // 한나, 레테, 증인, 재판장처럼 다른 사람이 말하기 시작하면 그 대사부터 천천히 걷힌다 (흐려졌다가 다시 밝아지게)
   function liftMood(name) {
     if (name === '신중한') return;
-    const c = DATA.인물[name];
-    if (c && c.자리 === '피고석') return;
+    if (G.seatOf(name) === '피고석') return;
     if (G.scene.calm) G.stage.calm(false);
     G.stage.green(false);
   }
@@ -55,9 +54,10 @@
     liftMood(c.말);
     // 보기: 말하는 사람 대신 다른 인물을 화면에 두고, 말하는 사람은 작은 얼굴로 보여 준다
     if (c.보기) { G.stage.showChar(c.보기, c.보기표정); G.box.face(c.말, c.표정); }
-    else if ((G.scene.overlayFaces || G.scene.photoFaces) && DATA.인물[c.말]) G.box.face(c.말, c.표정); // 지도·사진이 화면을 덮고 있을 때
+    else if ((G.scene.overlayFaces || G.scene.photoFaces) && G.who(c.말)) G.box.face(c.말, c.표정); // 지도·사진이 화면을 덮고 있을 때
     else G.stage.speaker(c.말, c.표정);
     await G.box.say({ 이름: c.말, 글: c.대사, cls: c.cls });
+    P.lastLine = c; // 증언 없이 증거만 내는 단계에서, 앞에 따로 주장이 없으면 바로 앞 대사를 띄운다 (6화)
     if (P.cardsAfterLine) { G.stage.hideCards(); P.cardsAfterLine = false; }
   }
 
@@ -158,10 +158,28 @@
       case '훑어보기': await G.stage.pan(c.훑어보기); return; // 그림 한 장을 크게 띄우고 몇 곳을 차례로 확대한다
       case '종이': await G.stage.paper(c.종이, c); return;
       case '재판': G.scene.trial = c.재판 === '시작'; G.stage.gauge(G.scene.trial); if (G.scene.trial) { P.gauge = 5; G.stage.updateGauge(); } return;
-      case '판결': await verdict(); return;
+      case '판결': await verdict(c.판결); return;
       case '기록카드': await G.screens.historyCard(c.기록카드); return;
       case '다음화': await G.screens.nextEpisode(c.다음화); throw new Quit();
-      case '증언': await testimony(c.증언); return;
+      case '증언': await (c.증언.깨기 ? testimonyBreak(c.증언) : testimony(c.증언)); return;
+      // ── 6화에서 더한 연출 ──
+      case '증언추가': await addStatement(c.증언추가); return; // 추궁이나 정답 장면에서 숨겨 둔 문장(3-1)이 증언에 더해진다
+      case '붉은줄': await strikeStatement(c); return; // 깨진 문장에 붉은 줄을 긋는다 (절반: 반만)
+      case '꺼내기': { // 기록 보관함의 🟩 기록을 다시 꺼내 법정 기록에 넣는다
+        G.box.hide();
+        G.stage.green(true);
+        c.꺼내기.forEach(gain);
+        G.stage.showCards(c.꺼내기, { center: true, slow: true });
+        await G.sleep(2800);
+        G.stage.hideCards();
+        G.stage.green(false);
+        return;
+      }
+      case '카메라': G.box.hide(); G.stage.hideChar(true); G.stage.camera(c.카메라, c.책상); await G.sleep(c.대기 || 900); return; // 법정의 한 자리를 사람 없이 비춘다 (책상: 앞그림을 바꿔서)
+      case '몽타주': await G.stage.montage(c.몽타주); return; // 얼굴과 글이 차례로 떠오른다 (진범들)
+      case '벽돌': await G.stage.bricks(c.벽돌); return; // 기억의 벽: 이름이 새겨진 벽돌이 하나씩 쌓인다
+      case '표': await G.screens.table(c.표); return;
+      case '반박문': await G.screens.rebuttal(); throw new Quit(); // 게임 2 끝의 반박문 쓰기 (아직 화면이 없으면 안내만)
       case '반격': await counter(c.반격); return;
       case '조사파트': await explore(c.조사파트); return;
       default: console.warn('[모르는 명령]', c);
@@ -239,8 +257,18 @@
     return ev;
   }
 
-  async function verdict() {
+  async function verdict(kind = '무죄') {
     G.box.hide();
+    if (kind === '유죄') { // 6화 히틀러: 나누지 않고 한 번에 조용히 띄운다 (통쾌한 장면처럼 보이지 않게)
+      await G.preload(['ui/text_guilty']);
+      const el = G.imgEl('ui/text_guilty', 'verdict-quiet');
+      $('#big').append(el);
+      await G.sleep(1800);
+      await G.input.waitAdvance();
+      el.remove();
+      return;
+    }
+    if (kind !== '무죄') { await G.stage.subtitle(['**' + kind + '**'], { 크게: true }); return; } // 글로 띄우는 판결 (6화: 1961년 예루살렘 판결은 옳았다)
     const big = $('#big');
     const a = G.imgEl('ui/text_not_guilty_1', 'verdict-l');
     const b = G.imgEl('ui/text_not_guilty_2', 'verdict-r');
@@ -320,7 +348,7 @@
       const text = revised[i] || st.글;
       G.stage.speaker(T.증인, expr());
       G.box.showStatic({ 이름: T.증인, 글: text, cls: 'cross-text', glow: !!(st.반짝임 && !revised[i]) });
-      const act = await crossAction(i, n, T);
+      const act = await crossAction((i + 1) + ' / ' + n, T);
       if (act === 'prev') { i = (i - 1 + n) % n; continue; }
       if (act === 'next') { i = (i + 1) % n; continue; }
       if (act === 'press') {
@@ -398,7 +426,151 @@
     s.remove();
   }
 
-  function crossAction(i, n, T) {
+  // ─────────── 6화: 문장을 하나씩 깨는 증언 ───────────
+  // T.깨기: 깨야 할 것의 목록. 하나마다
+  //   문장: 깰 문장 번호 (1, '3-1', 또는 [3, 4]처럼 여럿 중 아무 데나), 증거: 정답 증거 (여럿이면 그중 아무거나)
+  //   정답장면, 힌트, 힌트숨김: 깰 문장이 아직 숨어 있을 때의 힌트 (6화 증언 1의 "추가 전")
+  //   증언없이: 반대 심문 없이 증거만 고른다 (주장 대사는 앞 또는 바로 앞에 나온 대사), 앞: 그 전에 나오는 장면
+  //   마지막: 다른 것을 모두 깬 뒤에야 차례가 온다 (6화 증언 4의 4번), 이어서: 이것을 깨면 바로 이어지는 다음 단계
+  // 문장의 번호: 따로 적은 번호(번호: '3-1')가 있으면 그것, 없으면 1부터 차례로. 숨김: true 인 문장은 { 증언추가 } 명령으로 나타난다.
+  // 깨는 순서는 자유롭다 (6화 증언 2: 네 문장을 어떤 순서로 깨도 된다).
+  function statementIds(T) {
+    let n = 0;
+    return T.문장.map((st) => (st.번호 != null ? String(st.번호) : String(++n)));
+  }
+
+  async function testimonyBreak(T) {
+    const ids = statementIds(T);
+    const tm = (P.tm = { T, ids, shown: new Set(ids.filter((id, k) => !T.문장[k].숨김)), struck: {}, jump: null });
+    const chains = T.깨기.map((g) => { const out = []; for (let s = g; s; s = s.이어서) out.push(s); return out; });
+    const pos = chains.map(() => 0);
+    const done = (k) => pos[k] >= chains[k].length;
+    const cur = (k) => chains[k][pos[k]];
+    const targets = (s, k) => [].concat(s.문장 != null ? s.문장 : chains[k][0].문장).map(String); // 증언없이 단계는 처음 단계의 문장을 따른다
+    const evs = (s) => [].concat(s.증거);
+    const visible = () => ids.filter((id) => tm.shown.has(id));
+    const stOf = (id) => T.문장[ids.indexOf(id)];
+    const hintOf = (s, k) => (s.힌트숨김 && targets(s, k).every((id) => !tm.shown.has(id)) ? s.힌트숨김 : s.힌트);
+    let state = { wrong: 0 };
+
+    // 증언 개시
+    G.stage.speaker(T.증인, T.표정);
+    G.box.hide();
+    await G.stage.big('ui/text_testimony_start', 'fadehold', 1700);
+    for (const id of visible()) {
+      const st = stOf(id);
+      G.stage.speaker(T.증인, T.표정);
+      await G.box.say({ 이름: T.증인, 글: strip(st.낭독 || st.글) });
+    }
+    await runList(T.증언후);
+    await runList(T.반대심문전);
+    const crossBgm = G.audio.current;
+    let restoreBgm = false;
+
+    let i = 0;
+    for (;;) {
+      // 증언 없이 증거만 고르는 단계가 차례가 되면 바로 한다
+      // (깬 단계에 이어지는 단계는 곧바로, 마지막 단계는 다른 것을 모두 깬 뒤)
+      if (chains.every((c, j) => done(j))) break; // 모두 깼다
+      let k = chains.findIndex((c, j) => !done(j) && cur(j).증언없이 && !(pos[j] === 0 && cur(j).마지막));
+      if (k < 0 && chains.every((c, j) => done(j) || (pos[j] === 0 && cur(j).마지막))) k = chains.findIndex((c, j) => !done(j));
+      if (k >= 0 && cur(k).증언없이) {
+        const s = cur(k);
+        G.stage.calm(false); G.stage.green(false); G.stage.hideCards(); P.cardsAfterLine = false;
+        await runList(s.앞);
+        await counter({ 단계: [{ 앞: [], 정답: evs(s), 정답장면: s.정답장면, 힌트: s.힌트, 주장: s.주장 }], 일반오답: T.일반오답, 피해오답: T.피해오답 });
+        pos[k]++;
+        restoreBgm = true;
+        continue;
+      }
+      if (restoreBgm) {
+        restoreBgm = false;
+        G.stage.calm(false); G.stage.green(false); G.stage.hideCards(); P.cardsAfterLine = false;
+        if (crossBgm && G.audio.current !== crossBgm) G.audio.bgm(crossBgm); // 반대 심문으로 돌아올 때는 반대 심문 음악으로
+      }
+      // 반대 심문
+      const list = visible();
+      if (tm.jump) { i = Math.max(0, list.indexOf(tm.jump)); tm.jump = null; }
+      if (i >= list.length) i = 0;
+      const id = list[i];
+      const st = stOf(id);
+      const mainCount = ids.filter((x) => !x.includes('-')).length;
+      G.stage.speaker(T.증인, T.표정);
+      G.box.showStatic({ 이름: T.증인, 글: st.글, cls: 'cross-text' + strikeClass(id) });
+      const act = await crossAction(id + ' / ' + mainCount, T);
+      if (act === 'prev') { i = (i - 1 + list.length) % list.length; continue; }
+      if (act === 'next') { i = (i + 1) % list.length; continue; }
+      if (act === 'press') {
+        if (!(st.추궁 || []).some((c) => c.외침)) await shout('잠깐', 650);
+        await runList(st.추궁);
+        continue;
+      }
+      // 증거 제시
+      const ev = await G.record.open({ present: true });
+      if (!ev) continue;
+      const hit = chains.findIndex((c, j) => !done(j) && !cur(j).증언없이 && !(pos[j] === 0 && cur(j).마지막 && chains.some((cc, jj) => jj !== j && !done(jj)))
+        && targets(cur(j), j).includes(id) && evs(cur(j)).includes(ev));
+      if (hit >= 0) {
+        P.presented = ev;
+        await runList(cur(hit).정답장면);
+        pos[hit]++;
+        state = { wrong: 0 };
+        restoreBgm = true;
+        continue;
+      }
+      // 아직 차례가 아닌 정답 (같은 문장의 다음 단계 증거, 다른 것을 다 깬 뒤에 낼 증거): 벌칙 없이 힌트
+      const early = chains.findIndex((c, j) => !done(j) && targets(cur(j), j).includes(id) && c.slice(pos[j]).some((s) => evs(s).includes(ev)));
+      if (early >= 0) {
+        const first = chains.findIndex((c, j) => !done(j) && !(pos[j] === 0 && cur(j).마지막));
+        const k2 = first >= 0 ? first : early;
+        await showHint(hintOf(cur(k2), k2));
+        continue;
+      }
+      // 오답: 이 문장에서 깰 것이 있으면 그 힌트, 없으면 아직 남은 것 가운데 첫 번째의 힌트
+      let hk = chains.findIndex((c, j) => !done(j) && !cur(j).마지막 && targets(cur(j), j).includes(id));
+      if (hk < 0) hk = chains.findIndex((c, j) => !done(j) && !(pos[j] === 0 && cur(j).마지막));
+      if (hk < 0) hk = chains.findIndex((c, j) => !done(j));
+      await wrongAnswer({ 일반오답: T.일반오답, 피해오답: T.피해오답, 힌트: hintOf(cur(hk), hk) }, ev, state);
+    }
+    P.tm = null;
+  }
+
+  function strikeClass(id) {
+    const s = P.tm && P.tm.struck[id];
+    return s === 'half' ? ' struck half' : s ? ' struck' : '';
+  }
+
+  // { 증언추가: '3-1' }: 숨겨 둔 문장이 증언에 더해진다 (대본 [증언 추가]). 반대 심문은 그 문장부터 이어진다
+  async function addStatement(id) {
+    const tm = P.tm;
+    if (!tm) return;
+    const st = tm.T.문장[tm.ids.indexOf(String(id))];
+    if (!st) { console.warn('[없는 증언 문장]', id); return; }
+    tm.shown.add(String(id));
+    tm.jump = String(id);
+    G.stage.speaker(tm.T.증인, tm.T.표정);
+    G.box.showStatic({ 이름: tm.T.증인, 글: st.글, cls: 'cross-text' });
+    await stamp();
+    await G.box.say({ 이름: tm.T.증인, 글: st.글, cls: 'cross-text' });
+  }
+
+  // { 붉은줄: 3 }: 그 문장에 붉은 줄을 긋는다. 절반: 반만 (점선). 모두: 증언의 모든 문장에
+  async function strikeStatement(c) {
+    const tm = P.tm;
+    if (!tm) return;
+    const id = String(c.붉은줄);
+    const mark = c.절반 ? 'half' : 'full';
+    if (c.모두) tm.ids.forEach((x) => { if (tm.shown.has(x)) tm.struck[x] = 'full'; });
+    tm.struck[id] = mark;
+    if (mark === 'full') tm.ids.filter((x) => x.startsWith(id + '-')).forEach((x) => { tm.struck[x] = 'full'; }); // 3번을 다 깨면 3-1도
+    const st = tm.T.문장[tm.ids.indexOf(id)];
+    if (!st) return;
+    G.box.showStatic({ 이름: tm.T.증인, 글: st.글, cls: 'cross-text' + strikeClass(id) });
+    G.audio.se('붉은 줄 긋는 소리');
+    await G.sleep(1300);
+  }
+
+  function crossAction(label, T) {
     return new Promise((resolve) => {
       clearControls();
       const done = (v) => { clearControls(); resolve(v); };
@@ -406,7 +578,7 @@
         imgButton('ui/btn_press', '추궁', () => done('press'), 'act-btn press'),
         h('div', { class: 'grow' }),
         h('button', { class: 'arrow prev', 'aria-label': '이전 문장', onclick: () => done('prev') }, '◀'),
-        h('div', { class: 'count' }, h('small', {}, '증언 「' + T.제목 + '」'), (i + 1) + ' / ' + n),
+        h('div', { class: 'count' }, h('small', {}, '증언 「' + T.제목 + '」'), label),
         h('button', { class: 'arrow next', 'aria-label': '다음 문장', onclick: () => done('next') }, '▶'),
         h('div', { class: 'grow' }),
         imgButton('ui/btn_present', '증거 제시', () => done('present'), 'act-btn present'));
@@ -427,7 +599,8 @@
       if (k > 0) { G.stage.calm(false); G.stage.green(false); G.stage.hideCards(); P.cardsAfterLine = false; }
       const state = { wrong: 0 };
       await runList(step.앞);
-      const claim = [...step.앞].reverse().find((c) => c.말); // 주장 대사 (그 뒤에 안내창이 붙을 수 있다)
+      // 주장 대사 (그 뒤에 안내창이 붙을 수 있다). 앞에 대사가 없으면 바로 앞에 나온 대사 (6화 증언 속 단계)
+      const claim = step.주장 || [...step.앞].reverse().find((c) => c.말) || P.lastLine || { 말: '', 대사: '' };
       for (;;) {
         G.stage.speaker(claim.말, claim.표정);
         G.box.showStatic({ 이름: claim.말, 글: claim.대사 });
@@ -439,7 +612,7 @@
         });
         const ev = await G.record.open({ present: true });
         if (!ev) continue;
-        if (ev === step.정답) { P.presented = ev; await runList(step.정답장면); break; }
+        if ([].concat(step.정답).includes(ev)) { P.presented = ev; await runList(step.정답장면); break; } // 정답이 여러 개일 수 있다 (6화: 🟩 기록 아무거나)
         // 따로오답: 이 증거를 내면 공통 오답 대신 이 장면이 나온다 (5화 「암시장」의 🟥 번호 문신). 벌칙은 증거 색대로
         const own = (step.따로오답 || []).find((o) => o.증거 === ev);
         await wrongAnswer({ 일반오답: own ? own.장면 : C.일반오답, 피해오답: own ? own.장면 : C.피해오답, 힌트: step.힌트 }, ev, state);
@@ -547,6 +720,7 @@
     const out = [], upd = {};
     const take = (c) => {
       if (c.증거획득 && !out.includes(c.증거획득)) out.push(c.증거획득);
+      if (c.꺼내기) c.꺼내기.forEach((id) => { if (!out.includes(id)) out.push(id); });
       if (c.증거갱신) upd[c.증거갱신] = (upd[c.증거갱신] || 0) + 1;
     };
     G.ep.막.forEach((act, a) => {
@@ -585,9 +759,9 @@
     if (!act) return [];
     walk(act.내용, (c) => {
       if (c.배경 && DATA.배경[c.배경]) { keys.add(DATA.배경[c.배경].그림); keys.add(DATA.배경[c.배경].책상); }
-      if (c.말 && DATA.인물[c.말]) {
+      if (c.말 && G.who(c.말)) {
         keys.add(G.charKey(c.말, c.표정));
-        const seat = DATA.법정자리[DATA.인물[c.말].자리];
+        const seat = DATA.법정자리[G.seatOf(c.말)];
         if (seat) { keys.add(seat.배경); keys.add(seat.책상); }
       }
       if (c.보이기) keys.add(G.charKey(c.보이기, c.표정));
@@ -616,6 +790,12 @@
       if (c.아이콘지도) { keys.add(c.아이콘지도.지도); keys.add(c.아이콘지도.아이콘); }
       if (c.훑어보기) keys.add(c.훑어보기.그림);
       if (c.지도점 && G.ep.지도점 && G.ep.지도점.겹침) keys.add(G.ep.지도점.겹침);
+      // 6화 연출 그림
+      if (c.꺼내기) c.꺼내기.forEach((id) => G.ev[id] && keys.add(G.ev[id].그림));
+      if (c.카메라 && DATA.법정자리[c.카메라]) { keys.add(DATA.법정자리[c.카메라].배경); keys.add(c.책상 || DATA.법정자리[c.카메라].책상); }
+      if (c.몽타주) c.몽타주.forEach((m) => m.얼굴.forEach(([n, e]) => keys.add(G.charKey(n, e))));
+      if (c.벽돌) keys.add('backgrounds/cut_ep6_wall_bricks');
+      if (c.판결 === '유죄') keys.add('ui/text_guilty');
     });
     return [...keys].filter(Boolean);
   }

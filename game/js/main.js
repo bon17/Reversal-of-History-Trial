@@ -101,6 +101,31 @@
         const s = openScreen(h('div', { class: 'screen history-card' }, panel));
       });
     },
+    // 표 화면 (6화 「두 나라의 결말」): { 머리: [칸, …], 줄: [[칸, …], …] }. 칸의 **굵게**는 금색으로
+    table(spec) {
+      return new Promise((resolve) => {
+        const cell = (tag, t) => { const c = h(tag); c.innerHTML = G.mdBold(t).replace(/<b>/g, '<span class="hl">').replace(/<\/b>/g, '</span>'); return c; };
+        const tbl = h('table', {},
+          h('thead', {}, h('tr', {}, spec.머리.map((t) => cell('th', t)))),
+          h('tbody', {}, spec.줄.map((r) => h('tr', {}, r.map((t, k) => cell(k === 0 ? 'th' : 'td', t))))));
+        const s = openScreen(h('div', { class: 'screen table-screen' },
+          h('div', { class: 'panel' }, h('div', { class: 'tbl-wrap' }, tbl),
+            h('div', { class: 'row' }, h('button', { class: 'ui-btn', onclick: () => { s.remove(); resolve(); } }, '계속')))));
+      });
+    },
+    // 게임 2 끝: 반박문 쓰기 (기획서 12장). 화면이 만들어지면 G.rebuttal 을 부른다. 아직 없으면 안내만 하고 처음 화면으로 간다
+    rebuttal() {
+      G.store.clear();
+      if (G.rebuttal) return G.rebuttal();
+      return new Promise(() => {
+        openScreen(h('div', { class: 'screen' },
+          h('div', { class: 'panel' },
+            h('h2', {}, '반박문 쓰기'),
+            h('p', { style: 'text-align:center' }, '반박문 쓰기 화면은 아직 만들고 있어요. (기획서 12장)'),
+            h('p', { style: 'text-align:center' }, '게임 2는 여기까지예요. 수고했어요!'),
+            h('div', { class: 'row' }, h('button', { class: 'ui-btn', onclick: () => location.reload() }, '처음 화면으로')))));
+      });
+    },
     // 다음 화 예고 → 다음 화가 만들어져 있으면 [제N화 시작], 아니면 처음 화면
     nextEpisode(title) {
       return new Promise(() => {

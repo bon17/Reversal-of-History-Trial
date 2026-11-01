@@ -125,9 +125,18 @@
     return Promise.all(list.map((k) => G.loadImg(k).then(() => { done++; onProgress && onProgress(done, list.length); })));
   };
 
+  // 인물 표에서 한 사람 찾기. 화 데이터의 인물(G.ep.인물)에 적은 칸이 있으면 그 화에서만 그 칸을 바꾼다
+  // (6화: 한나는 피고석, 하야시는 변호인석에 좌우로 뒤집어 서고, 다비드는 1961년 모습)
+  G.who = (name) => {
+    const base = DATA.인물[name];
+    const over = G.ep && G.ep.인물 && G.ep.인물[name];
+    return over ? Object.assign({}, base, over) : base;
+  };
+  G.seatOf = (name) => (G.who(name) || {}).자리;
+
   // 인물 그림 이름
   G.charKey = (name, expr) => {
-    const c = DATA.인물[name];
+    const c = G.who(name);
     if (!c) return null;
     const e = DATA.표정[expr || '기본'] || 'default';
     return 'characters/' + c.파일 + '_' + e;
@@ -137,7 +146,7 @@
   // whole: 네모난 칸(증거 카드, 법정 기록 칸, 획득 알림)에서는 정수리가 잘려 보이지 않게, 머리 꼭대기(인물.머리)부터 턱 아래까지 넓게 자른다
   // 턱은 얼굴 동그라미 아래 끝보다 더 내려온 인물이 있어서(슈바르츠 부인) 동그라미 아래로 반지름의 20%를 더 둔다
   G.applyFace = (el, name, expr, opts = {}) => {
-    const c = DATA.인물[name];
+    const c = G.who(name);
     const key = G.charKey(name, expr);
     if (!c || !key) { el.style.backgroundImage = ''; return; }
     let [cx, cy, r] = c.얼굴 || [512, 260, 180];
