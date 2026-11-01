@@ -15,12 +15,14 @@
   };
 
   // 증거 그림 한 장. 겹침: 위에 겹쳐 그릴 그림 (3화 지도 위의 위안소 점). 채움(카드 칸만): 칸을 꽉 채우고 이 위치를 기준으로 자른다 (세로 사진의 얼굴이 보이게)
+  // 카드전체(카드 칸만): 실제 사진(사진: true)은 카드 칸을 꽉 채워 자르는데, 세로 사진은 자르지 않고 전체를 보인다 (4화 쉰들러, 6화 T4 명령서)
   // 실제 사진이 여러 장인 증거(5화 신발과 가방 더미): 법정 기록 칸, 큰 그림, 카드, 획득 알림에서는 사진을 모두 함께 보여 준다
   // (넓은 칸은 옆으로, 좁은 칸은 위아래로 나란히. 한 장씩 크게 보는 것은 [자세히 보기]의 [다음 사진])
   G.evImg = (ev, fill) => {
     if (ev.사진 && ev.뒤집기 && ev.뒤집기.그림.length > 1) return h('div', { class: 'ev-duo' }, h('div', { class: 'duo-in' }, ...ev.뒤집기.그림.map((k) => G.imgEl(k))));
     const main = G.imgEl(ev.그림);
     if (fill && ev.채움) { main.style.objectFit = 'cover'; main.style.objectPosition = ev.채움; }
+    if (fill && ev.카드전체) main.style.objectFit = 'contain';
     if (!ev.겹침) return main;
     return h('div', { class: 'ev-stack' }, main, G.imgEl(ev.겹침));
   };

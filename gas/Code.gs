@@ -12,6 +12,10 @@
  *  3. 나온 웹 앱 주소(…/exec)를 게임의 game/data/common.js 의 DATA.설정.GAS주소 에 넣는다.
  *  4. 이 스크립트를 고친 뒤에는 [배포 관리 → 수정 → 새 버전]으로 다시 배포해야 반영된다 (주소는 그대로).
  *
+ * 2026-11 바뀐 것: 반박문(친구에게 답장하기)이 메시지 하나 → 친구 넷 모두에게 답장으로 바뀌었다.
+ *  「반박문」 탭의 열이 달라져서, 예전 열 차례로 된 「반박문」 탭은 다음 저장 때 「반박문(예전)」으로 이름이 바뀌고 새 탭이 생긴다 (예전 답은 그대로 남는다).
+ *  이 파일을 붙여 넣은 뒤 꼭 [배포 관리 → 수정 → 새 버전]을 눌러야 한다.
+ *
  * [실행] 버튼은 위쪽 함수 목록에서 「setup」을 고른 뒤 한 번만 누른다. 시트 탭 세 개(기억노트, 반박문, 요약)가 생긴다.
  * doPost, doGet 은 직접 실행하지 않는다. 게임이 답을 보낼 때 저절로 불린다 (직접 실행하면 보낸 답이 없어서 오류가 난다).
  * 시트에 학생 답이 쌓이는 것은 게임에 주소를 넣은 뒤, 학생이 기억 노트를 저장할 때부터다.
@@ -25,15 +29,30 @@ function setup() {
   if (sum.getLastRow() === 0) updateSummary_();
 }
 
+// 반박문: 단톡방 친구 넷의 메시지 (게임의 game/data/ep6.js 반박문 표와 같은 차례). 시트 열 이름에 메시지를 함께 적는다
+var FRIEND_MSGS = [
+  ['A', '히틀러가 경제 살렸잖아'],
+  ['B', '히틀러 명령서도 없다던데?'],
+  ['C', '그 시대엔 다들 어쩔 수 없었잖아'],
+  ['D', '위안부는 돈 벌러 간 거라던데?'],
+];
+function friendCols_() {
+  var out = [];
+  FRIEND_MSGS.forEach(function (f) { out.push('친구 ' + f[0] + ' 「' + f[1] + '」 증거', '친구 ' + f[0] + ' 답장'); });
+  return out;
+}
+// 열 차례가 바뀐 탭: 예전 답과 섞이지 않게 예전 탭은 「이름(예전)」으로 옮기고 새로 만든다
+var REMAKE_IF_CHANGED = ['반박문'];
+
 var SHEETS = {
   기억노트: ['제출 시각', '반', '번호', '이름', '2화 여부', '기억에 남은 증거', '기억에 남은 이유(버튼)', '기억에 남은 이유(한 줄)',
     '잘못한 사람', '그 사람의 잘못', '벌을 받았을까', '어쩔 수 없었다(선택)', '어쩔 수 없었다(이유)', '왜 기억해야 할까'],
-  반박문: ['제출 시각', '반', '번호', '이름', '기억 노트 선택(불러온 값)', '지금 선택', '지금 이유', '고른 메시지', '제시한 증거', '답장 빈칸 1', '답장 빈칸 2'],
+  반박문: ['제출 시각', '반', '번호', '이름', '기억 노트 선택(불러온 값)', '지금 선택', '지금 이유'].concat(friendCols_()),
 };
 // 게임이 보내는 칸 이름 (시트 열 순서대로, 제출 시각 뒤부터)
 var FIELDS = {
   기억노트: ['반', '번호', '이름', '화2', '증거', '이유버튼', '이유한줄', '잘못한사람', '잘못', '벌', '선택', '이유', '기억'],
-  반박문: ['반', '번호', '이름', '불러온선택', '선택', '이유', '메시지', '증거', '빈칸1', '빈칸2'],
+  반박문: ['반', '번호', '이름', '불러온선택', '선택', '이유', 'A증거', 'A답장', 'B증거', 'B답장', 'C증거', 'C답장', 'D증거', 'D답장'],
 };
 var THINK = ['맞다, 어쩔 수 없었을 것 같다', '잘 모르겠다', '아니다, 다르게 할 수 있었다'];
 var MAX = 100; // 칸마다 글자 수 제한
@@ -41,6 +60,17 @@ var MAX = 100; // 칸마다 글자 수 제한
 function sheet_(name) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(name);
+  if (sh && SHEETS[name] && REMAKE_IF_CHANGED.indexOf(name) >= 0 && sh.getLastRow() > 0) {
+    var n = Math.min(sh.getLastColumn(), SHEETS[name].length);
+    var head = sh.getRange(1, 1, 1, n).getValues()[0];
+    var same = sh.getLastColumn() <= SHEETS[name].length && head.every(function (v, i) { return String(v) === SHEETS[name][i]; });
+    if (!same) {
+      var old = name + '(예전)', k = 2;
+      while (ss.getSheetByName(old)) old = name + '(예전 ' + (k++) + ')';
+      sh.setName(old);
+      sh = null;
+    }
+  }
   if (!sh) {
     sh = ss.insertSheet(name);
     if (SHEETS[name]) sh.appendRow(SHEETS[name]);

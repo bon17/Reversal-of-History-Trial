@@ -10,7 +10,8 @@
 //   --fast N : 기다리는 시간을 1/N로 줄인다 (기본 8)
 //   --html 파일 : index.html 대신 HTML 한 파일(dist/…게임2.html)을 시험한다
 //   --rebuttal : 처음 화면의 [친구에게 답장하기]로 반박문 쓰기만 해 본다
-//   (반박문 쓰기는 두 번 쓴다: 기억 노트가 있는 학생 → [짝도 쓰기] → 기억 노트가 없는 학생. 구글 시트로 가는 요청은 가짜 응답으로 가로챈다)
+//   (반박문 쓰기는 두 번 쓴다: 기억 노트가 있는 학생 → [짝도 쓰기] → 기억 노트가 없는 학생. 학생마다 친구 넷에게 모두 답장하고,
+//    첫 답장에서 한 번은 10글자보다 짧게 써서 막히는지 본다. 구글 시트로 가는 요청은 가짜 응답으로 가로챈다)
 //   --start 막:명령 : 그 화의 이 자리부터 시작한다 (막은 0부터. 예: --from 6 --start 5:0). --fast 1 과 함께 쓰면 연출을 제 속도로 찍는다
 import { createRequire } from 'node:module';
 import http from 'node:http';
@@ -199,15 +200,14 @@ await page.evaluate(({ FROM, FAST, PROBE }) => {
     return null;
   }
 
-  // 반박문 쓰기: 첫 학생은 메시지 ①(첫 증거), [짝도 쓰기] 뒤 둘째 학생은 메시지 ④(셋째 증거)
+  // 반박문 쓰기: 학생마다 친구 넷에게 모두 답장한다. 첫 학생은 메시지마다 첫 증거, [짝도 쓰기] 뒤 둘째 학생은 마지막 증거
   function rebuttalStep(top) {
     const p = top.querySelector('.panel');
     const R = (T.reb = T.reb || { n: 0 });
     const by = (t) => [...p.querySelectorAll('button')].find((b) => b.textContent === t);
-    const k = R.n ? 3 : 0;
-    if (/불러오는 중|저장하는 중/.test(p.textContent)) return { did: 'reb-wait' };
+    if (/불러오는 중|보내는 중/.test(p.textContent)) return { did: 'reb-wait' };
     if (by('짝도 쓰기')) {
-      if (R.n === 0) { R.n = 1; by('짝도 쓰기').click(); return { did: 'reb 짝도 쓰기' }; }
+      if (R.n === 0) { R.n = 1; R.short = false; by('짝도 쓰기').click(); return { did: 'reb 짝도 쓰기' }; }
       T.ended = true;
       return { did: 'end', text: clean(p.textContent).slice(0, 160) };
     }
@@ -220,11 +220,23 @@ await page.evaluate(({ FROM, FAST, PROBE }) => {
     }
     const opts = p.querySelectorAll('.opts button');
     if (opts.length) { if (!p.querySelector('.opts button.on')) { opts[2].click(); return { did: 'reb 선택' }; } by('다음').click(); return { did: 'reb 다음' }; }
-    const picks = p.querySelectorAll('.chat-pick');
-    if (picks.length) { if (!picks[k].classList.contains('on')) { picks[k].click(); return { did: 'reb 메시지 ' + (k + 1) }; } by('다음').click(); return { did: 'reb 다음' }; }
-    if (by('증거 제시하기')) { T.want = { ev: DATA.ep6.반박문.메시지[k].증거[R.n ? 2 : 0], pick: true }; by('증거 제시하기').click(); return { did: 'reb 증거 고르기' }; }
-    if (p.querySelector('.ev-open') && by('다음')) { by('다음').click(); return { did: 'reb 다음' }; }
-    if (by('저장하기')) { const ins = p.querySelectorAll('input.text'); ins[0].value = '(시험) 증거가 보여 주는 사실'; ins[1].value = '(시험) 내 생각'; by('저장하기').click(); return { did: 'reb 저장' }; }
+    if (by('답장 쓰기')) { by('답장 쓰기').click(); return { did: 'reb 답장 쓰기' }; }
+    const no = p.querySelector('.step-no');
+    const i = no ? +(no.textContent.match(/\((\d+)/) || [0, 1])[1] - 1 : -1;
+    if (by('증거 제시하기')) { const evl = DATA.ep6.반박문.메시지[i].증거; T.want = { ev: evl[R.n ? evl.length - 1 : 0], pick: true }; by('증거 제시하기').click(); return { did: 'reb 증거 고르기 ' + (i + 1) }; }
+    const ta = p.querySelector('textarea');
+    if (ta) {
+      const go = by('다음 친구') || by('다 썼어요');
+      const set = (v) => { ta.value = v; ta.dispatchEvent(new Event('input')); };
+      if (!R.short) {
+        R.short = true; set('짧은 답 이에요'); go.click();
+        const m = p.querySelector('.msg').textContent;
+        return { did: 'reb 짧은 답(띄어쓰기 빼고 6글자) → ' + m, bad: !/10글자 이상/.test(m) };
+      }
+      set('(시험) 친구 ' + (i + 1) + '에게: 이 증거를 보면 그 말은 사실이 아니야.'); go.click();
+      return { did: 'reb 답장 ' + (i + 1) };
+    }
+    if (by('교사에게 보내기')) { by('교사에게 보내기').click(); return { did: 'reb 교사에게 보내기' }; }
     const inp = p.querySelector('input.text');
     if (inp && by('다음')) { inp.value = '(시험) 지금 이유'; by('다음').click(); return { did: 'reb 이유' }; }
     return { did: 'reb ?', text: clean(p.textContent).slice(0, 80), bad: true };

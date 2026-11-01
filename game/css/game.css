@@ -322,14 +322,17 @@ img { -webkit-user-drag: none; }
 .land #box-img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: .85; pointer-events: none; }
 .land #box::before { content: none; }
 .land #name { position: absolute; left: calc(var(--u) * 82); top: calc(var(--u) * 768); width: calc(var(--u) * 318); height: calc(var(--u) * 48); font-size: max(13px, calc(var(--u) * 31)); }
+/* 대사창 글: 한 쪽에 두 줄까지 (세 줄이면 창 아래 테두리에 붙는다). 넘치면 screen.js가 문장 → 쉼표 → 띄어쓰기에서 다음 쪽으로 나눈다.
+   두 줄 묶음의 가운데가 창 안쪽(남색, 세로 809~998)의 가운데(904)에 오게 둔다. 한 줄이면 같은 자리에서 시작한다.
+   높이와 위치는 글자 크기(em) 기준이라, 작은 화면에서 글자가 15px에 걸려도 두 줄이 그대로 들어간다. 증거 알림도 같은 규칙이다 */
 .land #text, .land #text-measure {
-  position: absolute; left: calc(var(--u) * 100); top: calc(var(--u) * 842); width: calc(var(--u) * 1336); height: calc(var(--u) * 162); line-height: 1.42;
+  position: absolute; left: calc(var(--u) * 100); top: calc(var(--u) * 904 - 1.42em); width: calc(var(--u) * 1336); height: 2.92em; line-height: 1.42;
   font-size: max(15px, calc(var(--u) * 37)); overflow: hidden;
 }
-/* 증거 알림(보석 + 증거 이름 + 설명): 세 줄이 되어도 창 아래에 붙지 않게 조금 위에서 시작하고 줄 간격을 줄인다 */
-#text.ev, #text-measure.ev { line-height: 1.3; }
-.land #text.ev, .land #text-measure.ev { top: calc(var(--u) * 832); height: calc(var(--u) * 166); }
-.land.tight #text.ev, .land.tight #text-measure.ev { top: calc(var(--u) * 824); height: calc(var(--u) * 176); }
+/* 쪽을 나눌 수 없는 글(레테의 반격 주장)이 두 줄을 넘을 때만 (screen.js showStatic):
+   static2 = 글자 90%로 두 줄 칸에 (위치와 높이가 em 기준이라 그대로 가운데), 그래도 넘치면 static3 = 글자 90%, 촘촘한 줄 간격으로 세 줄을 창 가운데에 */
+.land #text.static2, .land #text.static3 { font-size: calc(max(15px, calc(var(--u) * 37)) * .9); }
+.land #text.static3 { line-height: 1.3; top: calc(var(--u) * 904 - 1.95em); height: 3.98em; }
 .land #next-icon { right: calc(var(--u) * 50); bottom: calc(var(--u) * 24); width: max(26px, calc(var(--u) * 70)); }
 .land #face { position: absolute; left: calc(var(--u) * 34); top: calc(var(--u) * 598); width: max(56px, calc(var(--u) * 150)); height: max(56px, calc(var(--u) * 150)); }
 .land #box.skin-hint #box-img { transform: translateY(calc(var(--u) * 339)); }
@@ -338,7 +341,8 @@ img { -webkit-user-drag: none; }
 .land #box.skin-hint #text, .land #box.skin-hint #text-measure,
 .land #box.skin-tutorial #text, .land #box.skin-tutorial #text-measure { left: calc(var(--u) * 385); top: calc(var(--u) * 806); width: calc(var(--u) * 1020); height: calc(var(--u) * 172); line-height: 1.45; }
 .land #box.skin-hint #next-icon, .land #box.skin-tutorial #next-icon { right: calc(var(--u) * 115); bottom: calc(var(--u) * 58); }
-.land.tight #text, .land.tight #text-measure { left: calc(var(--u) * 74); top: calc(var(--u) * 822); width: calc(var(--u) * 1392); height: calc(var(--u) * 180); line-height: 1.45; }
+.land.tight #text, .land.tight #text-measure { left: calc(var(--u) * 74); top: calc(var(--u) * 904 - 1.45em); width: calc(var(--u) * 1392); height: 2.98em; line-height: 1.45; }
+.land.tight #text.static3 { top: calc(var(--u) * 904 - 1.95em); height: 3.98em; line-height: 1.3; }
 .land.tight #box.skin-hint #text, .land.tight #box.skin-hint #text-measure,
 .land.tight #box.skin-tutorial #text, .land.tight #box.skin-tutorial #text-measure { left: calc(var(--u) * 370); top: calc(var(--u) * 796); width: calc(var(--u) * 1050); height: calc(var(--u) * 190); }
 .land #box.skin-hint #face { display: block; left: calc(var(--u) * 92); top: calc(var(--u) * 776); width: calc(var(--u) * 216); height: calc(var(--u) * 216); box-shadow: none; } /* window_hint 그림의 동그란 칸 안쪽(가로 92~307, 세로 437~651)에 아래로 339 내린 만큼 맞춘다 */
@@ -690,9 +694,13 @@ img { -webkit-user-drag: none; }
 .rebuttal .ev-desc .ev-name { color: var(--gold-light); font-weight: 800; margin-bottom: 4px; }
 .rebuttal .ev-desc p b { color: var(--gold-light); }
 .rebuttal .ev-desc p { margin: 3px 0; }
-.rebuttal .reply { background: rgba(232, 184, 74, .1); border: 1px solid rgba(232, 184, 74, .5); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
-.rebuttal .r-line { font-size: clamp(16px, 2.6vmin, 20px); line-height: 1.5; word-break: keep-all; }
-.rebuttal .r-ev { color: var(--gold-light); font-weight: 700; }
+/* 답장 한 칸 (띄어쓰기를 뺀 10글자 이상), 글자 수, 몇 번째 친구인지, 모아 보기의 증거 이름 */
+.rebuttal textarea.text { display: block; width: 100%; min-height: 96px; resize: vertical; font: inherit; font-size: clamp(16px, 2.6vmin, 20px); line-height: 1.5; padding: 10px 12px; border-radius: 10px; border: 2px solid var(--gold); background: #0b1430; color: #f2ead4; word-break: keep-all; }
+.rebuttal textarea.text::placeholder { color: #8f8a7a; }
+.rebuttal .count { text-align: right; font-size: 14px; color: #ffb4a0; margin-top: 4px; }
+.rebuttal .count.ok { color: #aef0a9; }
+.rebuttal .step-no { text-align: center; color: var(--gold-light); font-weight: 800; font-size: clamp(15px, 2.4vmin, 18px); margin-bottom: 6px; }
+.rebuttal .r-ev-note { text-align: right; font-size: 13px; color: #cdbf9a; margin: -2px 4px 6px 0; }
 @media (max-width: 560px) { .rebuttal .ev-open { flex-direction: column; align-items: center; } }
 
 /* ─────────────── 4화에서 더한 연출 ─────────────── */
@@ -905,7 +913,10 @@ img { -webkit-user-drag: none; }
 #char.flip { scale: -1 1; }
 /* 방탄유리 부스 (아이히만): 증언대 배경 앞에 부스 앞틀(유리는 반투명, cut_ep6_glass_booth_front)을 겹친다.
    유리 칸(y 7%~58%) 너머로 머리부터 서류를 든 손까지 보이게 조금 작게 세운다 */
-#stage[data-seat="방탄유리 부스"] #char { left: 26.667%; width: 46.667%; top: 9%; height: 70%; }
+#stage[data-seat="방탄유리 부스"] #char { left: 26.667%; width: 46.667%; top: 13.5%; height: 70%; }
+/* 부스 앞틀은 그림 안에서 y 977에서 끝나서, 그대로 두면 그 아래로 배경(증언대 배경)의 증언대 받침이 보인다.
+   앞틀(켜짐·꺼짐 모두)을 46점(4.5%) 내려 받침이 화면 아래 끝에 닿게 하고, 아이히만도 같은 만큼 내렸다 (위 top 9% → 13.5%) */
+#stage[data-seat="방탄유리 부스"] #desk { transform: translateY(4.5%); }
 /* 깨진 증언 문장: 붉은 줄 (절반만 깨졌을 때는 점선) */
 .cross-text.struck { text-decoration: line-through; text-decoration-color: #e0413a; text-decoration-thickness: .14em; }
 .cross-text.struck.half { text-decoration-style: dashed; }
@@ -926,7 +937,7 @@ img { -webkit-user-drag: none; }
 
 /* 기억의 벽: 이름이 새겨진 벽돌 (cut_ep6_wall_bricks, 1024×512 안에 벽돌 하나) */
 .bricks { z-index: 6; display: flex; flex-wrap: wrap; align-content: flex-start; justify-content: center; gap: calc(var(--u) * 6) calc(var(--u) * 10); padding: 4% 6% 0; pointer-events: none; }
-.bricks .brick { width: calc(var(--u) * 430); aspect-ratio: 2 / 1; background: center / 100% 100% no-repeat; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(-40%) scale(1.2); transition: opacity .6s, transform .6s cubic-bezier(.2, 1.3, .5, 1); }
+.bricks .brick { width: calc(var(--u) * 380); aspect-ratio: 2 / 1; background: center / 100% 100% no-repeat; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(-40%) scale(1.2); transition: opacity .6s, transform .6s cubic-bezier(.2, 1.3, .5, 1); }
 .bricks .brick.on { opacity: 1; transform: none; }
 .bricks .brick span { color: #2e1c10; font-weight: 800; font-size: max(11px, calc(var(--u) * 36)); text-shadow: 0 1px 0 rgba(255, 230, 200, .35); text-align: center; padding: 0 12%; word-break: keep-all; line-height: 1.2; }
 .bricks .brick.long span { font-size: max(10px, calc(var(--u) * 28)); }

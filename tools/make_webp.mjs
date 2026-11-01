@@ -33,6 +33,10 @@ const FRINGE = [
   [/^characters\/fritz_/, { 아래: 300, 거리: 18 }], // 5화 프리츠: 머리 둘레 (머리 위 조각이 두꺼워 18점까지)
   [/^characters\/jakob_/, { 아래: 300, 거리: 18 }], // 5화 야코프: 머리 둘레 (머리 위 조각이 두꺼워 18점까지)
   [/^characters\/david_/, { 아래: 330, 거리: 3, 밝기: 130, 선: false, 구멍: true, 테두리: true }], // 5화 다비드: 머리카락 끝의 밝은 테두리, 몸 둘레의 밝은 선, 팔과 몸 사이의 흰 틈
+  [/^characters\/eichmann_/, { 아래: 440, 구멍: true }], // 6화 아이히만: 정수리의 흰 점, 헤드폰 띠와 머리 사이에 갇힌 흰 틈
+  [/^characters\/hitler_/, { 아래: 390 }], // 6화 히틀러: 머리 위 흰 점만 (흑백 그림이라 귀와 뺨도 거의 흰색: 귀가 시작하는 높이 위까지만 본다)
+  [/^characters\/krause_/, { 아래: 420 }], // 6화 크라우제: 머리 위 흰 점
+  [/^characters\/david1961_/, { 아래: 330, 거리: 3, 밝기: 130, 선: false, 구멍: true, 테두리: true }], // 6화 1961년 다비드: 5화 다비드와 같다 (팔과 몸 사이의 흰 틈, 팔 둘레의 밝은 선)
   [/^characters\/greycoat_silhouette\.png$/, { 아래: 0, 구멍: true }], // 5화 회색 외투의 남자: 두 다리 사이의 흰 틈
 ];
 const fringeFor = (rel) => (FRINGE.find(([re]) => re.test(rel)) || [])[1];

@@ -886,8 +886,7 @@
       const voice = (이름 || '').match(/^\(([^,)]+)[,)]/);
       const shownName = 표시이름 != null ? 표시이름 : voice ? voice[1].trim() : (이름 || '').replace(/\s*\(자막\)$/, '');
       this.setName(skin === 'normal' ? shownName : (skin === 'hint' ? '힌트' : '알아두기'));
-      textEl.className = 증거 ? 'ev' : '';
-      measure.classList.toggle('ev', 증거); // 증거 알림은 줄 간격을 줄이고 조금 위에서 시작한다 (나누기도 같은 기준으로)
+      textEl.className = ''; // 증거 알림도 대사와 같은 칸, 같은 두 줄 규칙
       const thought = /^\(.*\)$/s.test(글);
       const tokens = tokenize(제목 ? 제목 + '\n' + 글 : 글, [cls, thought && 'thought'].filter(Boolean).join(' '));
       if (증거 || 제목) { // 증거 알림: 첫 줄(증거 이름)을 금색으로. 안내창 제목도 금색으로
@@ -926,8 +925,11 @@
       textEl.innerHTML = tokHtml(tokens, 0, tokens.length, false);
       textEl.className = glow ? 'glow' : '';
       nextIcon.classList.remove('on');
-      // 칸보다 길면 전부 보이도록 글자를 조금씩 줄인다
+      // 칸보다 길면 전부 보이도록: 글자 90%로 두 줄 → 세 줄용 촘촘한 칸 → 그래도 넘치면 글자를 조금씩 줄인다
       textEl.style.fontSize = '';
+      const over = () => textEl.scrollHeight > textEl.clientHeight + 1;
+      if (over()) textEl.classList.add('static2');
+      if (over()) { textEl.classList.remove('static2'); textEl.classList.add('static3'); }
       let size = parseFloat(getComputedStyle(textEl).fontSize);
       for (let i = 0; i < 12 && textEl.scrollHeight > textEl.clientHeight + 1; i++) {
         size *= 0.94;

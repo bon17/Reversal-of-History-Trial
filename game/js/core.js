@@ -151,7 +151,8 @@
     const c = G.who(name);
     const key = G.charKey(name, expr);
     if (!c || !key) { el.style.backgroundImage = ''; return; }
-    let [cx, cy, r] = c.얼굴 || [512, 260, 180];
+    // 얼굴표정: 자세가 크게 다른 표정만 따로 정한 얼굴 자리 (1화 오카다 무너짐: 머리를 감싸 쥐고 숙인 모습)
+    let [cx, cy, r] = (c.얼굴표정 && c.얼굴표정[expr || '기본']) || c.얼굴 || [512, 260, 180];
     if (opts.whole && c.머리 != null) {
       const top = Math.max(0, c.머리 - 14), bottom = cy + r * 1.2;
       const r2 = Math.min(500, Math.max(r, (bottom - top) / 2));
