@@ -10,9 +10,14 @@
 // 실행: node tools/build_single_html.mjs              → dist/기억의_법정_게임1.html, dist/기억의_법정_게임2.html
 //       node tools/build_single_html.mjs --game 2     → 게임 2 파일만
 //       node tools/build_single_html.mjs --game 2 저장할파일.html
+//
+// 30MB를 넘는 파일은 그 파일에 넣는 인물·배경 그림만 조금 낮은 품질(WebP 0.72, 그래도 넘으면 0.62)로 다시 압축해서 넣는다.
+// (6화를 넣은 게임 2 파일이 약 32MB여서. 원본과 사이트용 game/img/ 그림은 그대로다. --no-squeeze 로 끌 수 있다)
+// 다시 압축은 크롬 엔진(Playwright)으로 한다.
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import { createRequire } from 'node:module';
 import { audioFiles, embedAudio } from './embed_audio.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
@@ -41,7 +46,10 @@ const allImgs = [];
     else if (f.endsWith('.webp')) allImgs.push(path.relative(imgRoot, full).replace(/\\/g, '/').replace(/\.webp$/, ''));
   }
 })(imgRoot);
-const charKey = (name, expr) => { const c = DATA.인물[name]; const e = DATA.표정[expr || '기본']; return c && e ? 'characters/' + c.파일 + '_' + e : null; };
+// 화 데이터의 인물 표(6화: 1961년 다비드 = david1961)가 있으면 그 화를 훑는 동안은 그 칸을 먼저 본다 (게임의 G.who와 같게)
+let curEp = null;
+const whoOf = (name) => { const base = DATA.인물[name]; const over = curEp && curEp.인물 && curEp.인물[name]; return over ? Object.assign({}, base, over) : base; };
+const charKey = (name, expr) => { const c = whoOf(name); const e = DATA.표정[expr || '기본']; return c && e ? 'characters/' + c.파일 + '_' + e : null; };
 const allExpr = (name) => { const c = DATA.인물[name]; return c ? allImgs.filter((k) => k.startsWith('characters/' + c.파일 + '_')) : []; };
 const FIXED = ['신중한', '한나', '레테', '재판장']; // 늘 나오는 인물은 표정을 모두 넣는다
 
@@ -74,14 +82,17 @@ function imagesOf(part) {
     if (typeof v.퇴장 === 'string' && v.뒷모습) keys.add(charKey(v.퇴장, '뒷모습'));
     if (typeof v.배경 === 'string') addBg(v.배경);
     if (typeof v.조사배경 === 'string') addBg(v.조사배경); // 5화 조사 장소: 도착 뒤 조사 포인트를 찾는 배경
+    if (v.벽돌) keys.add('backgrounds/cut_ep6_wall_bricks'); // 6화 기억의 벽: 벽돌 그림은 데이터에 이름이 없다 (screen.js bricks)
     for (const x of Object.values(v)) visit(x);
   }
   for (const ep of episodes.filter((e) => partOf(e) === part)) {
+    curEp = ep;
     visit(ep.막);
     visit([ep.오답.일반, ep.오답.피해]);
     if (ep.지도점 && typeof ep.지도점 === 'object') keys.add(ep.지도점.겹침); // 5화 수용소 분포도의 이름 적힌 점 그림
     for (const [id, ev] of Object.entries(ep.증거)) addEv(ev.가져오기 ? (DATA[ev.가져오기] || { 증거: {} }).증거[ev.원래 || id] : ev);
   }
+  curEp = null;
   // 늘 쓰는 것: UI 전부, 법정 자리, 처음 화면 배경, 고정 인물의 모든 표정, 재판장 놀람
   allImgs.filter((k) => k.startsWith('ui/')).forEach((k) => keys.add(k));
   Object.values(DATA.법정자리).forEach((z) => { keys.add(z.배경); keys.add(z.책상); });
@@ -112,12 +123,59 @@ function soundsOf(part) {
   return Object.fromEntries(Object.entries(all).filter(([key]) => !key.startsWith('bgm/') || used.has(key)));
 }
 
+// ─────────── 30MB를 넘을 때: 인물·배경 그림을 조금 낮은 품질로 다시 압축 ───────────
+const LIMIT_MB = 30, TARGET_MB = 29.3;
+const mbOf = (s) => Buffer.byteLength(s) / 1048576;
+async function squeeze(orig, embed, keys, q) {
+  const { chromium } = createRequire(import.meta.url)('playwright');
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  for (let i = 0; i < keys.length; i += 16) {
+    const items = keys.slice(i, i + 16).map((k) => [k, orig[k]]);
+    const res = await page.evaluate(async ({ items, q }) => {
+      const r = {};
+      for (const [k, url] of items) {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        c.getContext('2d').drawImage(img, 0, 0);
+        r[k] = c.toDataURL('image/webp', q);
+      }
+      return r;
+    }, { items, q });
+    for (const [k, v] of Object.entries(res)) embed[k] = v.startsWith('data:image/webp') && v.length < orig[k].length ? v : orig[k]; // 더 작아질 때만 바꾼다
+  }
+  await browser.close();
+}
+
 // ─────────── HTML 한 파일 만들기 ───────────
 const inline = (s) => s.replace(/<\/script/gi, '<\\/script');
-function build(part, out) {
+async function build(part, out) {
   const used = imagesOf(part);
   const embed = {};
   for (const key of [...used].sort()) embed[key] = 'data:image/webp;base64,' + fs.readFileSync(path.join(imgRoot, key + '.webp')).toString('base64');
+  const sounds = soundsOf(part);
+  let html = assemble(part, embed, sounds);
+  let note = '';
+  if (mbOf(html) > LIMIT_MB && !args.includes('--no-squeeze')) {
+    const orig = Object.assign({}, embed);
+    const keys = Object.keys(embed).filter((k) => /^(characters|backgrounds)\//.test(k));
+    for (const q of [0.72, 0.62]) {
+      await squeeze(orig, embed, keys, q);
+      html = assemble(part, embed, sounds);
+      note = `  (30MB를 넘어서 인물·배경 그림 ${keys.length}장을 품질 ${q}로 다시 압축함)`;
+      if (mbOf(html) <= TARGET_MB) break;
+    }
+  }
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, html);
+  const mb = fs.statSync(out).size / 1048576;
+  console.log(`${path.relative(ROOT, out)} 만듦 (게임 ${part}): 그림 ${used.size}장, 소리 ${Object.keys(sounds).length}개, ${mb.toFixed(1)}MB${note}${mb > LIMIT_MB ? '  ※ 30MB가 넘습니다' : ''}`);
+}
+
+function assemble(part, embed, sounds) {
   let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   html = html.replace(/<link rel="stylesheet" href="([^"]+)">/g, (m, href) => {
     let css = fs.readFileSync(path.join(ROOT, href), 'utf8');
@@ -134,14 +192,9 @@ function build(part, out) {
   html = html.replace(/<title>([^<]*)<\/title>/, '<title>$1 게임 ' + part + '</title>');
   html = html.replace(/<script src="([^"]+)"><\/script>/g, (m, src) => '<script>\n' + inline(fs.readFileSync(path.join(ROOT, src), 'utf8')) + '\n</script>');
   html = html.replace('<script>', '<script>window.GAME_PART = ' + part + '; window.EMBED_IMG = ' + JSON.stringify(embed) + ';</script>\n<script>');
-  const sounds = soundsOf(part);
-  html = embedAudio(html, sounds);
-  fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, html);
-  const mb = fs.statSync(out).size / 1048576;
-  console.log(`${path.relative(ROOT, out)} 만듦 (게임 ${part}): 그림 ${used.size}장, 소리 ${Object.keys(sounds).length}개, ${mb.toFixed(1)}MB${mb > 30 ? '  ※ 30MB가 넘습니다' : ''}`);
+  return embedAudio(html, sounds);
 }
 
 for (const part of onlyGame ? [onlyGame] : [1, 2]) {
-  build(part, path.resolve(onlyGame && outArg ? outArg : path.join(ROOT, 'dist', `기억의_법정_게임${part}.html`)));
+  await build(part, path.resolve(onlyGame && outArg ? outArg : path.join(ROOT, 'dist', `기억의_법정_게임${part}.html`)));
 }

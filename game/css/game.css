@@ -85,6 +85,7 @@ img { -webkit-user-drag: none; }
 #scene.calm { filter: saturate(.25) brightness(.72); }
 #scene.dark #bg, #scene.dark #desk { filter: brightness(.22) saturate(.5); }
 #scene.dim #bg { filter: brightness(.42) saturate(.55); }
+#scene.lowlight #bg, #scene.lowlight #desk { filter: brightness(.48) saturate(.6); } /* 6화: 법정의 조명이 어두워진다 (인물은 그대로) */
 #scene.dark #char { filter: drop-shadow(0 0 calc(var(--u) * 40) rgba(255, 240, 200, .25)); }
 
 #photo { z-index: 10; background: #000; opacity: 0; transition: opacity 2.2s; }
@@ -770,6 +771,7 @@ img { -webkit-user-drag: none; }
 .drawer-cards.in { opacity: 1; }
 .drawer-cards.go { opacity: 0; transform: scale(.04); transition: opacity 1.7s ease-in, transform 1.7s cubic-bezier(.55, 0, .85, .4); }
 .drawer-cards .card { width: max(96px, calc(var(--u) * 330)); }
+.drawer-cards.takeout { transform-origin: 90% 3%; } /* 6화 꺼내기: [법정 기록] 버튼 쪽으로 */
 .drawer-spot {
   position: absolute; z-index: 10; left: 94%; top: 58%; width: 18%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none;
   background: radial-gradient(circle, rgba(150, 255, 180, .85), rgba(60, 200, 110, .4) 45%, transparent 70%); mix-blend-mode: screen; opacity: 0; transition: opacity .8s;

@@ -48,9 +48,13 @@ const quoteBlock = (from) => { // from 다음 줄부터 이어지는 '> ' 줄들
 };
 let prevSpeaker = false; // 바로 앞 줄이 대사였는지 (대사 뒤의 '> ' 인용을 찾으려고)
 let afterHeading = false; // 바로 앞 줄(빈 줄 빼고)이 ## 제목이었는지. 제목 바로 아래 '> ' 글은 만드는 사람에게 주는 설명이다 (4화 게임 2 시작 화면)
+// 힌트 목록 앞머리: (1단계), (1번), (3번 1단계), (추가 전), (추가 뒤) (6화)
+const LABEL = '\\((?:\\d단계|\\d+번(?: \\d단계)?|추가 전|추가 뒤)\\)';
+const labeledSpeaker = new RegExp('^- ' + LABEL + '\\s*(?=\\*\\*)'); // "- (1번) **하야시** (진지): …"
+const labelHead = new RegExp('^' + LABEL + '\\s*'); // 이름 없이 "- (추가 전) 글" 로 된 줄의 앞머리
 for (i = 0; i < lines.length; i++) {
   // 힌트 목록의 "- (1단계) **한나** (진지): …" 는 앞머리를 떼고 보통 대사로 읽는다
-  const L = lines[i].replace(/^- \(\d단계\)\s*(?=\*\*)/, '');
+  const L = lines[i].replace(labeledSpeaker, '');
   let m;
   if (!L.trim()) continue;
   const wasSpeaker = prevSpeaker;
@@ -71,7 +75,7 @@ for (i = 0; i < lines.length; i++) {
     continue;
   }
   if ((m = L.match(/^\*\*\[(증거 획득|개념 카드)\]\s*(🟥|🟦|🟩)?\s*(.+?)\*\*/))) {
-    add('증거이름', m[3].trim(), i + 1);
+    add('증거이름', m[3].trim().replace(/^\[검찰 측 증거\]\s*/, ''), i + 1); // 6화 "[검찰 측 증거] 명령서 조사 결과"
     const [qs] = quoteBlock(i);
     qs.forEach(([t, n]) => add('증거설명', t, n));
     continue;
@@ -97,6 +101,14 @@ for (i = 0; i < lines.length; i++) {
     else add('기록카드', t, i + 1);
     continue;
   }
+  // "> **실제 역사 기록**" 으로 시작하는 인용은 어느 구간에 있든 기록 카드다 (6화: 1라운드 결론, 증언 3 정답 장면)
+  if (/^>\s*\*\*실제 역사 기록\*\*\s*$/.test(L)) {
+    add('기록카드', '실제 역사 기록', i + 1);
+    let k = i + 1;
+    while (k < lines.length && lines[k].startsWith('>')) { const t = lines[k].replace(/^>\s?/, '').trim(); if (t) add('기록카드', t, k + 1); k++; }
+    i = k - 1;
+    continue;
+  }
   // 표정 없이 이름만 있는 말: (목소리), (목소리, 일본어 억양), 웨스트 대위의 기록 (자막)
   if ((m = L.match(/^\*\*([^*\[\]]+?)\*\*:\s*(.+)$/))) { add('대사', m[2], i + 1, m[1]); prevSpeaker = true; continue; }
   // 대사 바로 뒤에 따로 적힌 인용 (예: 포로들의 비밀 기록 내용)
@@ -117,8 +129,8 @@ for (i = 0; i < lines.length; i++) {
       parts.forEach((t) => add('대사', t, i + 1, who, expr));
       // 바로 아래 목록(1. / - )은 같은 사람의 이어지는 대사
       let k = i + 1;
-      while (k < lines.length && /^(\d+\. |- )/.test(lines[k]) && !/^- \(\d단계\)/.test(lines[k])) {
-        const t = lines[k].replace(/^- /, '');
+      while (k < lines.length && /^(\d+\. |- )/.test(lines[k]) && !labeledSpeaker.test(lines[k])) {
+        const t = lines[k].replace(/^- /, '').replace(labelHead, '');
         add('대사', t, k + 1, who, expr);
         k++;
       }
@@ -128,7 +140,7 @@ for (i = 0; i < lines.length; i++) {
       let k = i + 1;
       while (k < lines.length && (/^(\d+\. |> |- )/.test(lines[k]))) {
         if (lines[k].startsWith('>')) add('대사', lines[k].replace(/^>\s?/, ''), k + 1, who, expr);
-        else if (lines[k].startsWith('- ')) add('대사', lines[k].replace(/^- /, ''), k + 1, who, expr);
+        else if (lines[k].startsWith('- ')) add('대사', lines[k].replace(/^- /, '').replace(labelHead, ''), k + 1, who, expr); // 6화 증언 1: "- (추가 전) 글"
         else add('증언낭독', lines[k].replace(/^\d+\.\s*/, ''), k + 1, who, expr);
         k++;
       }
@@ -158,13 +170,15 @@ function walk(list, where) {
     if (c.지난기록) c.지난기록.forEach((k) => k.글.forEach((t) => put('자막', t, null, null, where)));
     if (c.종이) c.종이.forEach((t) => put('자막', t, null, null, where));
     if (c.판결) put('자막', '**' + c.판결 + '**', null, null, where);
+    if (c.몽타주) c.몽타주.forEach((m) => put('자막', m.글, null, null, where)); // 6화 진범 몽타주
+    if (c.벽돌) put('자막', c.벽돌, null, null, where); // 6화 기억의 벽 (대본 한 줄 그대로)
     if (c.다음화) put('다음화', c.다음화, null, null, where);
     if (c.인용) put('인용', c.인용, null, null, where);
     if (c.증언) {
       const T = c.증언;
       T.문장.forEach((st) => {
         put('증언문장', st.글, null, null, where);
-        put('증언낭독', (st.낭독 || st.글).replace(/[〔〕]/g, ''), T.증인, T.표정, where);
+        if (!st.숨김) put('증언낭독', (st.낭독 || st.글).replace(/[〔〕]/g, ''), T.증인, T.표정, where); // 숨긴 문장(6화 3-1)은 처음에 읽지 않는다
         walk(st.추궁, where);
         if (st.수정) { put('증언문장', st.수정.글, null, null, where); walk(st.수정.뒤, where); }
         (st.추가 || []).forEach((t) => put('증언문장', t, null, null, where));
@@ -175,6 +189,9 @@ function walk(list, where) {
         walk(st.앞, where); walk(st.정답장면, where); if (st.힌트) walk([st.힌트], where);
         if (st.확대) { walk([st.확대.대사], where); (st.확대.자막 || []).forEach((t) => put('자막', t, null, null, where)); } // 5화: 뒷면을 보면 그림 아래에 띄우는 글
       });
+      // 6화: 문장을 하나씩 깨는 증언 (이어서는 겹쳐 쓸 수 있다)
+      const brk = (g) => { if (!g) return; walk(g.앞, where); walk(g.정답장면, where); if (g.힌트) walk([g.힌트], where); if (g.힌트숨김) walk([g.힌트숨김], where); brk(g.이어서); };
+      (T.깨기 || []).forEach(brk);
       if (Array.isArray(T.일반오답)) walk(T.일반오답, where);
       if (Array.isArray(T.피해오답)) walk(T.피해오답, where);
       if (T.힌트) walk([T.힌트], where);
@@ -271,7 +288,7 @@ for (const c of allCmds) {
   if (c.보기) people.push([c.보기, c.보기표정]);
   for (const [w, ex] of people) {
     if (!w || nameOnly(w)) continue;
-    const person = DATA.인물[w];
+    const person = DATA.인물[w] && Object.assign({}, DATA.인물[w], (EP.인물 || {})[w]);
     if (!person) { problems.push('인물 표에 없음: ' + w); continue; }
     const e = DATA.표정[ex || '기본'];
     if (!e) problems.push('표정 이름이 표에 없음: ' + w + ' ' + ex);
@@ -302,6 +319,8 @@ for (const c of allCmds) {
   const faces = [];
   if (c.지난기록) c.지난기록.forEach((k) => { faces.push(k.피고); faces.push(...k.진범); });
   if (c.회상얼굴) faces.push(...c.회상얼굴);
+  if (c.몽타주) c.몽타주.forEach((m) => faces.push(...m.얼굴));
+  if (c.카메라) { if (!DATA.법정자리[c.카메라]) problems.push('법정 자리 이름이 표에 없음: ' + c.카메라); needImg(c.책상); }
   for (const [w, ex] of faces) {
     const person = DATA.인물[w];
     if (!person) { problems.push('인물 표에 없음: ' + w); continue; }

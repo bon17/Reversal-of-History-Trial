@@ -19,7 +19,9 @@
     return e;
   };
   // 글 안의 **강조** 만 굵은 글씨로 살린 HTML (나머지는 글자 그대로)
-  G.mdBold = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  // 🟥🟦🟩 는 대사창처럼 작은 보석 그림으로 바꾼다 (글꼴에 따라 네모로 보이지 않게. 6화 엔딩의 "피해 기록(🟥)")
+  const GEMS = { '🟥': 'r', '🟦': 'b', '🟩': 'g' };
+  G.mdBold = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/🟥|🟦|🟩/gu, (m) => '<span class="gem gem-' + GEMS[m] + '"></span>');
   G.sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   G.nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
