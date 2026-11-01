@@ -129,7 +129,7 @@ await new Promise((r) => setTimeout(r, 700));
 
 ## 6. 더 필요하면 (저장소)
 
-- 공개 저장소: https://github.com/bon17/Reversal-of-History-Trial (최신 통합 브랜치 `claude/sleepy-clarke-xeirvc`)
+- 공개 저장소: https://github.com/bon17/Reversal-of-History-Trial (가장 새 브랜치 `claude/sharp-goldberg-r57qqy`. 게임 2 HTML은 이 브랜치에서 `node tools/build_single_html.mjs --game 2`로 만든다)
 - 대본: `docs/대본/`, 기획서: `docs/기획서.md`, 소리 파일 이름 전체 표(효과음 포함): `docs/게임_실행_안내.md` 5장
 - 저장소에서는 `assets/audio/bgm/`에 mp3를 넣고 `node tools/build_single_html.mjs`를 돌리면, 게임마다 쓰는 BGM만 골라 HTML에 넣는다.
 - 효과음(`assets/audio/se/`)도 같은 방식으로 넣을 수 있다. 이번 작업은 BGM만 한다.
