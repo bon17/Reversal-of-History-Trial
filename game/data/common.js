@@ -146,6 +146,7 @@ DATA.컷 = {
   'backgrounds/cut_ep5_watch_in_blanket': '담요에 싸인 금시계',
   'backgrounds/cut_ep5_becker_hand_watch': '회중시계를 귀에 댄 베커의 손',
   'backgrounds/cut_ep6_eichmann_glasses': '안경을 닦는 아이히만',
+  'backgrounds/cut_ep6_press_silhouette': '기자석에서 받아 적는 여자 실루엣 (1961)',
 };
 
 // 소리: 대본의 이름 → 파일 (assets/audio/ 아래, 확장자 없이).

@@ -81,6 +81,7 @@
       case '연출': await effect(c.연출); return;
       case '컷':
         if (c.그림없음) console.info('[그림 없음, 빈 자리로 둠]', c.그림없음);
+        if (c.있을때만 && c.컷 && G.isPlaceholder(await G.loadImg(c.컷))) return; // 아직 올리지 않은 그림이면 이 컷을 건너뛴다 (6화 기자석 실루엣)
         G.stage.cut(c.컷); return;
       case '자막': await G.stage.subtitle(c.자막, c); return;
       case '기록글': await G.stage.subtitle(c.기록글, c); return; // 실제 역사 기록 화면의 글 (검은 화면)
