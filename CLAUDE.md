@@ -6,6 +6,7 @@
 
 - 가장 새 브랜치: `claude/sharp-goldberg-r57qqy` (2026-11-01, 6화 게임 데이터까지 완성). 그 앞은 `claude/modest-gauss-chzsc0`(6화 작업 중), 그 앞의 통합 브랜치는 `claude/sleepy-clarke-xeirvc`. 저장소 기본 브랜치(`claude/gyakuten-saiban-steam-e9a1vw`)는 옛 대본이라 쓰지 않는다.
 - **6화 작업을 이어서 할 때는 `docs/6화_작업_메모.md`부터 읽는다.**
+- **외침 소리("잠깐!", "이의 있음!", "받아라!") 작업은 `docs/인계문_외침소리.md`부터 읽는다.** 브랜치 `claude/bold-turing-nt4dxk`에 외침이 늦게 나는 것을 고쳐 두었다 (sharp-goldberg 최신본 + 고침).
 - 대본(`docs/대본/`)이 기준이다. 대본을 고치면 `node tools/check_script.mjs --ep N`으로 게임 데이터와 비교한다.
 - 실행, 소리 파일 이름, 도구 사용법: `docs/게임_실행_안내.md`
 - 브라우저로 끝까지 해 보기: `node tools/playtest.mjs --from 4 --to 6 --probe` (실행 안내 7장)
