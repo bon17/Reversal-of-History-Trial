@@ -41,7 +41,10 @@ const allImgs = [];
     else if (f.endsWith('.webp')) allImgs.push(path.relative(imgRoot, full).replace(/\\/g, '/').replace(/\.webp$/, ''));
   }
 })(imgRoot);
-const charKey = (name, expr) => { const c = DATA.인물[name]; const e = DATA.표정[expr || '기본']; return c && e ? 'characters/' + c.파일 + '_' + e : null; };
+// 화마다 인물 칸을 바꿀 수 있다 (6화: 다비드 → david1961). 게임의 G.who와 같게, 지금 훑는 화의 인물 칸을 먼저 본다
+let epOver = {};
+const who = (name) => (DATA.인물[name] ? Object.assign({}, DATA.인물[name], epOver[name]) : null);
+const charKey = (name, expr) => { const c = who(name); const e = DATA.표정[expr || '기본']; return c && e ? 'characters/' + c.파일 + '_' + e : null; };
 const allExpr = (name) => { const c = DATA.인물[name]; return c ? allImgs.filter((k) => k.startsWith('characters/' + c.파일 + '_')) : []; };
 const FIXED = ['신중한', '한나', '레테', '재판장']; // 늘 나오는 인물은 표정을 모두 넣는다
 
@@ -74,14 +77,17 @@ function imagesOf(part) {
     if (typeof v.퇴장 === 'string' && v.뒷모습) keys.add(charKey(v.퇴장, '뒷모습'));
     if (typeof v.배경 === 'string') addBg(v.배경);
     if (typeof v.조사배경 === 'string') addBg(v.조사배경); // 5화 조사 장소: 도착 뒤 조사 포인트를 찾는 배경
+    if (v.벽돌) keys.add('backgrounds/cut_ep6_wall_bricks'); // 6화 기억의 벽: 벽돌 그림은 엔진이 정해 둔 한 장
     for (const x of Object.values(v)) visit(x);
   }
   for (const ep of episodes.filter((e) => partOf(e) === part)) {
+    epOver = ep.인물 || {};
     visit(ep.막);
     visit([ep.오답.일반, ep.오답.피해]);
     if (ep.지도점 && typeof ep.지도점 === 'object') keys.add(ep.지도점.겹침); // 5화 수용소 분포도의 이름 적힌 점 그림
     for (const [id, ev] of Object.entries(ep.증거)) addEv(ev.가져오기 ? (DATA[ev.가져오기] || { 증거: {} }).증거[ev.원래 || id] : ev);
   }
+  epOver = {};
   // 늘 쓰는 것: UI 전부, 법정 자리, 처음 화면 배경, 고정 인물의 모든 표정, 재판장 놀람
   allImgs.filter((k) => k.startsWith('ui/')).forEach((k) => keys.add(k));
   Object.values(DATA.법정자리).forEach((z) => { keys.add(z.배경); keys.add(z.책상); });

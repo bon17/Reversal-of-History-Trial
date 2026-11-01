@@ -265,7 +265,12 @@
       await G.memoryNote(noteSpec.기억노트);
       location.reload();
     } }, '기억 노트 쓰기');
-    [startBtn, resumeBtn, codeBtn, noteBtn].forEach((b) => { b.disabled = true; menu.append(b); });
+    // 반박문 쓰기만 바로 하기 (게임 2를 끝까지 못 한 학생, 결석한 학생). 게임 2 파일과 사이트에만 있다
+    const rebuttalBtn = h('button', { class: 'ui-btn sub', hidden: PART === 1 || !DATA.ep6 || !G.rebuttal, onclick: () => {
+      s.remove();
+      G.rebuttal();
+    } }, '친구에게 답장하기');
+    [startBtn, resumeBtn, codeBtn, noteBtn, rebuttalBtn].forEach((b) => { b.disabled = true; menu.append(b); });
 
     // 처음에 꼭 필요한 그림을 먼저 받는다
     const first = ['ui/textbox', 'ui/window_hint', 'ui/window_tutorial', 'ui/btn_press', 'ui/btn_present', 'ui/btn_record', 'ui/btn_move', 'ui/btn_examine',
@@ -279,7 +284,7 @@
       await Promise.race([document.fonts.load('20px "RIDIBatang"', '기억의 법정').catch(() => {}), G.sleep(4000)]);
     }
     loading.textContent = '';
-    startBtn.disabled = false; codeBtn.disabled = false; noteBtn.disabled = false; resumeBtn.disabled = !canResume;
+    startBtn.disabled = false; codeBtn.disabled = false; noteBtn.disabled = false; rebuttalBtn.disabled = false; resumeBtn.disabled = !canResume;
   }
 
   // ─────────── 시작 ───────────

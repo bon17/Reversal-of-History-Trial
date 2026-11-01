@@ -237,4 +237,8 @@
 
     intro();
   });
+
+  // 반박문 쓰기(game/js/rebuttal.js)도 같은 저장 방법과 같은 세 답을 쓴다 (구글 시트의 「요약」이 두 답을 나란히 센다)
+  G.sendToSheet = send;
+  G.THINK = THINK;
 })();

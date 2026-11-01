@@ -81,6 +81,7 @@
       case '연출': await effect(c.연출); return;
       case '컷':
         if (c.그림없음) console.info('[그림 없음, 빈 자리로 둠]', c.그림없음);
+        if (c.있을때만 && c.컷 && G.isPlaceholder(await G.loadImg(c.컷))) return; // 아직 올리지 않은 그림이면 이 컷을 건너뛴다 (6화 기자석 실루엣)
         G.stage.cut(c.컷); return;
       case '자막': await G.stage.subtitle(c.자막, c); return;
       case '기록글': await G.stage.subtitle(c.기록글, c); return; // 실제 역사 기록 화면의 글 (검은 화면)
@@ -165,16 +166,11 @@
       // ── 6화에서 더한 연출 ──
       case '증언추가': await addStatement(c.증언추가); return; // 추궁이나 정답 장면에서 숨겨 둔 문장(3-1)이 증언에 더해진다
       case '붉은줄': await strikeStatement(c); return; // 깨진 문장에 붉은 줄을 긋는다 (절반: 반만)
-      case '꺼내기': { // 기록 보관함의 🟩 기록을 다시 꺼내 법정 기록에 넣는다
+      case '꺼내기': // 기록 보관함의 🟩 기록을 다시 꺼내 법정 기록에 넣는다 (초록빛 속에 카드가 나란히 떴다가 [법정 기록]으로 들어간다)
         G.box.hide();
-        G.stage.green(true);
         c.꺼내기.forEach(gain);
-        G.stage.showCards(c.꺼내기, { center: true, slow: true });
-        await G.sleep(2800);
-        G.stage.hideCards();
-        G.stage.green(false);
+        await G.stage.takeOut(c.꺼내기);
         return;
-      }
       case '카메라': G.box.hide(); G.stage.hideChar(true); G.stage.camera(c.카메라, c.책상); await G.sleep(c.대기 || 900); return; // 법정의 한 자리를 사람 없이 비춘다 (책상: 앞그림을 바꿔서)
       case '몽타주': await G.stage.montage(c.몽타주); return; // 얼굴과 글이 차례로 떠오른다 (진범들)
       case '벽돌': await G.stage.bricks(c.벽돌); return; // 기억의 벽: 이름이 새겨진 벽돌이 하나씩 쌓인다
@@ -212,6 +208,10 @@
       case '밝게': G.stage.dark(false); G.listening = false; updateTopbar(); return;
       case '듣기': G.listening = true; updateTopbar(); return; // 증언 듣기: 화면은 그대로 두고 법정 기록 버튼만 숨긴다 (배경이 이미 어두울 때)
       case '듣기 끝': G.listening = false; updateTopbar(); return;
+      // 6화: 법정의 조명만 어둡게 (배경과 책상만 어두워지고 인물과 법정 기록 버튼은 그대로. '어둡게'는 증언 듣기용이라 버튼을 숨긴다)
+      case '조명 어둡게': G.stage.lowlight(true); return;
+      case '조명 밝게': G.stage.lowlight(false); return;
+      case '초록빛': G.stage.green(true); return; // 🟩 기록들이 초록빛으로 빛난다 (6화 최종 변론). 다른 사람이 말하거나 음악이 바뀌면 걷힌다
       default: console.warn('[모르는 연출]', name);
     }
   }
@@ -268,7 +268,7 @@
       el.remove();
       return;
     }
-    if (kind !== '무죄') { await G.stage.subtitle(['**' + kind + '**'], { 크게: true }); return; } // 글로 띄우는 판결 (6화: 1961년 예루살렘 판결은 옳았다)
+    if (kind !== '무죄') { await G.stage.subtitle(['**' + kind + '**'], { 크게: true, 겹쳐: true }); return; } // 글로 띄우는 판결 (6화: 1961년 예루살렘 판결은 옳았다). 법정을 어둡게 비친 채 띄우고, 누르면 법정으로 돌아온다
     const big = $('#big');
     const a = G.imgEl('ui/text_not_guilty_1', 'verdict-l');
     const b = G.imgEl('ui/text_not_guilty_2', 'verdict-r');
@@ -331,6 +331,8 @@
     // 면: 뒤집어 볼 수 있는 증거는 이 면을 봐야 한다 (5화 금시계 뒷면). 자막: 그때 그림 아래에 띄우는 글
     const setZoomHook = () => { const z = stages[stageNo].확대; P.zoomHook = z ? { 증거: z.증거, 면: z.면, 대사: z.대사, 자막: z.자막, done: false } : null; };
     setZoomHook();
+    // 지금 증언의 진행 (자동 시험 tools/playtest.mjs가 정답을 찾을 때 읽는다. 게임은 쓰지 않는다)
+    P.cx = { T, stages, revised, stage: () => stageNo };
     // 증언 개시
     G.stage.speaker(T.증인, T.표정);
     G.box.hide();
@@ -444,6 +446,7 @@
     const tm = (P.tm = { T, ids, shown: new Set(ids.filter((id, k) => !T.문장[k].숨김)), struck: {}, jump: null });
     const chains = T.깨기.map((g) => { const out = []; for (let s = g; s; s = s.이어서) out.push(s); return out; });
     const pos = chains.map(() => 0);
+    Object.assign(tm, { chains, pos }); // 자동 시험(tools/playtest.mjs)이 읽는다
     const done = (k) => pos[k] >= chains[k].length;
     const cur = (k) => chains[k][pos[k]];
     const targets = (s, k) => [].concat(s.문장 != null ? s.문장 : chains[k][0].문장).map(String); // 증언없이 단계는 처음 단계의 문장을 따른다
@@ -521,8 +524,13 @@
       // 아직 차례가 아닌 정답 (같은 문장의 다음 단계 증거, 다른 것을 다 깬 뒤에 낼 증거): 벌칙 없이 힌트
       const early = chains.findIndex((c, j) => !done(j) && targets(cur(j), j).includes(id) && c.slice(pos[j]).some((s) => evs(s).includes(ev)));
       if (early >= 0) {
-        const first = chains.findIndex((c, j) => !done(j) && !(pos[j] === 0 && cur(j).마지막));
-        const k2 = first >= 0 ? first : early;
+        // 같은 문장의 앞 단계가 남았으면 그 단계의 힌트 (6화 증언 2: 3번에 연설을 먼저 내면 T4 명령서 힌트)
+        // 다른 것을 다 깬 뒤에 낼 증거(마지막)이면 아직 남은 것 가운데 첫 번째의 힌트 (6화 증언 4의 4번)
+        let k2 = early;
+        if (pos[early] === 0 && cur(early).마지막) {
+          const first = chains.findIndex((c, j) => !done(j) && !(pos[j] === 0 && cur(j).마지막));
+          if (first >= 0) k2 = first;
+        }
         await showHint(hintOf(cur(k2), k2));
         continue;
       }
@@ -565,6 +573,7 @@
     if (mark === 'full') tm.ids.filter((x) => x.startsWith(id + '-')).forEach((x) => { tm.struck[x] = 'full'; }); // 3번을 다 깨면 3-1도
     const st = tm.T.문장[tm.ids.indexOf(id)];
     if (!st) return;
+    G.stage.speaker(tm.T.증인, tm.T.표정); // 줄이 그어지는 동안 그 증언을 한 증인을 비춘다
     G.box.showStatic({ 이름: tm.T.증인, 글: st.글, cls: 'cross-text' + strikeClass(id) });
     G.audio.se('붉은 줄 긋는 소리');
     await G.sleep(1300);
@@ -598,6 +607,7 @@
       // 다음 단계로 넘어갈 때 앞 단계의 🟥 차분한 화면, 🟩 초록빛, 카드를 걷는다 (반대 심문의 단계와 같게)
       if (k > 0) { G.stage.calm(false); G.stage.green(false); G.stage.hideCards(); P.cardsAfterLine = false; }
       const state = { wrong: 0 };
+      P.ct = step; // 자동 시험(tools/playtest.mjs)이 읽는다
       await runList(step.앞);
       // 주장 대사 (그 뒤에 안내창이 붙을 수 있다). 앞에 대사가 없으면 바로 앞에 나온 대사 (6화 증언 속 단계)
       const claim = step.주장 || [...step.앞].reverse().find((c) => c.말) || P.lastLine || { 말: '', 대사: '' };

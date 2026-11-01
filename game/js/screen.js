@@ -68,6 +68,7 @@
       this.releaseRecallFaces(true);
       stage.querySelectorAll('.bricks, .montage').forEach((e) => e.remove()); // 6화 기억의 벽, 몽타주
       this.calm(false);
+      this.lowlight(false);
       if (S.court) this.camera('전경');
       else {
         S.seat = null;
@@ -387,7 +388,25 @@
       await G.sleep(700);
       spot.remove();
     },
+    // 6화 기록 보관함에서 꺼내기: 🟩 카드가 초록빛 속에 나란히 떴다가 오른쪽 위 [법정 기록] 쪽으로 날아 들어간다 (drawer의 거꾸로)
+    async takeOut(ids) {
+      G.box.hide();
+      this.green(true);
+      await G.preload(ids.map((id) => G.ev[id] && G.ev[id].그림).filter(Boolean).concat('ui/card_green'));
+      const box = h('div', { class: 'drawer-cards takeout' });
+      ids.forEach((id) => box.append(G.renderCard(id)));
+      stage.append(box);
+      requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add('in')));
+      await G.sleep(3000);
+      box.classList.add('go');
+      await G.sleep(1700);
+      box.remove();
+      this.green(false);
+      await G.sleep(400);
+    },
     dark(on) { scene.classList.toggle('dark', !!on); S.dark = !!on; },
+    // 6화: 법정의 조명이 어두워진다 (배경과 책상만. 다음 배경이 나오면 저절로 걷힌다)
+    lowlight(on) { scene.classList.toggle('lowlight', !!on); S.lowlight = !!on; },
 
     // 외침, 띠, 증언 개시 같은 큰 그림
     async big(key, anim, ms) {
@@ -877,7 +896,7 @@
       }
       await G.nextFrame();
       const pages = paginate(tokens);
-      G.log.push({ 이름: skin === 'hint' ? '힌트 · 한나' : skin === 'tutorial' ? '알아두기' : shownName, 글 });
+      G.log.push({ 이름: skin === 'hint' ? '힌트 · ' + (이름 || '한나') : skin === 'tutorial' ? '알아두기' : shownName, 글 }); // 6화 힌트는 하야시
       if (G.log.length > 300) G.log.shift();
       let skipped = false;
       let skipBtn = null;

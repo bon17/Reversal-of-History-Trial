@@ -85,6 +85,7 @@ img { -webkit-user-drag: none; }
 #scene.calm { filter: saturate(.25) brightness(.72); }
 #scene.dark #bg, #scene.dark #desk { filter: brightness(.22) saturate(.5); }
 #scene.dim #bg { filter: brightness(.42) saturate(.55); }
+#scene.lowlight #bg, #scene.lowlight #desk { filter: brightness(.48) saturate(.6); } /* 6화: 법정의 조명이 어두워진다 (인물은 그대로) */
 #scene.dark #char { filter: drop-shadow(0 0 calc(var(--u) * 40) rgba(255, 240, 200, .25)); }
 
 #photo { z-index: 10; background: #000; opacity: 0; transition: opacity 2.2s; }
@@ -664,6 +665,36 @@ img { -webkit-user-drag: none; }
 .note .summary div { margin: 2px 0; }
 .note .summary b { color: var(--gold-light); }
 
+/* ─────────────── 반박문 쓰기 (친구에게 답장하기, 기획서 12장) ─────────────── */
+/* 단톡방: 특정 메신저 앱처럼 보이지 않게 게임 창과 같은 남색·금색으로 */
+.rebuttal .chat { background: rgba(4, 10, 28, .7); border: 2px solid #5a5040; border-radius: 14px; padding: 8px 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.rebuttal .chat.small { padding: 8px 10px; margin-bottom: 6px; }
+.rebuttal .chat-head { text-align: center; color: #cdbf9a; font-size: 14px; padding-bottom: 6px; border-bottom: 1px solid rgba(255, 255, 255, .1); margin-bottom: 2px; }
+.rebuttal .chat-pick { all: unset; display: block; cursor: pointer; border-radius: 12px; padding: 4px 6px; border: 2px solid transparent; }
+.rebuttal .chat-pick:hover { background: rgba(232, 184, 74, .08); }
+.rebuttal .chat-pick.on { border-color: var(--gold-light); box-shadow: 0 0 0 2px var(--gold); background: rgba(232, 184, 74, .12); }
+.rebuttal .chat-line { display: flex; align-items: flex-start; gap: 10px; }
+.rebuttal .chat-line.mine { justify-content: flex-end; }
+.rebuttal .av { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 2px solid #8a7a58; background: #46506e; }
+.rebuttal .av1 { background: #5e4a6e; } .rebuttal .av2 { background: #3f6a5e; } .rebuttal .av3 { background: #6e5a3f; }
+.rebuttal .chat-body { display: flex; flex-direction: column; gap: 3px; max-width: 82%; }
+.rebuttal .chat-body .who { font-size: 13px; color: #cdbf9a; }
+.rebuttal .bubble { display: inline-block; background: #f2ead4; color: #1d1a12; border-radius: 4px 14px 14px 14px; padding: 8px 12px; font-size: clamp(15px, 2.5vmin, 19px); line-height: 1.5; word-break: keep-all; }
+.rebuttal .chat-line.mine .bubble { background: #e8b84a; border-radius: 14px 4px 14px 14px; }
+.rebuttal .fb.then { text-align: center; margin-bottom: 8px; }
+.rebuttal .fb.then b { display: block; font-size: 1.08em; margin-bottom: 4px; }
+.rebuttal .ev-open { display: flex; gap: 14px; align-items: flex-start; }
+.rebuttal .ev-open .picked { margin: 0; flex: none; }
+.rebuttal .ev-open .picked .card { width: min(170px, 34vw); }
+.rebuttal .ev-desc { flex: 1; background: rgba(0, 0, 0, .3); border-radius: 10px; padding: 10px 12px; font-size: clamp(14px, 2.2vmin, 17px); line-height: 1.55; max-height: 38vh; overflow: auto; word-break: keep-all; }
+.rebuttal .ev-desc .ev-name { color: var(--gold-light); font-weight: 800; margin-bottom: 4px; }
+.rebuttal .ev-desc p b { color: var(--gold-light); }
+.rebuttal .ev-desc p { margin: 3px 0; }
+.rebuttal .reply { background: rgba(232, 184, 74, .1); border: 1px solid rgba(232, 184, 74, .5); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.rebuttal .r-line { font-size: clamp(16px, 2.6vmin, 20px); line-height: 1.5; word-break: keep-all; }
+.rebuttal .r-ev { color: var(--gold-light); font-weight: 700; }
+@media (max-width: 560px) { .rebuttal .ev-open { flex-direction: column; align-items: center; } }
+
 /* ─────────────── 4화에서 더한 연출 ─────────────── */
 /* 안내창의 [건너뛰기] (조작 복습) */
 .skip-btn { font-size: 15px; min-height: 36px; padding: 4px 14px; }
@@ -770,6 +801,7 @@ img { -webkit-user-drag: none; }
 .drawer-cards.in { opacity: 1; }
 .drawer-cards.go { opacity: 0; transform: scale(.04); transition: opacity 1.7s ease-in, transform 1.7s cubic-bezier(.55, 0, .85, .4); }
 .drawer-cards .card { width: max(96px, calc(var(--u) * 330)); }
+.drawer-cards.takeout { transform-origin: 90% 3%; } /* 6화 꺼내기: [법정 기록] 버튼 쪽으로 */
 .drawer-spot {
   position: absolute; z-index: 10; left: 94%; top: 58%; width: 18%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none;
   background: radial-gradient(circle, rgba(150, 255, 180, .85), rgba(60, 200, 110, .4) 45%, transparent 70%); mix-blend-mode: screen; opacity: 0; transition: opacity .8s;
