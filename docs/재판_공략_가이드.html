@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>기억의 법정 공략집</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Hahmlet:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: 법정 기록철. 머리말 → 공통 규칙 → 화별 사건 파일(사건 개요, 조사 증거판, 번호 매긴 법정 진행) 순서의 한 장짜리 문서. 상단에 고정된 사건 목차. */
+:root {
+  --paper: #f2f3f6;
+  --surface: #ffffff;
+  --ink: #18202e;
+  --muted: #586174;
+  --line: #d9dde5;
+  --line-strong: #b5bcc9;
+  --brass: #8a5f12;
+  --brass-soft: #f3e8d2;
+  --red: #b3322a;   --red-bg: #fbeae8;   --red-line: #e8b8b3;
+  --blue: #2350a0;  --blue-bg: #e8eefa;  --blue-line: #b5c6e9;
+  --green: #1f7346; --green-bg: #e2f2e8; --green-line: #a9d5bb;
+  --grey: #6b7385;  --grey-bg: #eceef2;  --grey-line: #c8cdd7;
+  --mark: #fff0c2;
+  --shout-bg: #18202e;
+  --shout-fg: #ffffff;
+
+  --f-display: "Hahmlet", "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --f-shout: "Black Han Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #11141b; --surface: #181d27; --ink: #e5e8ee; --muted: #9ba3b4;
+    --line: #2a3140; --line-strong: #3d4657;
+    --brass: #d9aa4c; --brass-soft: #2f2715;
+    --red: #f08479;   --red-bg: #33191a;   --red-line: #6b302c;
+    --blue: #92b3f3;  --blue-bg: #172238;  --blue-line: #31497a;
+    --green: #76cf9d; --green-bg: #142a1e; --green-line: #2e5f42;
+    --grey: #9ba3b4;  --grey-bg: #222834;  --grey-line: #3a4252;
+    --mark: #4a3c12;
+    --shout-bg: #e5e8ee; --shout-fg: #11141b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #11141b; --surface: #181d27; --ink: #e5e8ee; --muted: #9ba3b4;
+  --line: #2a3140; --line-strong: #3d4657;
+  --brass: #d9aa4c; --brass-soft: #2f2715;
+  --red: #f08479;   --red-bg: #33191a;   --red-line: #6b302c;
+  --blue: #92b3f3;  --blue-bg: #172238;  --blue-line: #31497a;
+  --green: #76cf9d; --green-bg: #142a1e; --green-line: #2e5f42;
+  --grey: #9ba3b4;  --grey-bg: #222834;  --grey-line: #3a4252;
+  --mark: #4a3c12;
+  --shout-bg: #e5e8ee; --shout-fg: #11141b;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.65;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px); z-index: 10;
+  background: var(--surface);
+}
+.wrap {
+  max-width: 1040px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; border-radius: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* 머리말 */
+.masthead .wrap { padding-block: 44px 24px; }
+.eyebrow { margin: 0; font-size: .8rem; font-weight: 600; letter-spacing: .08em; color: var(--brass); }
+h1 {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(2rem, 5.2vw, 3.1rem); line-height: 1.2;
+  margin: .35rem 0 .7rem; text-wrap: balance;
+}
+.lede { margin: 0; max-width: 62ch; color: var(--muted); font-size: 1rem; }
+
+/* 공통 규칙 */
+.rules .wrap { padding-block: 8px 32px; }
+.rules-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+}
+.rule { background: var(--surface); padding: 16px 18px; min-width: 0; }
+.rule h2 { margin: 0 0 .7rem; font-size: .82rem; font-weight: 600; letter-spacing: .06em; color: var(--muted); }
+.rule ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.rule li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .65rem; align-items: baseline; font-size: .9rem; }
+.rule li.plain { display: block; }
+.rule-foot { margin: .9rem 0 0; font-size: .85rem; color: var(--muted); }
+@media (max-width: 820px) { .rules-grid { grid-template-columns: 1fr; } }
+
+/* 증거 칩: 모양으로도 종류를 구별 (피해 ■, 책임 ◆, 선택 ●) */
+.ev {
+  display: inline-flex; align-items: center; gap: .42em;
+  padding: .12em .55em .12em .45em;
+  border: 1px solid var(--grey-line); background: var(--grey-bg);
+  border-radius: 4px; font-size: .86rem; font-weight: 500; line-height: 1.45;
+  color: var(--ink);
+}
+.ev i { flex: none; width: .6em; height: .6em; background: var(--grey); border-radius: 1px; }
+.ev-r { background: var(--red-bg); border-color: var(--red-line); }
+.ev-r i { background: var(--red); }
+.ev-b { background: var(--blue-bg); border-color: var(--blue-line); }
+.ev-b i { background: var(--blue); transform: rotate(45deg) scale(.9); }
+.ev-g { background: var(--green-bg); border-color: var(--green-line); }
+.ev-g i { background: var(--green); border-radius: 50%; }
+.ev-c i { background: transparent; border: 1.5px solid var(--grey); border-radius: 50%; }
+.ev-p i { background: transparent; border: 1.5px solid var(--grey); }
+
+/* 외침 */
+.shout {
+  display: inline-block; white-space: nowrap;
+  font-family: var(--f-shout); font-weight: 400; font-size: .95rem; line-height: 1.25;
+  letter-spacing: .02em; padding: .22em .65em .14em; border-radius: 3px;
+  transform: skewX(-8deg);
+}
+.shout-obj { background: var(--shout-bg); color: var(--shout-fg); }
+.shout-hold { color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+.shout-take { background: var(--brass); color: var(--surface); }
+.press {
+  display: inline-block; font-size: .82rem; font-weight: 600; line-height: 1.4;
+  padding: .12em .55em; border: 1.5px dashed var(--line-strong); border-radius: 4px;
+}
+.choice { font-weight: 600; }
+.choice::before { content: "▶ "; color: var(--brass); }
+
+/* 사건 목차 */
+.casenav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--surface);
+  border-block: 1px solid var(--line);
+}
+.casenav .wrap { position: relative; overflow-x: auto; scrollbar-width: thin; }
+.casenav ul { display: flex; gap: .2rem; list-style: none; margin: 0; padding: .4rem 0; white-space: nowrap; }
+.casenav a {
+  display: block; padding: .42rem .7rem; border-radius: 6px;
+  color: var(--muted); text-decoration: none; font-size: .9rem;
+}
+.casenav a b { font-family: var(--f-display); font-weight: 700; color: var(--ink); margin-right: .35em; }
+.casenav a:hover { background: var(--grey-bg); }
+.casenav a[aria-current="true"] { background: var(--brass-soft); color: var(--ink); }
+
+/* 사건 파일 */
+.case { padding-block: 44px 12px; scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 56px); }
+.case + .case { border-top: 2px solid var(--ink); }
+.case-no { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; font-size: .82rem; font-weight: 600; letter-spacing: .06em; color: var(--brass); }
+.case-no .when { color: var(--muted); font-weight: 500; letter-spacing: .02em; }
+.badge { font-size: .72rem; letter-spacing: .04em; padding: .05em .5em; border: 1px solid var(--brass); border-radius: 3px; }
+.case h2 {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(1.7rem, 4.2vw, 2.4rem); line-height: 1.25;
+  margin: .25rem 0 1.1rem; text-wrap: balance;
+}
+.facts {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px; background: var(--line); margin: 0;
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+}
+.facts > div { background: var(--surface); padding: .7rem 1rem; min-width: 0; }
+.facts dt { font-size: .75rem; font-weight: 600; letter-spacing: .05em; color: var(--muted); }
+.facts dd { margin: .15rem 0 0; }
+@media (max-width: 640px) { .facts { grid-template-columns: 1fr; } }
+
+.case h3 {
+  font-family: var(--f-display); font-weight: 700; font-size: 1.15rem;
+  margin: 2.2rem 0 .85rem; display: flex; align-items: baseline; gap: .6rem;
+}
+.case h3 small { font-family: var(--f-body); font-weight: 500; font-size: .82rem; color: var(--muted); }
+
+.locs { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: .7rem; }
+.loc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .8rem .9rem; min-width: 0; }
+.loc h4 { margin: 0 0 .5rem; font-size: .88rem; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.loc p { margin: .55rem 0 0; font-size: .82rem; color: var(--muted); }
+.trap {
+  margin-top: .8rem; padding: .7rem .9rem;
+  border: 1px dashed var(--line-strong); border-radius: 8px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .5rem;
+  font-size: .86rem; color: var(--muted);
+}
+.trap > span:first-child { font-weight: 600; margin-right: .2rem; }
+.trap .ev { text-decoration: line-through; text-decoration-color: var(--muted); }
+
+/* 법정 진행 */
+.steps { list-style: none; margin: 0; padding: 0; }
+.step {
+  display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 1rem;
+  padding-block: 1.05rem; border-top: 1px solid var(--line);
+}
+.step:first-child { border-top: 0; }
+.num {
+  font-family: var(--f-display); font-weight: 700; font-size: 1.2rem; line-height: 1.6;
+  color: var(--muted); text-align: right; font-variant-numeric: tabular-nums;
+}
+.step-body { min-width: 0; }
+.step-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .6rem; }
+.kind {
+  font-size: .72rem; font-weight: 600; letter-spacing: .05em; line-height: 1.5;
+  padding: .05em .5em; border-radius: 3px; border: 1px solid var(--line-strong); color: var(--muted);
+}
+.kind-test { color: var(--ink); border-color: var(--ink); }
+.kind-reb { color: var(--brass); border-color: var(--brass); }
+.phase { font-weight: 600; font-size: 1.02rem; }
+.who { color: var(--muted); font-size: .9rem; }
+.tag { font-size: .8rem; color: var(--brass); }
+
+.moves { list-style: none; margin: .45rem 0 0; padding: 0; }
+.move {
+  display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: .2rem 1rem;
+  padding-block: .6rem; border-top: 1px dashed var(--line);
+}
+.move:first-child { border-top: 0; }
+.move .t { font-size: .8rem; font-weight: 600; color: var(--muted); padding-top: .2rem; }
+.q { margin: 0; font-family: var(--f-display); font-weight: 500; font-size: 1rem; line-height: 1.6; }
+mark { background: var(--mark); color: inherit; padding: 0 .12em; border-radius: 2px; }
+.ans { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: .35rem; }
+.ans .arrow { color: var(--muted); font-weight: 600; }
+.ans .or { color: var(--muted); font-size: .82rem; }
+.move .n { margin: .4rem 0 0; font-size: .85rem; color: var(--muted); }
+@media (max-width: 560px) {
+  .move { grid-template-columns: 1fr; }
+  .move .t { padding-top: 0; }
+  .step { grid-template-columns: 1.6rem minmax(0, 1fr); gap: .7rem; }
+}
+
+.why, .alt, .note { margin: .6rem 0 0; font-size: .9rem; max-width: 70ch; }
+.why b, .alt b { color: var(--brass); font-weight: 600; margin-right: .45em; }
+.alt, .note { color: var(--muted); }
+
+.round {
+  display: flex; align-items: center; gap: .8rem;
+  padding: 1.6rem 0 .5rem; font-family: var(--f-display); font-weight: 700; font-size: 1.1rem;
+}
+.round::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
+.round + .step { border-top: 0; }
+
+footer .wrap { padding-block: 36px 48px; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); margin-top: 32px; }
+footer p { margin: 0 0 .4rem; max-width: 70ch; }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">기억의 법정: 역사 역전재판 · 법정 파트 공략</p>
+    <h1>기억의 법정 공략집</h1>
+    <p class="lede">1화부터 6화까지, 증언마다 어느 문장을 추궁하고 어떤 증거를 내야 하는지 순서대로 정리했습니다. 조사 파트에서 미리 챙길 증거도 장소별로 함께 적었습니다.</p>
+  </div>
+</header>
+
+<section class="rules" aria-label="공통 규칙">
+  <div class="wrap">
+    <div class="rules-grid">
+      <div class="rule">
+        <h2>증거 카드 3종</h2>
+        <ul>
+          <li><span class="ev ev-r"><i></i>피해 기록</span><span>이런 일이 있었고 사람들이 고통받았다는 기록. 잘못 내도 벌칙 없음</span></li>
+          <li><span class="ev ev-b"><i></i>책임 기록</span><span>누가 명령하고 실행했는지 보여 주는 기록</span></li>
+          <li><span class="ev ev-g"><i></i>선택 기록</span><span>같은 상황에서 다른 선택을 한 사람의 기록</span></li>
+          <li><span class="ev ev-c"><i></i>개념 카드</span><span>용어 풀이. 회색 네모는 검찰 측 증거</span></li>
+        </ul>
+      </div>
+      <div class="rule">
+        <h2>외침 3종</h2>
+        <ul>
+          <li><span class="shout shout-obj">이의 있음!</span><span>증거를 제시할 때</span></li>
+          <li><span class="shout shout-hold">잠깐!</span><span>증언을 추궁할 때</span></li>
+          <li><span class="shout shout-take">받아라!</span><span>같은 증언에서 이어서 한 번 더 제시할 때</span></li>
+        </ul>
+      </div>
+      <div class="rule">
+        <h2>틀렸을 때</h2>
+        <ul>
+          <li class="plain">추궁은 몇 번을 해도 벌칙이 없습니다.</li>
+          <li class="plain">책임·선택 기록을 잘못 내면 재판부 신뢰도가 1칸 줄어듭니다. (5칸 중)</li>
+          <li class="plain">같은 증언에서 두 번 틀리면 조수가 힌트를 줍니다.</li>
+          <li class="plain">신뢰도가 0이 되면 재판이 연기되고 그 증언부터 다시 합니다.</li>
+        </ul>
+        <p class="rule-foot">개정 선택지는 매 화 <span class="choice">피고는 무죄입니다</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="casenav" aria-label="사건 목차">
+  <div class="wrap"><ul id="nav"></ul></div>
+</nav>
+
+<main class="wrap" id="cases">
+  <noscript><p>이 공략집은 자바스크립트로 내용을 그립니다. 자바스크립트를 켜 주세요.</p></noscript>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>출처: 저장소의 <code>docs/대본</code> 제1화~제6화 대본과 <code>docs/기획서.md</code>.</p>
+    <p>표에 적힌 문장 번호는 각 증언의 반대 심문 순서입니다. 〔강조 단어〕는 게임 안에서 추궁 포인트로 표시되는 말입니다.</p>
+  </div>
+</footer>
+
+<script>
+const KIND = { r: "피해 기록", b: "책임 기록", g: "선택 기록", c: "개념 카드", p: "검찰 측 증거" };
+const STEP_KIND = { choice: "선택지", test: "증언", reb: "검사", listen: "증언 듣기", event: "진행", final: "최종 변론" };
+
+const EPISODES = [
+  {
+    id: "ep1", no: 1, title: "군함도의 명부", when: "1944년 · 하시마 탄광",
+    facts: [
+      ["피고", "김석진 (17세 조선인 광부)"],
+      ["죄명", "사보타주로 인한 갱도 파괴 및 치사"],
+      ["증인 → 진범", "오카다 감독관 → 사토 광업소장 → <b>모리 군수성 차관</b>"],
+      ["깨는 왜곡", "“돈 벌러 스스로 왔다” · “월급도 줬다”"]
+    ],
+    locs: [
+      ["역사 배경", ["b:국가 총동원법", "r:하시마섬 사진", "c:강제 동원"], "국가 총동원법은 마지막 증언 6에서 씁니다."],
+      ["피고 면회", ["r:김석진의 이야기"]],
+      ["광부 숙소", ["r:동료의 증언과 치료 기록", "r:임금 명세서"]],
+      ["3번 갱도 입구", ["b:썩은 버팀목", "r:구조 기록"], "갈림길 표지판: 갱도에서 나와 오른쪽이 경비실, 왼쪽이 선착장입니다."],
+      ["광업소 사무실", ["r:동원 경위 기록", "b:안전 점검 보고서", "b:증산 명령서"]],
+      ["법정 도중", ["b:동원 할당표"], "모리가 들어오기 직전에 한나가 건넵니다."]
+    ],
+    traps: ["b:회사의 사고 보고서", "b:탈출 시도 기록"],
+    steps: [
+      { k: "choice", ph: "개정", a: "피고는 무죄입니다", n: "“죄를 인정합니다”를 골라도 벌칙 없이 선택지로 돌아갑니다." },
+      { k: "test", ph: "증언 1 「사고 당일 밤」", who: "오카다 감독관", tag: "튜토리얼",
+        moves: [
+          { t: "3번", q: "그때 피고가 갱도에서 뛰쳐나오더니 〔정신없이 달아났소〕.", a: "press", s: "잠깐!",
+            n: "“어느 쪽으로 달아났습니까?” → 증언이 “〔오른쪽으로〕 정신없이 달아났소”로 바뀝니다." },
+          { t: "수정된 3번", a: ["r:구조 기록"], s: "이의 있음!" }
+        ],
+        why: "갱도 오른쪽은 경비실입니다. 새벽 2시 10분 김석진이 경비실에 붕괴를 알렸고, 2시 25분 구조대가 출동해 박만수가 살았습니다. 달아난 게 아니라 동료를 구하러 뛰어간 것입니다." },
+      { k: "test", ph: "증언 2 「피고라는 사람」", who: "오카다 감독관",
+        moves: [ { t: "2번", q: "우리 광업소는 광부들을 〔잘 대해 주었소〕.", a: ["r:동료의 증언과 치료 기록"], s: "이의 있음!" } ],
+        why: "할당량을 못 채웠다는 이유로 여러 차례 맞아 치료받았고, 콩깻묵 위주의 식사로 늘 굶주렸습니다." },
+      { k: "test", ph: "증언 3 「갱도 관리」", who: "오카다 감독관",
+        moves: [
+          { t: "2번", q: "3번 갱도의 버팀목도 사고 전날까지 〔아무 문제 없었지〕.", a: ["b:안전 점검 보고서"], s: "받아라!" },
+          { t: "또는 3번", q: "〔튼튼한 버팀목〕이 저절로 무너질 리 없소.", a: ["b:썩은 버팀목"], s: "받아라!" }
+        ],
+        why: "보고서에 “부식 심각, 붕괴 위험, 교체 요청 3회”와 오카다의 도장, 처리 결과 “보류”가 적혀 있습니다. 오카다는 “위에서 생산량을 채우라고 했다”며 무너집니다." },
+      { k: "reb", ph: "레테의 반격", who: "레테 검사",
+        moves: [
+          { q: "“조선인들은 돈을 벌러 스스로 이 섬에 왔다.”", a: ["r:동원 경위 기록"], s: "이의 있음!" },
+          { q: "“그래도 월급은 받았을 것 아니오!”", a: ["r:임금 명세서"] }
+        ],
+        why: "면마다 광부 인원을 할당하고 면장과 경찰이 책임지고 확보하게 했습니다. 월급은 강제 저축, 식비, 도구비, 숙소비를 빼면 거의 남지 않았습니다." },
+      { k: "listen", ph: "김석진", n: "선택지 없이 끝까지 듣습니다. 이어서 휴정합니다." },
+      { k: "test", ph: "증언 4 「광업소의 방침」", who: "사토 광업소장",
+        moves: [ { t: "2번", q: "무리하게 〔생산량을 늘리라고〕 지시한 적은 없습니다.", a: ["b:증산 명령서"], s: "이의 있음!" } ],
+        why: "군수성이 생산량을 1.5배로 늘리고 목표를 채우기 전에는 작업 중단을 금하라고 명령했습니다. 결재한 사람은 모리입니다." },
+      { k: "event", ph: "모리 등장", n: "한나가 기록실에서 찾은 서류를 건넵니다.", ev: ["b:동원 할당표"] },
+      { k: "test", ph: "증언 5 「도쿄의 사무실」", who: "모리 차관",
+        moves: [ { t: "2번", q: "하시마 탄광에서 사람이 〔다치고 죽는지는〕 알 길이 없었소.", a: ["b:동원 할당표"], s: "이의 있음!" } ],
+        why: "모리가 결재한 할당표의 비고란에 “사상자가 발생하면 보충 인원을 추가 할당할 것”이라고 적혀 있습니다. 사람이 죽는다는 걸 알고 있었습니다." },
+      { k: "test", ph: "증언 6 「국가를 위한 정책」", who: "모리 차관",
+        moves: [ { t: "4번", q: "이 모든 건 〔국가를 위한 정책〕이었소.", a: ["b:국가 총동원법"], s: "이의 있음!" } ],
+        why: "전쟁을 위해 사람과 물자를 마음대로 끌어다 쓰려고 만든 법입니다. 3번을 추궁하면 모리가 철도와 광산은 “석탄과 쌀과 사람을 실어 나르려는 것”이었다고 스스로 말합니다." },
+      { k: "final", ph: "판결: 무죄", n: "증거를 이어 모리 차관을 지목하고 “그러므로 피고는 무죄입니다!”를 선언합니다." }
+    ]
+  },
+  {
+    id: "ep2", no: 2, title: "두 개의 국적", when: "1943년 · 태국-버마 철도 포로수용소", optional: true,
+    facts: [
+      ["피고", "박영수 (20세 조선인 포로감시원)"],
+      ["죄명", "포로 학대로 인한 치사 (1946년 싱가포르 재판에서 사형)"],
+      ["증인 → 진범", "해리스 상병 → <b>야마모토 중위</b>"],
+      ["깨는 왜곡", "“조선인도 스스로 지원한 일본군”"]
+    ],
+    locs: [
+      ["역사 배경", ["r:태국-버마 철도 기록", "c:BC급 전범 재판"]],
+      ["피고 면회", ["b:박영수의 흉터", "r:박영수의 이야기"], "흉터는 처음엔 쓸모없어 보이지만 조사하면서 두 번 갱신됩니다."],
+      ["감시원 숙소", ["r:군속의 처지", "r:최동식의 증언"], "흉터 갱신 ①: 야마모토가 군도 칼집으로 때렸고, 군도는 장교만 찹니다."],
+      ["포로 막사", ["r:포로 군의관 일지", "g:박영수의 치료 기록", "r:포로들의 비밀 기록"], "흉터 갱신 ②: 상처 끝에 둥근 쇠붙이 자국이 있습니다."],
+      ["수용소 사무실", ["b:포로감시원 모집 할당 문서", "b:근무 일지 원본"], "할당 문서는 서류함에서, 근무 일지 원본은 근무 일지를 조사하면 나옵니다."]
+    ],
+    traps: ["b:1946년 판결 기록", "b:포로 진술 조서", "b:근무표 (재판 제출본)"],
+    steps: [
+      { k: "choice", ph: "개정", a: "피고는 무죄입니다" },
+      { k: "test", ph: "증언 1 「그날 작업장에서」", who: "해리스 상병", tag: "추궁으로 푸는 증언",
+        moves: [
+          { t: "3번", q: "그러자 〔막대기를 든 조선인 감시원〕이 톰슨 앞에 섰습니다.", a: "press", s: "잠깐!",
+            n: "“그다음에 무슨 일이 있었습니까?” → “감시원은 떨면서 〔막대기를 내려놓았습니다〕”가 증언에 더해집니다." }
+        ],
+        why: "해리스는 피해자 쪽 증인이고 거짓말을 하지 않습니다. 아직 다 말하지 못했을 뿐입니다. 여기서 증거를 내면 신뢰도만 1칸 줄어듭니다." },
+      { k: "test", ph: "증언 2 「근무표」", who: "야마모토 중위",
+        moves: [
+          { t: "2번", q: "사건 당일 오후 3시, 〔작업장 감독은 박영수〕였다.", a: ["b:근무 일지 원본"], s: "이의 있음!" },
+          { t: "또는 3번", q: "나는 그 시각 〔사무실에서〕 서류를 보고 있었다.", a: ["b:근무 일지 원본"] }
+        ],
+        why: "원본에는 오후 3시 작업장 감독이 “야마모토 중위 직접 감독”, 박영수는 “식량 창고 경비”로 적혀 있습니다. 재판에 낸 근무표는 나중에 고쳐 쓴 것입니다." },
+      { k: "test", ph: "증언 3 「조선인 감시원」", who: "야마모토 중위",
+        moves: [ { t: "3번", q: "박영수는 〔내 명령에 따라〕 그 포로를 때렸다.", a: ["g:박영수의 치료 기록"], s: "이의 있음!" } ],
+        why: "그날 밤 포로 군의관 웨스트 대위가 치료한 상처의 원인은 “장교에게 맞음”이었습니다. 박영수는 명령을 따른 게 아니라 거부했습니다." },
+      { k: "test", ph: "증언 3-2 「그 상처」", who: "야마모토 중위",
+        moves: [ { t: "3번", q: "그때 포로가 휘두른 〔나무 막대기〕에 박영수가 얼굴을 맞은 것이다.", a: ["b:박영수의 흉터"], s: "이의 있음!",
+          n: "감시원 숙소와 포로 막사를 모두 조사해 두 번 갱신된 흉터여야 합니다." } ],
+        why: "상처 끝의 둥근 쇠붙이 자국은 나무 막대기로는 생기지 않습니다. 감시원은 나무 막대기만, 포로는 아무것도 가질 수 없었고, 쇠 장식이 달린 군도 칼집은 장교만 찼습니다." },
+      { k: "reb", ph: "레테의 반격 「두 개의 국적」", who: "레테 검사",
+        moves: [
+          { q: "“피고는 스스로 지원해서 일본군 군속이 된 일본인이다.”", a: ["b:포로감시원 모집 할당 문서"], s: "이의 있음!" },
+          { q: "“그래도 군속은 포로를 감시하는 권한이 있었다!”", a: ["r:군속의 처지"] }
+        ],
+        why: "도마다 인원을 할당하고 못 채우면 면 단위로 책임지고 확보하게 했습니다. 군속은 “군마, 군견, 군속”이라 불린 일본군 명령 체계의 밑바닥이었습니다." },
+      { k: "listen", ph: "박영수", n: "선택지 없이 끝까지 듣습니다." },
+      { k: "test", ph: "증언 4 「명령」", who: "야마모토 중위",
+        moves: [ { t: "3번", q: "나는 그 포로에게 〔직접 손대지 않았다〕.", a: ["r:포로들의 비밀 기록"], s: "받아라!" } ],
+        why: "포로들이 몰래 남긴 기록에 “톰슨을 때린 것은 일본군 장교 야마모토. 조선인 감시원은 막대기를 내려놓았다가 장교에게 맞았다”라고 적혀 있습니다.",
+        alt: "4번 〔병과 날씨〕에 {{r:포로 군의관 일지}}를 내면 반론 장면이 나오지만 결정적인 증거로 인정되지 않습니다. 벌칙은 없습니다." },
+      { k: "final", ph: "판결: 무죄", n: "야마모토 중위를 지목하고 무죄를 선언합니다." }
+    ]
+  },
+  {
+    id: "ep3", no: 3, title: "첫 번째 보도", when: "1991년 · 도쿄의 신문사",
+    facts: [
+      ["피고", "하야시 (일본인 기자)"],
+      ["죄명", "허위 보도에 의한 명예훼손"],
+      ["증인 → 진범", "기무라 편집부장 → <b>다나카</b> (참전 군인 모임 회장, 전 제38부대 소좌)"],
+      ["깨는 왜곡", "“위안소는 일부” · “민간 업자가 한 일” · “증거가 없다”"]
+    ],
+    locs: [
+      ["역사 배경", ["c:일본군 ‘위안부’", "r:일본군 위안소 분포도"]],
+      ["피고 면회", ["b:고발장"], "불리해 보이지만 증언 4-2에서 결정적으로 씁니다."],
+      ["신문사 편집국", ["b:하야시의 취재 수첩", "b:정정 기사", "g:후세 다쓰지"], "취재 수첩은 책상 서랍, 정정 기사는 벽의 스크랩에 있습니다."],
+      ["기억의 법정 기록실", ["r:김학순 할머니의 공개 증언 기록", "b:고노 담화 (1993)"]],
+      ["도서관 자료실", ["b:일본 육군성 문서 (1938)", "b:패전 직전 문서 소각 명령", "b:불에 탄 소각 담당자 명단"]]
+    ],
+    traps: ["b:문제의 기사"],
+    steps: [
+      { k: "choice", ph: "개정", a: "피고는 무죄입니다" },
+      { k: "test", ph: "증언 1 「그 기사」", who: "기무라 편집부장",
+        moves: [ { t: "2번", q: "그 기사도 〔제대로 확인하지 않고〕 급하게 썼습니다.", a: ["b:하야시의 취재 수첩"], s: "이의 있음!" } ],
+        why: "녹음을 세 번 다시 듣고 받아 적은 수첩에는 “1941년”이 정확히 적혀 있습니다. 원고를 옮겨 쓰다 생긴 실수이고, 다른 내용은 모두 당시 기록과 대조했습니다.",
+        alt: "4번 〔믿기 어렵습니다〕에 {{b:정정 기사}}를 내도 보조 정답으로 넘어갑니다." },
+      { k: "reb", ph: "레테의 반격", who: "레테 검사",
+        moves: [ { q: "“틀린 곳이 하나라도 있는 기사는 전부 날조요!”", a: ["b:정정 기사"], s: "이의 있음!" } ],
+        why: "다음 날 “1942년”을 “1941년”으로 바로잡았고 그 밖의 내용은 바뀐 것이 없습니다. 작은 실수 하나로 전체를 거짓으로 모는 것은 역사 부정의 흔한 방법입니다." },
+      { k: "listen", ph: "1991년 8월 14일", n: "김학순 할머니의 공개 증언을 선택지 없이 끝까지 듣습니다." },
+      { k: "test", ph: "증언 2 「위안소」", who: "다나카",
+        moves: [ { t: "1번", q: "위안소라는 것은 전쟁터 〔몇몇 곳〕에만 있었습니다.", a: ["r:일본군 위안소 분포도"], s: "이의 있음!" } ],
+        why: "위안소는 중국, 동남아시아, 태평양의 섬들까지 아시아 전역에 퍼져 있었습니다.",
+        alt: "2번 〔돈을 벌러 스스로〕는 여기서 깨지 않고 증언 3에서 반박합니다." },
+      { k: "test", ph: "증언 3 「민간 업자」", who: "다나카",
+        moves: [
+          { t: "2번", q: "군은 업자들이 장사를 하도록 〔허가만〕 내줬을 뿐이지요.", a: ["b:일본 육군성 문서 (1938)"], s: "이의 있음!" },
+          { t: "또는 3번", q: "여자들을 어떻게 모았는지는 〔업자들이 알아서〕 한 일입니다.", a: ["b:일본 육군성 문서 (1938)"] }
+        ],
+        why: "파견된 군이 업자를 골라 통제하고 현지 헌병과 경찰이 협력하도록 지시한 일본 육군의 공식 문서입니다." },
+      { k: "reb", ph: "레테의 반격", who: "레테 검사",
+        moves: [ { q: "“강제로 끌려갔다는 건 피해자 쪽의 일방적인 주장일 뿐이오!”", a: ["b:고노 담화 (1993)"], s: "이의 있음!" } ],
+        why: "피해자가 아니라 일본 정부가 조사해 발표한 담화입니다. “본인들의 의사에 반하여 모집된 경우가 많았다.”" },
+      { k: "test", ph: "증언 4 「명령서」", who: "다나카",
+        moves: [
+          { t: "2번", q: "정말 그런 명령이 있었다면, 문서가 〔지금까지 남아 있었을〕 겁니다.", a: ["b:패전 직전 문서 소각 명령"], s: "이의 있음!" },
+          { t: "실언", q: "“그, 그 문서들은 분명히 다 태웠는데…!”", a: "press", s: "잠깐!", n: "다나카가 흘린 말을 바로 추궁하면 증언 4-2로 넘어갑니다." }
+        ],
+        why: "1945년 8월, 패전을 앞둔 일본 군과 정부가 전쟁 책임과 관련된 문서를 불태우라고 지시했습니다.",
+        alt: "4번 〔없는 일을 지어낸〕에 {{r:김학순 할머니의 공개 증언 기록}}을 내면 반론 장면이 나오지만 결정적인 증거는 아닙니다. 벌칙은 없습니다." },
+      { k: "test", ph: "증언 4-2 「소각」", who: "다나카", tag: "3단계",
+        moves: [
+          { t: "1단계 · 2번", q: "하지만 나는 위안소 문서를 태운 일과 〔아무 관계가 없소〕.", a: ["b:불에 탄 소각 담당자 명단"], s: "이의 있음!", n: "3번 〔다른 부대〕에 내도 됩니다." },
+          { t: "2단계", q: "레테: “마지막 글자가 타서 안 보이잖소! ‘다나’로 시작하는 이름이 얼마나 많은지 아시오?”", a: ["b:고발장"], s: "받아라!" },
+          { t: "3단계", q: "다나카: “명령을 거역할 수 있는 일본인은 없었소. 어쩔 수 없었소!”", a: ["g:후세 다쓰지"], s: "이의 있음!" }
+        ],
+        why: "명단에는 “제38부대 후방 담당, 다나○ 대위 — 위안소 관계 서류 일체 소각 완료”라고 적혀 있고, 다나카는 자기가 낸 고발장에 “전 제38부대 소좌”라고 썼습니다. 같은 시대에 조선 독립운동가를 변호한 일본인 후세 다쓰지가 있었습니다." },
+      { k: "final", ph: "판결: 무죄", n: "다나카를 지목하고 무죄를 선언합니다. 이어서 1부 마무리 「심판받지 않은 자들」이 나옵니다." }
+    ]
+  },
+  {
+    id: "ep4", no: 4, title: "숨겨진 방", when: "1943년 · 독일의 한 도시",
+    facts: [
+      ["피고", "마르타 슈미트 (빵집 주인)"],
+      ["죄명", "밀고로 인한 반인도 범죄 (1946년 기소)"],
+      ["증인 → 진범", "<b>슈나이더</b> (옆집 시계방 주인) · 가짜 용의자: 슈바르츠 부인"],
+      ["깨는 왜곡", "“숨을 이유가 없었다” · “시민의 의무였다”"]
+    ],
+    locs: [
+      ["2부 시작 · 역사 배경", ["c:전체주의", "c:추축국", "b:『나의 투쟁』", "b:뉘른베르크 인종법 (1935)", "r:수정의 밤 (1938)", "b:‘유대인 별’ 착용 명령 (1941)", "r:게토와 강제 이송"]],
+      ["피고 면회", ["b:밀고 편지"], "서명란의 S가 고리 모양으로 둥글게 말려 있습니다. 증언 3에서 비교합니다."],
+      ["빵집 다락방", ["r:레아의 일기 (첫 번째 공책)"]],
+      ["마르타의 부엌", ["b:비밀경찰 소환장"], "부엌 서랍에 있습니다."],
+      ["옆집 시계방", ["b:슈나이더의 이야기"]],
+      ["빵집 앞 거리", ["c:나치당 구역 감시원", "b:슈바르츠 부인의 이야기"], "슈바르츠 부인은 가짜 용의자입니다."],
+      ["기억의 법정 기록실", ["b:1938년 동네 유대인 재산 매각 기록", "c:유대인 재산 강탈", "r:안네 프랑크의 일기", "g:‘열방의 의인’ 기록"]],
+      ["휴정 때 다락방", ["r:레아의 일기 (두 번째 공책)"], "헐거운 마룻바닥 판자 밑에 숨겨져 있습니다."]
+    ],
+    traps: ["b:1946년 기소장", "b:목격자 진술", "b:은식기 발견 기록"],
+    steps: [
+      { k: "choice", ph: "개정", a: "피고는 무죄입니다" },
+      { k: "reb", ph: "레테의 주장 「숨을 이유」", who: "레테 검사",
+        moves: [
+          { q: "“유대인은 독일 사회와 잘 어울리지 못해서 스스로 떠나려던 것뿐이오.”", a: ["b:뉘른베르크 인종법 (1935)"], s: "이의 있음!" },
+          { q: "“법은 법이오! 그래도 유대인은 평범하게 살 수 있었소!”", a: ["r:수정의 밤 (1938)"] }
+        ],
+        why: "국가가 법으로 유대인의 시민권을 빼앗았고, 1938년 11월에는 독일 전역에서 유대인 상점이 부서지고 회당이 불탔습니다." },
+      { k: "test", ph: "증언 1 「그날 오후」", who: "슈나이더",
+        moves: [ { t: "2번", q: "그런데 마르타 씨가 〔스스로〕 비밀경찰 건물로 들어가더군요.", a: ["b:비밀경찰 소환장"], s: "이의 있음!" } ],
+        why: "체포 하루 전, 오후 3시까지 출석하라는 소환장이었습니다. 마르타는 밀고하러 간 게 아니라 누군가의 익명 제보 때문에 불려 갔습니다." },
+      { k: "reb", ph: "레테의 반격 「은식기」", who: "레테 검사",
+        moves: [ { q: "“레비 가족의 은식기가 피고의 찬장에서 나왔소. 재산을 챙긴 거요!”", a: ["r:레아의 일기 (첫 번째 공책)"], s: "이의 있음!" } ],
+        why: "1941년 10월 20일 일기: “엄마가 은식기를 마르타 아주머니께 맡겼다.” 마르타는 자기 몫을 덜어 매일 밤 빵을 가져다주었습니다." },
+      { k: "test", ph: "증언 2 「이웃」", who: "슈나이더",
+        moves: [ { t: "3번", q: "저는 돌아오면 돌려주려고 가게를 지켜 왔을 뿐, 〔이득을 본 적이 없습니다〕.", a: ["b:1938년 동네 유대인 재산 매각 기록"], s: "이의 있음!" } ],
+        why: "“레비 시계방 → 슈나이더 (시세의 10분의 1)”. 맡아 준 게 아니라 헐값에 넘겨받았습니다." },
+      { k: "event", ph: "휴정", n: "레아의 일기 마지막 줄 “새 공책을 부탁해야지”를 따라 다락방의 헐거운 마룻바닥 판자를 조사합니다.", ev: ["r:레아의 일기 (두 번째 공책)"] },
+      { k: "test", ph: "증언 3 「밀고 편지」", who: "슈나이더", tag: "2단계",
+        moves: [
+          { t: "1단계 · 4번", q: "게다가 저는 다락방에 누가 숨어 있는지 〔전혀 몰랐습니다〕.", a: ["r:레아의 일기 (두 번째 공책)"], s: "이의 있음!" },
+          { t: "2단계 · 3번", q: "저는 비밀경찰에 〔편지 같은 걸 써 본 적도〕 없습니다.", a: ["b:1938년 동네 유대인 재산 매각 기록"], s: "받아라!",
+            n: "법정 기록에서 매각 기록을 고르고 [자세히 보기]로 확대한 다음 제시해야 합니다." }
+        ],
+        why: "1943년 2월 10일 일기: 쿵 소리가 나자 슈나이더가 한참 천장을 올려다봤습니다. 확대한 매각 기록에서 슈나이더의 S는 고리 모양으로 말려 있어 밀고 편지의 S와 같습니다. 슈바르츠 부인의 S는 반듯합니다." },
+      { k: "reb", ph: "레테의 반격 「시민의 의무」", who: "레테 검사",
+        moves: [ { q: "“그 시대에는 유대인을 신고하는 게 법이고 의무였소. 누구도 거역할 수 없었지.”", a: ["g:‘열방의 의인’ 기록"], s: "이의 있음!" } ],
+        why: "목숨을 걸고 유대인을 구한 비유대인이 있었고, 그중 600명 넘게 독일인입니다. 나치당원이던 오스카 쉰들러, 그리고 피고석의 마르타도 그런 사람입니다." },
+      { k: "listen", ph: "레아의 일기", n: "레아의 일기와 안네 프랑크의 일기를 선택지 없이 끝까지 듣습니다." },
+      { k: "final", ph: "판결: 무죄", n: "슈나이더를 지목하고 무죄를 선언합니다." }
+    ]
+  },
+  {
+    id: "ep5", no: 5, title: "아버지의 시계", when: "1946년 · 난민 수용소",
+    facts: [
+      ["피고", "다비드 레비 (18세 홀로코스트 생존자)"],
+      ["죄명", "절도"],
+      ["증인 → 진범", "<b>베커</b> (시계점 주인) · 가짜 용의자: 점원 프리츠, 회색 외투의 남자"],
+      ["깨는 왜곡", "“노동 수용소였다” · “이주했을 뿐” · “물건만 분류했다”"]
+    ],
+    locs: [
+      ["역사 배경", ["c:강제 수용소와 홀로코스트", "r:강제 수용소 분포도"]],
+      ["피고 면회", ["b:수색 기록", "b:도난 신고된 금시계", "r:다비드의 번호 문신"], "금시계는 [자세히 보기]로 확대해 뒤집을 수 있습니다. 문신 번호 104732를 기억해 두세요."],
+      ["베커의 시계점", ["b:베커의 시계 수집품", "b:베커의 이야기"]],
+      ["난민 수용소", ["r:야코프의 증언", "c:‘캐나다’ 창고", "b:야코프의 이야기", "b:난민 수용소 출입 명부", "b:담요 기부 기록"], "담요 기부 기록은 프리츠를 의심하게 만드는 단서일 뿐, 법정에서 낼 곳이 없습니다."],
+      ["기억의 법정 기록실", ["b:소지품 압수 목록", "r:아우슈비츠 정문 사진", "r:신발과 가방 더미", "r:홀로코스트 희생 기록"]],
+      ["법정 도중", ["b:담요 배달 전표", "b:친위대 인사 기록"], "전표는 증언 2에서 프리츠가 건네고, 인사 기록은 휴정 때 기록실에서 찾습니다."]
+    ],
+    traps: ["b:베커의 신고 내용"],
+    steps: [
+      { k: "choice", ph: "개정", a: "피고는 무죄입니다" },
+      { k: "test", ph: "증언 1 「그날 밤」", who: "베커",
+        moves: [ { t: "4번", q: "그 청년이 〔밤중에 몰래 가게에 들어와〕 훔쳐 간 게 분명합니다.", a: ["b:난민 수용소 출입 명부"], s: "이의 있음!" } ],
+        why: "다비드는 밤 8시에 수용소로 돌아온 뒤 다음 날 아침 9시까지 외출 기록이 없습니다. 밤 10시부터 아침 6시까지는 출입 금지입니다." },
+      { k: "test", ph: "증언 2 「담요 배달」", who: "점원 프리츠", tag: "2단계",
+        moves: [
+          { t: "1단계 · 3번", q: "〔C 막사에는 들어가지도〕 않았어요.", a: ["b:수색 기록"], s: "이의 있음!" },
+          { t: "2단계", q: "레테: “회색 외투의 남자? 궁지에 몰리니 있지도 않은 사람을 지어내는군!”", a: ["b:야코프의 이야기"], s: "잠깐!" }
+        ],
+        why: "시계는 “베커 상회 기증” 도장이 찍힌 새 담요에 싸여 있었습니다. 프리츠가 회색 외투의 남자를 털어놓으면, 같은 C 막사의 야코프도 그 남자를 봤다는 것으로 받아칩니다. 프리츠는 누명이었고, 이어서 담요 배달 전표를 건넵니다." },
+      { k: "test", ph: "증언 3 「그날 아침」", who: "베커", tag: "2단계",
+        moves: [
+          { t: "1단계 · 1번", q: "그날 아침, 저는 담요를 〔전부 프리츠에게 맡겼습니다〕.", a: ["b:담요 배달 전표"], s: "이의 있음!" },
+          { t: "2단계 · 3번", q: "회색 외투의 남자라니, 저는 〔전혀 모르는 사람〕입니다.", a: ["b:야코프의 이야기"], s: "받아라!",
+            n: "1단계 뒤 베커가 회중시계를 귀에 대고 소리를 듣는 장면을 놓치지 마세요." }
+        ],
+        why: "전표에는 “50장 중 49장 배달. 1장은 사장님이 따로 챙겨 가심.”이라고 적혀 있습니다. 야코프가 본 회색 외투의 남자도 다비드의 침상 옆에서 무언가를 귀에 대고 한참 들었습니다." },
+      { k: "test", ph: "증언 4 「가보」", who: "베커",
+        moves: [ { t: "1번", q: "그 금시계는 〔1930년대부터 우리 집안에 내려온 가보〕입니다.", a: ["b:도난 신고된 금시계"], s: "이의 있음!",
+          n: "[자세히 보기]로 확대해 시계를 뒤집은 다음 제시합니다. 2번 〔아버지께 물려받았고〕에 내도 됩니다." } ],
+        why: "시계 뒷면에 “J. Levi 1920”이 새겨져 있습니다. 다비드의 아버지 요제프 레비의 시계입니다." },
+      { k: "reb", ph: "레테의 반격 「암시장」", who: "레테 검사",
+        moves: [ { q: "“증인은 암시장에서 정당하게 샀소. 피고가 요제프 레비의 아들이라는 서류라도 있소?”", a: ["b:소지품 압수 목록"], s: "이의 있음!" } ],
+        why: "“수감 번호 104732 / 레비, 다비드 — 금 회중시계 1 (뒷면 각인 있음)”. 다비드 팔에 새겨진 번호와 같습니다." },
+      { k: "reb", ph: "레테의 주장 「노동 수용소」", who: "레테 검사",
+        moves: [
+          { q: "“그곳은 노동 수용소였소! 열심히 일하면 풀려날 수도 있었소.”", a: ["r:아우슈비츠 정문 사진"], s: "이의 있음!" },
+          { q: "“수용소에 간 유대인들은 대부분 동쪽으로 이주해서 살았을 거요!”", a: ["r:홀로코스트 희생 기록"] }
+        ],
+        why: "정문의 “노동이 자유를 만든다”를 지나 자유를 얻은 수감자는 없었습니다. 유럽 유대인 약 900만 명 가운데 약 600만 명이 목숨을 잃었습니다." },
+      { k: "listen", ph: "다비드", n: "선택지 없이 끝까지 듣습니다." },
+      { k: "event", ph: "레테의 반격 「여러 사람의 손」 → 휴정", n: "“여러 사람의 손을 거쳐 암시장까지 흘러갔을 수 있다”는 주장에는 낼 증거가 없습니다. 휴정 때 한나가 야코프의 말 “시계 수집가”를 떠올리고 기록실에서 새 증거를 찾습니다.", ev: ["b:친위대 인사 기록"] },
+      { k: "test", ph: "증언 5 「전쟁 중에」", who: "베커",
+        moves: [ { t: "2번", q: "〔수용소 근처에는〕 가 본 적도 없습니다.", a: ["b:친위대 인사 기록"], s: "이의 있음!", n: "3번 〔만져 본 적도〕에 내도 됩니다." } ],
+        why: "“베커, 하사. 1942년 9월부터 1945년 1월까지 소지품 창고 구역(‘캐나다’) 담당.” 귀중품이 사라진 일로 조사받은 기록도 있습니다." },
+      { k: "reb", ph: "레테의 반격 「물건만 분류했다」", who: "레테 검사",
+        moves: [ { q: "“증인은 물건을 분류했을 뿐, 학살과는 아무 상관이 없는 사람이오.”", a: ["r:신발과 가방 더미"], s: "이의 있음!" } ],
+        why: "베커가 날마다 분류한 물건마다 주인이 있었고, 그 주인들은 돌아오지 못했습니다." },
+      { k: "final", ph: "판결: 무죄", n: "베커를 지목하고 무죄를 선언합니다." }
+    ]
+  },
+  {
+    id: "ep6", no: 6, title: "명령서는 없다", when: "1961년 · 예루살렘", finale: true,
+    facts: [
+      ["피고", "한나 (기자). 이번 화의 조수는 하야시"],
+      ["죄명", "허위 보도에 의한 명예훼손. 1961년 기사 “홀로코스트는 ① 히틀러가 명령하고 ② 수많은 사람이 실행한 일”"],
+      ["증인 → 진범", "1라운드 아이히만 → <b>히틀러</b> · 2라운드 크라우제 → <b>아이히만</b>"],
+      ["깨는 왜곡", "“경제를 살렸다” · “합법” · “명령서는 없다” · “애국자” · “어쩔 수 없었다” · “평범한 독일인은 책임 없다”"]
+    ],
+    locs: [
+      ["역사 배경", ["c:아이히만과 IV B4과", "r:생존자들의 법정 증언 (1961)"]],
+      ["피고 면회", ["b:한나의 기사 (1961)"]],
+      ["예루살렘 법정 기자석", ["b:한나의 취재 수첩"]],
+      ["예루살렘 법정 증거 보관실", ["b:반제 회의록 (1942)", "b:헝가리 유대인 수송 기록 (1944)", "b:비슬리체니의 증언 (1946)"]],
+      ["베를린 기록 보관소", ["b:나치 경제의 실체", "b:수권법과 독재 (1933)", "b:T4 작전 명령서 (1939)", "b:1939년 국회 연설", "b:네로 명령 (1945)"]],
+      ["기억의 법정 기록 보관함", ["g:101 예비경찰대대 기록 (1942)", "b:독일 역사 교과서 서술의 변화", "b:어빙 대 립스탯 재판 판결 (2000)", "g:박영수의 치료 기록", "g:후세 다쓰지", "g:‘열방의 의인’ 기록"], "2~4화에서 모은 선택 기록을 여기서 다시 꺼냅니다."]
+    ],
+    traps: ["p:명령서 조사 결과"],
+    steps: [
+      { k: "choice", ph: "개정", a: "피고는 무죄입니다" },
+      { round: "1라운드 · 명령한 자" },
+      { k: "test", ph: "증언 1 「명령서」", who: "아이히만",
+        moves: [
+          { t: "3번", q: "그 시절 〔총통의 말은 곧 법〕이었다.", a: "press", s: "잠깐!", n: "“총통은 유대인에 대해 무슨 말을 했습니까?” → 3-1이 증언에 더해집니다." },
+          { t: "추가된 3-1", q: "하이드리히가 말했다. 〔“총통께서 유대인의 육체적 절멸을 명령하셨다.”〕", a: ["b:한나의 취재 수첩"], s: "이의 있음!" }
+        ],
+        why: "1961년 한나가 법정에서 받아 적은 아이히만의 진술과 같습니다. 한나는 명령‘서’라고 쓴 적이 없고, 명령이라고 썼습니다." },
+      { k: "test", ph: "증언 2 「기록 속의 목소리」", who: "히틀러", tag: "네 문장 모두 · 순서 자유",
+        moves: [
+          { t: "1번", q: "나는 무너진 독일 경제를 되살렸다. 〔실업자가 사라졌다〕.", a: ["b:나치 경제의 실체"], s: "이의 있음!" },
+          { t: "2번", q: "나는 국민이 〔선거로 뽑은〕 합법적인 지도자였다.", a: ["b:수권법과 독재 (1933)"], s: "이의 있음!" },
+          { t: "3번 · 1단계", q: "유대인을 죽이라는 〔나의 명령서〕는 어디에도 없다.", a: ["b:T4 작전 명령서 (1939)"], s: "이의 있음!" },
+          { t: "3번 · 2단계", q: "레테: “그건 환자들에 관한 명령이지, 유대인 학살 명령이 아니오!”", a: ["b:1939년 국회 연설"], s: "받아라!" },
+          { t: "4번", q: "나는 끝까지 〔독일을 사랑한 애국자〕였다.", a: ["b:네로 명령 (1945)"], s: "이의 있음!" }
+        ],
+        why: "실업 감소는 군수 공장, 징집, 갚을 계획 없는 빚으로 한 전쟁 준비였고, 수권법 뒤 다른 정당을 모두 금지했습니다. 히틀러가 직접 서명한 T4 명령으로 장애인과 환자 약 7만 명이 살해됐고, 1939년 국회에서 “유럽 유대인의 절멸”을 공개적으로 말했습니다. 패전 직전에는 국민이 살아가는 데 필요한 시설을 모두 파괴하라고 명령했습니다." },
+      { k: "reb", ph: "레테의 반격 「명령서는 없다」", who: "레테 검사",
+        moves: [ { q: "“서명 한 장 없는 한, 누구도 히틀러가 명령했다고 확실히 말할 수 없소!”", a: ["b:어빙 대 립스탯 재판 판결 (2000)"], s: "이의 있음!" } ],
+        why: "“히틀러는 학살을 몰랐다”고 주장한 어빙은 2000년 영국 법원에서 역사 자료를 일부러 왜곡하고 조작했다는 판결을 받고 졌습니다." },
+      { k: "event", ph: "1라운드 결론 · 전환 장면", n: "기억의 법정이 처음으로 판결합니다. 히틀러 유죄. 이어지는 「그게 끝이 아니었다」에서 1~5화 진범들이 한 “어쩔 수 없었다”를 되짚습니다." },
+      { round: "2라운드 · 따른 자" },
+      { k: "test", ph: "증언 3 「거부할 수 없었다」", who: "크라우제 (전직 경찰)",
+        moves: [ { t: "3번", q: "그 자리에서 명령을 〔거부할 수 있는 사람은 아무도〕 없었습니다.", a: ["g:101 예비경찰대대 기록 (1942)"], s: "이의 있음!", n: "4번 〔총살당했을〕에 내도 됩니다." } ],
+        why: "대대장은 “이 일을 감당할 수 없는 사람은 빠져도 좋다”고 했고, 약 12명이 빠졌지만 아무런 처벌도 받지 않았습니다." },
+      { k: "event", ph: "레테의 반격 「더 높은 곳의 사람」", n: "“관료는 거대한 기계의 톱니바퀴였을 뿐”이라며 아이히만을 다시 부릅니다. 낼 증거는 없습니다." },
+      { k: "test", ph: "증언 4 「톱니바퀴」", who: "아이히만", tag: "차례대로 4번 깨기",
+        moves: [
+          { t: "① 2번", q: "유대인을 어떻게 할지 〔결정한 것은 윗사람들〕이었다.", a: ["b:반제 회의록 (1942)"], s: "이의 있음!" },
+          { t: "② 3번", q: "나는 〔기차 시간표를 짰을 뿐〕, 한 사람도 직접 죽이지 않았다.", a: ["b:헝가리 유대인 수송 기록 (1944)"], s: "이의 있음!", n: "3-1이 증언에 더해집니다." },
+          { t: "③ 추가된 3-1", q: "나는 그 일을 〔원하지도, 즐기지도 않았다〕.", a: ["b:비슬리체니의 증언 (1946)"], s: "받아라!", n: "이 뒤에 증언 듣기(다비드, 1961년)가 나옵니다." },
+          { t: "④ 4번", q: "거역했다면 나도 죽었을 것이다. 〔나에게는 선택이 없었다〕.", any: true,
+            a: ["g:101 예비경찰대대 기록 (1942)", "g:박영수의 치료 기록", "g:후세 다쓰지", "g:‘열방의 의인’ 기록"], s: "이의 있음!",
+            n: "선택 기록은 넷 중 무엇을 내도 정답입니다. 101 예비경찰대대 기록은 6화에서 얻으므로 2화를 건너뛰었어도 막히지 않습니다." }
+        ],
+        why: "반제 회의록을 쓴 사람이 아이히만입니다. 1944년 두 달 사이 헝가리 유대인 약 43만 명을 아우슈비츠로 보낼 때 부다페스트에서 직접 지휘했습니다. 부하 비슬리체니는 아이히만이 “웃으면서 무덤에 뛰어들 것”이라고 말했다고 증언했습니다." },
+      { k: "event", ph: "2라운드 결론 · 1961년의 판결", n: "1961년 예루살렘 판결(아이히만 사형)을 다시 보여 주고 “1961년 예루살렘 판결은 옳았다”고 선언합니다." },
+      { k: "reb", ph: "레테의 반격 「평범한 독일인」", who: "레테 검사",
+        moves: [ { q: "“대다수의 평범한 독일인은 아무것도 몰랐소. 독일 사람들 스스로도 그렇게 생각한다고!”", a: ["b:독일 역사 교과서 서술의 변화"], s: "이의 있음!" } ],
+        why: "1953년 독일 교과서는 학살을 힘러가 한 일로 적었지만, 1998년 교과서는 평범한 사람들이 “적응하고 참여하면서 공범자가 되었다”고 고쳐 썼습니다." },
+      { k: "event", ph: "악의 평범성", n: "한나가 아렌트의 ‘악의 평범성’을 설명합니다.", ev: ["c:악의 평범성"] },
+      { k: "final", ph: "판결: 한나 무죄", n: "기사의 ① 히틀러가 명령했다, ② 수많은 사람이 실행했다를 모두 증명하고 무죄를 선언합니다." }
+    ]
+  }
+];
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const chipRaw = (k, nameHtml) => `<span class="ev ev-${k}" title="${KIND[k]}"><i aria-hidden="true"></i>${nameHtml}<span class="sr"> (${KIND[k]})</span></span>`;
+const chip = token => { const i = token.indexOf(":"); return chipRaw(token.slice(0, i), esc(token.slice(i + 1))); };
+const fmt = s => esc(s)
+  .replace(/〔(.+?)〕/g, "<mark>〔$1〕</mark>")
+  .replace(/\{\{([rbgcp]):(.+?)\}\}/g, (m, k, n) => chipRaw(k, n));
+const SHOUT = { "이의 있음!": "obj", "잠깐!": "hold", "받아라!": "take" };
+const shout = s => s ? `<span class="shout shout-${SHOUT[s]}">${s}</span>` : "";
+
+function renderMove(m) {
+  let ans;
+  if (m.a === "press") ans = `<span class="press">추궁</span>`;
+  else ans = m.a.map(chip).join(m.any ? `<span class="or">또는</span>` : "");
+  return `<li class="move">
+    <div class="t">${m.t ? esc(m.t) : "주장"}</div>
+    <div>
+      ${m.q ? `<p class="q">${fmt(m.q)}</p>` : ""}
+      <div class="ans"><span class="arrow" aria-hidden="true">→</span>${ans}${shout(m.s)}</div>
+      ${m.n ? `<p class="n">${fmt(m.n)}</p>` : ""}
+    </div>
+  </li>`;
+}
+
+function renderStep(st, n) {
+  if (st.round) return `<li class="round" role="presentation">${esc(st.round)}</li>`;
+  const head = `<div class="step-head">
+      <span class="kind kind-${st.k}">${STEP_KIND[st.k]}</span>
+      <span class="phase">${esc(st.ph)}</span>
+      ${st.who ? `<span class="who">${esc(st.who)}</span>` : ""}
+      ${st.tag ? `<span class="tag">${esc(st.tag)}</span>` : ""}
+    </div>`;
+  let body = "";
+  if (st.k === "choice") {
+    body = `<div class="ans"><span class="arrow" aria-hidden="true">→</span><span class="choice">${esc(st.a)}</span></div>`
+      + (st.n ? `<p class="note">${fmt(st.n)}</p>` : "");
+  } else if (st.moves) {
+    body = `<ul class="moves">${st.moves.map(renderMove).join("")}</ul>`
+      + (st.why ? `<p class="why"><b>이유</b>${fmt(st.why)}</p>` : "")
+      + (st.alt ? `<p class="alt"><b>참고</b>${fmt(st.alt)}</p>` : "");
+  } else {
+    body = `<p class="note">${fmt(st.n)}${st.ev ? `</p><div class="note chips">${st.ev.map(chip).join("")}</div>` : "</p>"}`;
+  }
+  return `<li class="step"><div class="num">${n}</div><div class="step-body">${head}${body}</div></li>`;
+}
+
+function renderCase(ep) {
+  let n = 0;
+  const steps = ep.steps.map(st => renderStep(st, st.round ? 0 : ++n)).join("");
+  const interactive = ep.steps.filter(s => s.moves).reduce((c, s) => c + s.moves.length, 0);
+  return `<article class="case" id="${ep.id}" aria-labelledby="${ep.id}-title">
+    <header>
+      <p class="case-no">사건 제${ep.no}호 <span class="when">${esc(ep.when)}</span>
+        ${ep.optional ? `<span class="badge">선택 에피소드</span>` : ""}${ep.finale ? `<span class="badge">최종화</span>` : ""}</p>
+      <h2 id="${ep.id}-title">${esc(ep.title)}</h2>
+      <dl class="facts">${ep.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join("")}</dl>
+    </header>
+    <h3>조사에서 챙길 증거 <small>${ep.locs.length}곳</small></h3>
+    <div class="locs">${ep.locs.map(([name, ev, note]) => `<div class="loc">
+        <h4>${esc(name)}</h4>
+        <div class="chips">${ev.map(chip).join("")}</div>
+        ${note ? `<p>${fmt(note)}</p>` : ""}
+      </div>`).join("")}</div>
+    <p class="trap"><span>처음 받는 불리한 증거 · 반박에 쓰지 않음</span>${ep.traps.map(chip).join("")}</p>
+    <h3>법정 진행 <small>제시·추궁 ${interactive}번</small></h3>
+    <ol class="steps">${steps}</ol>
+  </article>`;
+}
+
+document.getElementById("cases").insertAdjacentHTML("beforeend", EPISODES.map(renderCase).join(""));
+document.getElementById("nav").innerHTML = EPISODES.map(ep =>
+  `<li><a href="#${ep.id}" data-id="${ep.id}"><b>${ep.no}화</b>${esc(ep.title)}</a></li>`).join("");
+
+const links = [...document.querySelectorAll("#nav a")];
+const setCurrent = id => links.forEach(a => {
+  const on = a.dataset.id === id;
+  a.setAttribute("aria-current", on ? "true" : "false");
+  if (on) {
+    const box = a.closest(".wrap");
+    const l = a.offsetLeft, r = l + a.offsetWidth;
+    if (l < box.scrollLeft || r > box.scrollLeft + box.clientWidth) box.scrollLeft = l - 16;
+  }
+});
+setCurrent(location.hash.slice(1) || "ep1");
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) setCurrent(e.target.id); });
+  }, { rootMargin: "-30% 0px -60% 0px" });
+  document.querySelectorAll(".case").forEach(c => io.observe(c));
+}
+if (location.hash) {
+  const target = document.getElementById(location.hash.slice(1));
+  if (target) target.scrollIntoView();
+}
+</script>
