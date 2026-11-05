@@ -7,5 +7,6 @@
 - 가장 새 브랜치: `claude/nifty-edison-ajkflk` (2026-11-01, 1~6화 게임과 반박문 쓰기 + 선생님 4~6화 플레이 지적 12개 고침). 그 앞은 `claude/sharp-goldberg-r57qqy`(6화 완성), `claude/modest-gauss-chzsc0`(6화 작업 중), 그 앞의 통합 브랜치는 `claude/sleepy-clarke-xeirvc`. 저장소 기본 브랜치(`claude/gyakuten-saiban-steam-e9a1vw`)는 옛 대본이라 쓰지 않는다.
 - **6화 작업을 이어서 할 때는 `docs/6화_작업_메모.md`부터 읽는다.**
 - 대본(`docs/대본/`)이 기준이다. 대본을 고치면 `node tools/check_script.mjs --ep N`으로 게임 데이터와 비교한다.
+- 학생용 웹 주소(GitHub Pages)는 이 브랜치에 올리면 저절로 다시 만들어진다 (`.github/workflows/deploy-site.yml`, 실행 안내 1장). 고친 것은 이 브랜치에 합쳐야 주소에 나온다.
 - 실행, 소리 파일 이름, 도구 사용법: `docs/게임_실행_안내.md`
 - 브라우저로 끝까지 해 보기: `node tools/playtest.mjs --from 4 --to 6 --probe` (실행 안내 7장)
