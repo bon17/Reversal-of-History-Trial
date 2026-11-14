@@ -213,6 +213,7 @@
         h('label', {}, '효과음 크기'), slider('se'),
         h('div', { class: 'row' },
           h('button', { class: 'ui-btn sub', onclick: logScreen }, '지난 대사 보기'),
+          G.teacher ? h('button', { class: 'ui-btn sub', onclick: () => G.teacher.open() }, '선생님 창') : null,
           h('button', { class: 'ui-btn sub', onclick: async () => { if (await ask('처음 화면으로 갈까요? 진행은 저장되어 있어서 [이어하기]로 돌아올 수 있어요.', '처음 화면으로')) location.reload(); } }, '처음 화면으로')),
         h('div', { class: 'row' }, h('button', { class: 'ui-btn', onclick: close }, '닫기')))));
   }
@@ -247,7 +248,9 @@
       G.imgEl('ui/title_logo', 'logo'),
       PART ? h('div', { class: 'part-badge' }, PART === 2 ? '게임 2 · 제2부 「평범한 사람들」' : '게임 1 · 제1부 「심판받지 않은 자들」') : null,
       menu, loading,
-      h('div', { class: 'corner' }, fullscreenButton())));
+      h('div', { class: 'corner' },
+        G.teacher ? h('button', { class: 'teacher-btn', onclick: () => G.teacher.open() }, '선생님') : null,
+        fullscreenButton())));
 
     const startBtn = h('button', { class: 'ui-btn', onclick: async () => {
       if (canResume && !(await ask('처음부터 시작하면 저장된 진행이 지워져요. 처음부터 할까요?', '처음부터 하기'))) return;

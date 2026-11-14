@@ -950,3 +950,31 @@ img { -webkit-user-drag: none; }
 .table-screen thead th { text-align: center; color: var(--gold-light); }
 .table-screen tbody th { color: var(--gold-light); white-space: nowrap; }
 .table-screen .hl { color: var(--gold-light); font-weight: 800; }
+
+/* ─────────────── 선생님 창 (game/js/teacher.js): 비밀번호 → 재판 공략 가이드 ─────────────── */
+.teacher-btn {
+  height: 48px; padding: 0 16px; border-radius: 24px;
+  border: 2px solid #8a7a55; background: rgba(11, 20, 48, .85); color: #e6dcc0;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+}
+.teacher-btn:active { transform: scale(.96); }
+.teacher-login .panel { width: min(440px, 94vw); }
+.screen.teacher-view {
+  flex-direction: column; align-items: stretch; justify-content: flex-start;
+  background: #0a1330;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+.teacher-view .t-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+  padding: 8px 12px; border-bottom: 3px solid var(--gold); background: linear-gradient(#162757, #0a1330);
+}
+.teacher-view .t-title { flex: 1 1 220px; color: var(--gold-light); font-size: 18px; font-weight: 800; word-break: keep-all; }
+.teacher-view .t-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.teacher-view .t-btns .ui-btn, .teacher-view .seg .ui-btn { min-height: 40px; padding: 4px 14px; font-size: 15px; }
+.teacher-view .seg { flex: 0 1 auto; }
+.teacher-view .t-msg { color: #ffd9a0; font-size: 14px; padding: 0 12px; background: #0a1330; }
+.teacher-view .t-msg:empty { display: none; }
+.teacher-view .t-msg:not(:empty) { padding: 6px 12px; }
+.teacher-view .guide-frame { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; background: #f2f3f6; }
+.teacher-login .t-what { text-align: center; color: var(--gold-light); font-weight: 800; word-break: keep-all; }
+.teacher-login .t-how { text-align: center; word-break: keep-all; }

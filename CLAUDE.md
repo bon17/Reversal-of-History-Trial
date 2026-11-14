@@ -9,4 +9,5 @@
 - 대본(`docs/대본/`)이 기준이다. 대본을 고치면 `node tools/check_script.mjs --ep N`으로 게임 데이터와 비교한다.
 - 학생용 웹 주소(GitHub Pages)는 이 브랜치에 올리면 저절로 다시 만들어진다 (`.github/workflows/deploy-site.yml`, 실행 안내 1장). 고친 것은 이 브랜치에 합쳐야 주소에 나온다.
 - 실행, 소리 파일 이름, 도구 사용법: `docs/게임_실행_안내.md`
+- 선생님 창(비밀번호 → 재판 공략 가이드): 원본 `docs/재판_공략_가이드.html`을 고치면 `GUIDE_PASSWORD=비밀번호 node tools/build_teacher_guide.mjs`로 `game/data/teacher_guide.js`를 다시 만든다. 비밀번호는 저장소에 적지 않는다 (실행 안내 3-2장)
 - 브라우저로 끝까지 해 보기: `node tools/playtest.mjs --from 4 --to 6 --probe` (실행 안내 7장)
