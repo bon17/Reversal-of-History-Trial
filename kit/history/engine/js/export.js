@@ -13,6 +13,7 @@
       + '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<meta name="theme-color" content="#000000">\n'
       + '<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-capable" content="yes">\n'
       + '<meta name="generator" content="법정 추리 수업 게임 키트 ' + (bundle.판 || '') + '">\n'
+      + '<!-- 이 게임은 「법정 추리 수업 게임 키트」로 만들었습니다. 엔진: 원작 「기억의 법정」 (c) BONSSAM, CC BY-NC-SA 4.0. 이야기와 그림은 이 게임을 만든 사람의 것입니다. -->\n'
       + '<title>' + title + '</title>\n<style>\n' + bundle.css + '\n</style>\n</head>\n<body>\n' + bundle.body + '\n'
       // 이 묶음은 만들기 도우미가 다시 읽을 수 있다 ([게임 파일 불러오기])
       + '<script id="kit-data" type="application/json">' + json({ data, images: images || {}, audio: audio || {} }) + '</script>\n'

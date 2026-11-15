@@ -178,7 +178,7 @@
           h('button', { class: 'ui-btn sub', onclick: logScreen }, '지난 대사 보기'),
           h('button', { class: 'ui-btn sub', onclick: async () => { if (await ask('처음 화면으로 갈까요? 진행은 저장되어 있어서 [이어하기]로 돌아올 수 있어요.', '처음 화면으로')) location.reload(); } }, '처음 화면으로')),
         h('div', { class: 'row' }, h('button', { class: 'ui-btn', onclick: close }, '닫기')),
-        h('p', { class: 'credit' }, G.KIT.이름 + ' ' + G.KIT.판))));
+        h('p', { class: 'credit' }, G.KIT.이름 + ' ' + G.KIT.판 + ' · 원작 ' + G.KIT.원작 + ' · ' + G.KIT.조건))));
   }
   function logScreen() {
     const lines = h('div', { class: 'lines' });
@@ -261,20 +261,26 @@
   }
 
   // ─────────── 시작 ───────────
-  // my-game/story2.js, story3.js … 가 있으면 저절로 불러온다 (index.html 을 고치지 않아도 된다)
-  function loadStories() {
+  // 게임 데이터 불러오기: my-game/settings.js 와 story1.js, story2.js … (있는 것만)
+  // 주소 끝에 ?game=폴더 를 붙이면 그 폴더의 게임을 연다 (키트 안의 폴더만. 예: ?game=examples/memory-court-ep1)
+  function loadGame() {
     if (window.KIT_SINGLE) return Promise.resolve();
-    const one = (n) => new Promise((resolve) => {
+    const q = params.get('game') || '';
+    const base = /^[\w\-][\w\-./]*$/.test(q) && !q.includes('..') ? q.replace(/\/+$/, '') : 'my-game';
+    G.gameBase = base;
+    G.imgBase = base + '/images/';
+    G.audioBase = base + '/audio/';
+    const one = (f) => new Promise((resolve) => {
       const s = document.createElement('script');
-      s.src = 'my-game/story' + n + '.js';
+      s.src = base + '/' + f;
       s.onload = s.onerror = () => resolve();
       document.head.append(s);
     });
-    return Promise.all([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(one));
+    return one('settings.js').then(() => Promise.all([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => one('story' + n + '.js'))));
   }
 
   async function boot() {
-    await loadStories();
+    await loadGame();
     G.setup();
     $('#btn-record').textContent = G.cfg.버튼.기록;
     $('#btn-record').addEventListener('click', () => G.record.open());
@@ -286,7 +292,7 @@
     const eps = G.episodes();
     if (!eps.length) {
       openScreen(h('div', { class: 'screen solid' }, h('div', { class: 'panel' }, h('h2', {}, '이야기를 찾지 못했어요'),
-        h('p', {}, 'my-game/story1.js 파일에 DATA.ep1 = { 번호: 1, 제목: …, 막: [ … ] } 모양의 이야기가 있어야 해요.'),
+        h('p', {}, (G.gameBase || 'my-game') + '/story1.js 파일에 DATA.ep1 = { 번호: 1, 제목: …, 막: [ … ] } 모양의 이야기가 있어야 해요.'),
         h('p', {}, '파일이 있는데도 이 화면이 나오면 파일 안에 글자가 잘못 들어간 곳(따옴표, 쉼표, 괄호)이 있는 거예요. maker.html 의 점검에 파일 내용을 붙여 넣으면 어디가 잘못됐는지 알려 줘요.'))));
       return;
     }

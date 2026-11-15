@@ -61,7 +61,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   console.log('만들었어요: engine/bundle.js, ai/guide.js, ai/수업_설계서.md');
   if (process.argv.includes('--html')) {
     const { exportHtml } = require(path.join(root, 'engine/js/export.js'));
-    const game = path.join(root, 'my-game');
+    // 다른 폴더의 게임을 묶으려면: node tools/build.mjs --html --game=examples/memory-court-ep1
+    const game = path.join(root, (process.argv.find((a) => a.startsWith('--game=')) || '--game=my-game').slice(7));
     const data = loadGame(game);
     const images = embedFiles(path.join(game, 'images'), { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml' });
     const audio = embedFiles(path.join(game, 'audio'), { mp3: 'audio/mpeg', ogg: 'audio/ogg', wav: 'audio/wav', m4a: 'audio/mp4' });

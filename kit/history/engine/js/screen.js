@@ -47,6 +47,13 @@
     return !!c.화면밖 || S.offscreen.includes(name);
   }
 
+  // 인물자리: [왼쪽, 위, 너비, 높이] (장면에 대한 %). 배경이나 법정 자리에 적으면 그 자리에 인물을 세운다 (그림에 맞출 때)
+  function setCharBox(a) {
+    const st = charEl.style;
+    if (Array.isArray(a) && a.length === 4) { st.left = a[0] + '%'; st.top = a[1] + '%'; st.width = a[2] + '%'; st.height = a[3] + '%'; }
+    else { st.left = st.top = st.width = st.height = ''; }
+  }
+
   G.stage = {
     // 배경 바꾸기. 법정: true 인 배경은 말하는 사람의 자리로 화면이 저절로 바뀐다
     setBackground(name, opts = {}) {
@@ -71,6 +78,7 @@
         stage.dataset.seat = '';
         G.setImg(bgEl, b.그림 === null ? null : b.그림 || 'backgrounds/' + name);
         G.setImg(deskEl, b.책상 || null);
+        setCharBox(b.인물자리);
       }
       this.blackout(b.그림 === null);
       this.rain(false);
@@ -84,6 +92,7 @@
       stage.dataset.seat = seat;
       G.setImg(bgEl, z.배경);
       G.setImg(deskEl, z.책상 || null);
+      setCharBox(z.인물자리);
     },
     // 말하는 사람을 화면에 맞게 보여 준다 (법정은 자리로 화면 전환, 화면 밖 인물은 얼굴만)
     speaker(name, expr) {

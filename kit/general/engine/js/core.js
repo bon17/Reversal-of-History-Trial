@@ -1,10 +1,13 @@
+// 법정 추리 수업 게임 키트 · 원작 「기억의 법정」 (c) BONSSAM · CC BY-NC-SA 4.0 (이용_안내.md)
 // 기본 도구: 설정 읽기, 그림 불러오기(없으면 자리 그림), 소리, 저장
 // 이 폴더(engine/)는 고치지 않아도 된다. 내 게임은 my-game/ 폴더의 파일만 고치면 된다.
 (function () {
   const G = (window.G = window.G || {});
   window.DATA = window.DATA || {};
 
-  G.KIT = { 이름: '법정 추리 수업 게임 키트', 판: '1.0.0' };
+  // 이 엔진은 「기억의 법정」(BONSSAM)의 엔진을 바탕으로 만들었다. 이용 조건: CC BY-NC-SA 4.0 (이용_안내.md)
+  // 이 표시는 게임의 설정 화면 아래에 작게 나온다. 지우지 않는다 (출처 표시).
+  G.KIT = { 이름: '법정 추리 수업 게임 키트', 판: '1.0.0', 원작: '「기억의 법정」 BONSSAM', 조건: 'CC BY-NC-SA 4.0' };
 
   G.$ = (s, r = document) => r.querySelector(s);
   G.h = (tag, attrs = {}, ...kids) => {
