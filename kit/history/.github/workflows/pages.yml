@@ -1,0 +1,47 @@
+# 게임을 누리집 주소로 올리기 (GitHub Pages)
+#
+# 이 키트 폴더를 내 GitHub 저장소의 맨 위에 올리면, 고칠 때마다 게임 주소가 저절로 새로 만들어진다.
+#   주소: https://(내 아이디).github.io/(저장소 이름)/
+# 처음 한 번: 저장소 Settings → Pages → Build and deployment → Source 를 "GitHub Actions" 로 바꾼다.
+#
+# 올리는 것: index.html, engine/, my-game/ (게임에 필요한 것만)
+# 올리지 않는 것: ai/, docs/, tools/, maker.html (학생에게 필요 없는 것)
+# 주의: my-game/story1.js 에는 정답이 들어 있다. 학생이 주소를 고쳐서 볼 수 있으니, 평가에 쓰는 게임이라면 알고 쓴다.
+name: 게임 주소로 올리기
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 게임 파일만 모으기
+        run: |
+          set -euo pipefail
+          mkdir site
+          cp index.html site/
+          cp -r engine my-game site/
+          rm -f site/engine/bundle.js
+          touch site/.nojekyll
+          du -sh site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
