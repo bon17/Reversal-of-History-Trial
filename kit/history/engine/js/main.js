@@ -262,7 +262,7 @@
 
   // ─────────── 시작 ───────────
   // 게임 데이터 불러오기: my-game/settings.js 와 story1.js, story2.js … (있는 것만)
-  // 주소 끝에 ?game=폴더 를 붙이면 그 폴더의 게임을 연다 (키트 안의 폴더만. 예: ?game=examples/memory-court-ep1)
+  // 주소 끝에 ?game=폴더 를 붙이면 그 폴더의 게임을 연다 (키트 안의 폴더만. 예: ?game=examples/daedong-map)
   function loadGame() {
     if (window.KIT_SINGLE) return Promise.resolve();
     const q = params.get('game') || '';

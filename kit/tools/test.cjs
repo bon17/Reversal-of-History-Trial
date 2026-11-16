@@ -72,18 +72,20 @@ const loadData = (dir) => {
       ok(!errs.length, '화면 오류가 없다' + (errs.length ? ' → ' + errs[0] : ''));
       await ctx.close();
     }
-    // 원작 예시 (역사판): 다른 폴더의 게임을 ?game= 으로 열어 끝까지 실행
-    console.log('history: 원작 예시');
-    const ex = 'examples/memory-court-ep1';
-    const exIssues = (() => { const ctx = { window: {} }; ctx.window.DATA = {}; vm.createContext(ctx); for (const f of ['settings.js', 'story1.js']) vm.runInContext('var DATA = window.DATA;' + fs.readFileSync(path.join(kit, 'history', ex, f), 'utf8'), ctx); return check(JSON.parse(JSON.stringify(ctx.window.DATA))).filter((i) => i.수준 !== '참고'); })();
-    ok(!exIssues.length, '예시 데이터에 오류와 주의가 없다' + (exIssues.length ? ' → ' + exIssues[0].글 : ''));
+    // 역사판: 기본 예시(원작 제1화)의 그림이 모두 있는가, 짧은 예시를 ?game= 으로 열어 끝까지 실행
+    console.log('history: 원작 제1화 그림, 짧은 예시');
     const e = await b.newPage();
     const eerrs = []; e.on('pageerror', (x) => eerrs.push(x.message));
+    await e.goto('file://' + path.join(kit, 'history/index.html') + '?auto');
+    await e.waitForFunction(() => window.KIT_AUTO_RESULT, null, { timeout: 90000 }).catch(() => {});
+    const miss = await e.evaluate(() => [...G.missing].filter((k) => !/^evidence\/(mobilization_law|hashima_photo)$/.test(k)));
+    ok(!miss.length, '원작 제1화의 그림이 모두 있다' + (miss.length ? ' → 없음: ' + miss.join(', ') : ''));
+    const ex = 'examples/daedong-map';
+    const exIssues = (() => { const ctx = { window: {} }; ctx.window.DATA = {}; vm.createContext(ctx); for (const f of ['settings.js', 'story1.js']) vm.runInContext('var DATA = window.DATA;' + fs.readFileSync(path.join(kit, 'history', ex, f), 'utf8'), ctx); return check(JSON.parse(JSON.stringify(ctx.window.DATA))).filter((i) => i.수준 !== '참고'); })();
+    ok(!exIssues.length, '짧은 예시 데이터에 오류와 주의가 없다' + (exIssues.length ? ' → ' + exIssues[0].글 : ''));
     await e.goto('file://' + path.join(kit, 'history/index.html') + '?game=' + ex + '&auto');
     const res3 = await e.waitForFunction(() => window.KIT_AUTO_RESULT, null, { timeout: 90000 }).then((h) => h.jsonValue()).catch(() => null);
-    ok(res3 && res3.ok && !eerrs.length, '원작 예시가 끝까지 자동 실행된다' + (res3 && !res3.ok ? ' → ' + JSON.stringify(res3.문제[0]) : ''));
-    const miss = await e.evaluate(() => [...G.missing].filter((k) => !/^evidence\/(mobilization_law|hashima_photo)$/.test(k)));
-    ok(!miss.length, '원작 예시의 그림이 모두 있다' + (miss.length ? ' → 없음: ' + miss.join(', ') : ''));
+    ok(res3 && res3.ok && !eerrs.length, '짧은 예시가 끝까지 자동 실행된다' + (res3 && !res3.ok ? ' → ' + JSON.stringify(res3.문제[0]) : ''));
     await b.close();
     fs.rmSync(tmp, { recursive: true, force: true });
   }

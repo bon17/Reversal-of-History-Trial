@@ -20,7 +20,9 @@ export function makeBundle() {
 }
 export function makeGuide() {
   const form = JSON.parse(read('ai/form.json'));
-  return Object.assign({}, form, { 지침: read('ai/AI_지침.md'), 형식: read('ai/데이터_형식.md'), 예시설정: read('my-game/settings.js'), 예시이야기: read('my-game/story1.js') });
+  // AI에게 형식 예시로 보내는 게임: 양식에 예시폴더가 적혀 있으면 그 폴더, 아니면 my-game (짧은 예시일수록 좋다)
+  const ex = form.예시폴더 || 'my-game';
+  return Object.assign({}, form, { 지침: read('ai/AI_지침.md'), 형식: read('ai/데이터_형식.md'), 예시설정: read(ex + '/settings.js'), 예시이야기: read(ex + '/story1.js') });
 }
 const asJs = (name, obj, note) => '// 이 파일은 node tools/build.mjs 가 만든다. 직접 고치지 않는다. (' + note + ')\nwindow.' + name + ' = ' + JSON.stringify(obj).replace(/<\/(script)/gi, '<\\/$1') + ';\n';
 
@@ -61,7 +63,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   console.log('만들었어요: engine/bundle.js, ai/guide.js, ai/수업_설계서.md');
   if (process.argv.includes('--html')) {
     const { exportHtml } = require(path.join(root, 'engine/js/export.js'));
-    // 다른 폴더의 게임을 묶으려면: node tools/build.mjs --html --game=examples/memory-court-ep1
+    // 다른 폴더의 게임을 묶으려면: node tools/build.mjs --html --game=examples/daedong-map
     const game = path.join(root, (process.argv.find((a) => a.startsWith('--game=')) || '--game=my-game').slice(7));
     const data = loadGame(game);
     const images = embedFiles(path.join(game, 'images'), { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml' });
