@@ -113,19 +113,6 @@
             h('div', { class: 'row' }, h('button', { class: 'ui-btn', onclick: () => { s.remove(); resolve(); } }, '계속')))));
       });
     },
-    // 게임 2 끝: 반박문 쓰기 (기획서 12장). 화면이 만들어지면 G.rebuttal 을 부른다. 아직 없으면 안내만 하고 처음 화면으로 간다
-    rebuttal() {
-      G.store.clear();
-      if (G.rebuttal) return G.rebuttal();
-      return new Promise(() => {
-        openScreen(h('div', { class: 'screen' },
-          h('div', { class: 'panel' },
-            h('h2', {}, '반박문 쓰기'),
-            h('p', { style: 'text-align:center' }, '반박문 쓰기 화면은 아직 만들고 있어요. (기획서 12장)'),
-            h('p', { style: 'text-align:center' }, '게임 2는 여기까지예요. 수고했어요!'),
-            h('div', { class: 'row' }, h('button', { class: 'ui-btn', onclick: () => location.reload() }, '처음 화면으로')))));
-      });
-    },
     // 다음 화 예고 → 다음 화가 만들어져 있으면 [제N화 시작], 아니면 처음 화면
     nextEpisode(title) {
       return new Promise(() => {
@@ -261,19 +248,7 @@
     const resumeBtn = h('button', { class: 'ui-btn', disabled: !canResume, onclick: () => { G.ep = savedEp; startFrom(saved); } },
       canResume ? '이어하기 (제' + savedEp.번호 + '화 「' + savedEp.막[saved.막].이름 + '」부터)' : '이어하기');
     const codeBtn = h('button', { class: 'ui-btn sub', onclick: codeScreen, hidden: !hasCodes() }, '이어하기 코드 입력');
-    // 기억 노트만 바로 쓰기 (결석한 학생, 게임을 끝까지 못 한 학생). 끝나면 처음 화면으로 돌아온다
-    const noteSpec = PART !== 2 && DATA.ep3 && DATA.ep3.막.flatMap((m) => m.내용).find((c) => c.기억노트);
-    const noteBtn = h('button', { class: 'ui-btn sub', hidden: !noteSpec, onclick: async () => {
-      s.remove();
-      await G.memoryNote(noteSpec.기억노트);
-      location.reload();
-    } }, '기억 노트 쓰기');
-    // 반박문 쓰기만 바로 하기 (게임 2를 끝까지 못 한 학생, 결석한 학생). 게임 2 파일과 사이트에만 있다
-    const rebuttalBtn = h('button', { class: 'ui-btn sub', hidden: PART === 1 || !DATA.ep6 || !G.rebuttal, onclick: () => {
-      s.remove();
-      G.rebuttal();
-    } }, '친구에게 답장하기');
-    [startBtn, resumeBtn, codeBtn, noteBtn, rebuttalBtn].forEach((b) => { b.disabled = true; menu.append(b); });
+    [startBtn, resumeBtn, codeBtn].forEach((b) => { b.disabled = true; menu.append(b); });
 
     // 처음에 꼭 필요한 그림을 먼저 받는다
     const first = ['ui/textbox', 'ui/window_hint', 'ui/window_tutorial', 'ui/btn_press', 'ui/btn_present', 'ui/btn_record', 'ui/btn_move', 'ui/btn_examine',
@@ -287,7 +262,7 @@
       await Promise.race([document.fonts.load('20px "RIDIBatang"', '기억의 법정').catch(() => {}), G.sleep(4000)]);
     }
     loading.textContent = '';
-    startBtn.disabled = false; codeBtn.disabled = false; noteBtn.disabled = false; rebuttalBtn.disabled = false; resumeBtn.disabled = !canResume;
+    startBtn.disabled = false; codeBtn.disabled = false; resumeBtn.disabled = !canResume;
   }
 
   // ─────────── 시작 ───────────

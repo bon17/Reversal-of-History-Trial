@@ -2,13 +2,6 @@
 // 그림 이름은 assets/ 폴더 기준 (확장자 없이). 게임은 game/img/ 의 WebP를 먼저 쓰고, 없으면 assets/ 원본을 쓴다.
 window.DATA = window.DATA || {};
 
-// 게임 설정
-DATA.설정 = {
-  // 기억 노트·반박문 답을 저장할 GAS 웹 앱 주소 (…/exec). 만드는 법: docs/게임_실행_안내.md 11장 "기억 노트 저장"
-  // 비워 두면 답을 저장하지 않고, 쓴 답을 화면에 보여 준다 (이 기기에도 남는다).
-  GAS주소: 'https://script.google.com/macros/s/AKfycbyDkyQdQyQiJjaT4aM4iseZtuM69UOr0DphhaXkNJbMauw_zUmQvGFk7eDK0jKQzk1J/exec',
-};
-
 // 표정 한글 → 파일 이름 (스프라이트 목록 2-2 표)
 DATA.표정 = {
   '기본': 'default', '생각': 'think', '놀람': 'surprised', '자신감': 'confident', '당황': 'flustered',

@@ -278,7 +278,7 @@
 
   // ─────────── 저장 ───────────
   // 한 파일짜리 게임 1·2(tools/build_single_html.mjs)는 한 컴퓨터에서 저장소를 함께 쓰므로 진행 저장 자리를 나눈다.
-  // (🟩 기록과 해 본 화 목록은 게임 2의 기록 보관함과 기억 노트가 함께 보도록 나누지 않는다)
+  // (🟩 기록은 게임 2의 기록 보관함이 함께 보도록 나누지 않는다)
   const SAVE_KEY = 'memory-court-save' + (window.GAME_PART ? '-' + window.GAME_PART : '');
   G.store = {
     load() {
@@ -298,11 +298,6 @@
     clear() { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} },
     // 🟩 선택 기록 모음 (6화 기록 보관함용): { '2': ['treatment_record'], … }
     green() { try { return JSON.parse(localStorage.getItem('memory-court-green') || '{}'); } catch (e) { return {}; } },
-    // 한 번이라도 시작한 화 (기억 노트에서 2화를 했는지 볼 때 쓴다)
-    played() { try { return JSON.parse(localStorage.getItem('memory-court-played') || '[]'); } catch (e) { return []; } },
-    markPlayed(ep) {
-      try { const p = this.played(); if (!p.includes(ep)) { p.push(ep); localStorage.setItem('memory-court-played', JSON.stringify(p)); } } catch (e) {}
-    },
     addGreen(ep, id) {
       try {
         const g = this.green();

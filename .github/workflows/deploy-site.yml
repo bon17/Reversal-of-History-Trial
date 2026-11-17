@@ -2,8 +2,8 @@
 #
 # 이 브랜치에 고친 것을 올리면, 게임에 필요한 파일만 골라 `site` 브랜치를 새로 만든다.
 # GitHub Pages가 `site` 브랜치를 보여 준다 (저장소 Settings → Pages → Branch: site, / (root)).
-#   게임 1 (1~3화, 기억 노트):       https://bon17.github.io/Reversal-of-History-Trial/1/
-#   게임 2 (4~6화, 친구에게 답장하기): https://bon17.github.io/Reversal-of-History-Trial/2/
+#   게임 1 (1~3화): https://bon17.github.io/Reversal-of-History-Trial/1/
+#   게임 2 (4~6화): https://bon17.github.io/Reversal-of-History-Trial/2/
 #
 # - 올리는 것: index.html, manifest.webmanifest, game/, assets/audio/ (소리 파일이 생기면)
 # - 올리지 않는 것: docs/(대본, 정답, 교사용 메모), tools/, gas/, assets/의 원본 그림

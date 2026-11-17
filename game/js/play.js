@@ -88,8 +88,12 @@
       case '지도점': G.box.hide(); await G.stage.mapDots(c.지도점, G.ep.지도점, { faces: c.얼굴 }); return;
       case '숫자화면': await G.stage.numbers(c.숫자화면); return;
       case '뒷모습': await G.stage.walkAway(c.뒷모습); return;
-      case '기억노트': G.store.clear(); P.running = false; updateTopbar(); await G.memoryNote(c.기억노트); return;
-      case '끝': await G.input.waitAdvance(); location.reload(); throw new Quit(); // 게임 1 끝: 누르면 처음 화면으로
+      // 게임 1(3화)·게임 2(6화) 끝: 저장된 진행을 지우고, 검은 화면에 [처음 화면으로] 단추를 띄운다
+      case '끝':
+        G.store.clear(); P.running = false; updateTopbar(); G.box.hide();
+        await new Promise((resolve) => $('#overlay').append(h('div', { class: 'screen solid' }, h('button', { class: 'ui-btn', onclick: resolve }, '처음 화면으로'))));
+        location.reload();
+        throw new Quit();
       case '외침': await shout(c.외침); return;
       case '띠': G.box.hide(); await G.stage.big({ '레테의 반격': 'ui/banner_lethe_counter', '레테의 주장': 'ui/banner_lethe_claim', '증언 듣기': 'ui/banner_listen', '휴정': 'ui/banner_recess', '최종 변론': 'ui/banner_closing' }[c.띠], 'slide', 1900); return;
       case '증거획득': gain(c.증거획득); await G.stage.evidencePopup(c.증거획득); return;
@@ -175,7 +179,6 @@
       case '몽타주': await G.stage.montage(c.몽타주); return; // 얼굴과 글이 차례로 떠오른다 (진범들)
       case '벽돌': await G.stage.bricks(c.벽돌); return; // 기억의 벽: 이름이 새겨진 벽돌이 하나씩 쌓인다
       case '표': await G.screens.table(c.표); return;
-      case '반박문': await G.screens.rebuttal(); throw new Quit(); // 게임 2 끝의 반박문 쓰기 (아직 화면이 없으면 안내만)
       case '반격': await counter(c.반격); return;
       case '조사파트': await explore(c.조사파트); return;
       default: console.warn('[모르는 명령]', c);
@@ -818,7 +821,6 @@
   // 게임 시작: from = { 막, 명령, 증거, 신뢰도, 조사 } (없으면 처음부터)
   G.startGame = async (from = {}) => {
     const ep = G.ep;
-    G.store.markPlayed(ep.번호);
     P.act = from.막 || 0;
     P.idx = from.명령 || 0;
     P.section = P.idx;
