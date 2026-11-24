@@ -80,6 +80,7 @@
 
   // ─────────── 법정 기록 (역전재판처럼: 위에 큰 증거 칸, 아래에 작은 칸 8개) ───────────
   // present: true 이면 증거를 골라 돌려준다 (없으면 null)
+  // guide: 연습에서 내밀 증거 이름. 그 카드(다른 쪽에 있으면 ▶, 다른 칸에 있으면 그 칸 단추)가 반짝이고, 고르면 [증거 제시]가 반짝인다 (단독판 4화)
   // pick: { 제목, 증거: [id…] } 정해진 증거 가운데서 고를 때 (기억 노트). 개념 카드 칸은 없다
   const COLOR = { 빨강: 'red', 파랑: 'blue', 초록: 'green', 개념: 'concept', 검찰: 'prosecution' };
   const PER_PAGE = 8;
@@ -110,7 +111,7 @@
 
   G.record = {
     has: (id) => G.play.evidence.includes(id),
-    open({ present = false, pick = null } = {}) {
+    open({ present = false, pick = null, guide = null } = {}) {
       return new Promise((resolve) => {
         const ov = document.getElementById('overlay');
         const scr = h('div', { class: 'screen record' + (present ? ' presenting' : '') });
@@ -137,7 +138,7 @@
         const drawTabs = () => {
           tabs.innerHTML = '';
           for (const [t, label] of [['증거', '증거'], ['개념', '개념 카드']]) {
-            tabs.append(h('button', { class: 'ui-btn' + (tab === t ? ' on' : ''), onclick: () => { if (tab === t) return; tab = t; sel = lists[t][0] || null; draw(); } }, label + ' (' + lists[t].length + ')'));
+            tabs.append(h('button', { class: 'ui-btn' + (tab === t ? ' on' : '') + (guide && tab !== t && lists[t].includes(guide) ? ' guide' : ''), onclick: () => { if (tab === t) return; tab = t; sel = lists[t][0] || null; draw(); } }, label + ' (' + lists[t].length + ')'));
           }
         };
         const drawInfo = () => {
@@ -159,7 +160,7 @@
             info.append(h('div', { class: 'src' }, G.imgEl('ui/caption_source', 'band'), h('span', {}, src)));
           }
           if (ev.그림) btns.append(h('button', { class: 'img-btn bb', 'aria-label': '자세히 보기', onclick: () => zoom(sel) }, G.imgEl('ui/btn_examine')));
-          if (present && ev.색 !== '개념') btns.append(h('button', { class: 'img-btn bb', 'aria-label': '증거 제시', onclick: () => close(sel) }, G.imgEl('ui/btn_present')));
+          if (present && ev.색 !== '개념') btns.append(h('button', { class: 'img-btn bb' + (guide && sel === guide ? ' guide' : ''), 'aria-label': '증거 제시', onclick: () => close(sel) }, G.imgEl('ui/btn_present')));
           fitDesc(desc);
         };
         const drawStrip = () => {
@@ -173,14 +174,14 @@
             const id = list[page * PER_PAGE + i];
             if (!id) { slots.append(h('div', { class: 'slot empty' })); continue; }
             const ev = G.ev[id];
-            const b = h('button', { class: 'slot item k-' + (COLOR[ev.색] || 'concept') + (id === sel ? ' on' : ''), 'aria-label': ev.이름, onclick: () => { sel = id; draw(); } });
+            const b = h('button', { class: 'slot item k-' + (COLOR[ev.색] || 'concept') + (id === sel ? ' on' : '') + (id === guide ? ' guide' : ''), 'aria-label': ev.이름, onclick: () => { sel = id; draw(); } });
             b.append(slotInner(ev));
             slots.append(b);
           }
           strip.append(
             h('button', { class: 'arrow prev', 'aria-label': '앞 쪽', disabled: pages < 2 ? '' : null, onclick: () => go(-1) }, '◀'),
             slots,
-            h('button', { class: 'arrow next', 'aria-label': '다음 쪽', disabled: pages < 2 ? '' : null, onclick: () => go(1) }, '▶'),
+            h('button', { class: 'arrow next' + (guide && list.includes(guide) && Math.floor(list.indexOf(guide) / PER_PAGE) !== page ? ' guide' : ''), 'aria-label': '다음 쪽', disabled: pages < 2 ? '' : null, onclick: () => go(1) }, '▶'),
             h('div', { class: 'pg' }, pages > 1 ? (page + 1) + ' / ' + pages : ''));
         };
         const draw = () => { if (sel) lastId = sel; drawTabs(); drawStrip(); drawInfo(); };

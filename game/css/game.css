@@ -269,6 +269,21 @@ img { -webkit-user-drag: none; }
 .gem-b { background-position: -1.31em -1.333em; }
 .gem-g { background-position: -2.41em -1.333em; }
 #text.glow { animation: glowText 1.1s ease-in-out infinite; }
+/* 단추안내: 연습 증언에서 지금 누를 단추가 반짝인다 (단독판 4화) */
+#controls .guide, .record .guide { position: relative; animation: guideGlow 1.1s ease-in-out infinite; }
+#controls .act-btn.off { opacity: .35; filter: grayscale(.7); cursor: default; }
+@keyframes guideGlow {
+  0%, 100% { filter: drop-shadow(0 0 3px #fff6b0) drop-shadow(0 0 8px #ffd24a); transform: scale(1); }
+  50% { filter: brightness(1.2) drop-shadow(0 0 5px #fffbe0) drop-shadow(0 0 14px #ffd24a) drop-shadow(0 0 26px #ffb300); transform: scale(1.1); }
+}
+/* 누를 곳 위에 통통 튀는 ▼ (단추, 법정 기록의 [증거 제시]·칸 단추). 카드 칸은 금색 테두리로 */
+#controls .guide::after, .record .rbtns .guide::after, .record .tabs .guide::after {
+  content: '▼'; position: absolute; left: 50%; bottom: 100%; margin-bottom: 4px;
+  color: #ffe27a; font-size: max(18px, calc(var(--u, 1px) * 40)); line-height: 1; pointer-events: none;
+  text-shadow: 0 0 4px #000, 0 0 10px #ffb300; animation: guideArrow .8s ease-in-out infinite;
+}
+@keyframes guideArrow { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -8px); } }
+.record .slot.guide { outline: 4px solid #ffd24a; outline-offset: 2px; }
 @keyframes glowText { 0%, 100% { text-shadow: 0 0 0 transparent; } 50% { text-shadow: 0 0 10px #fff6b0, 0 0 18px #ffd24a; } }
 #next-icon { position: absolute; opacity: 0; pointer-events: none; }
 #next-icon.on { opacity: 1; animation: nudge .8s ease-in-out infinite; }

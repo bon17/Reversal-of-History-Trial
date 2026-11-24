@@ -347,16 +347,23 @@
     await runList(T.증언후);
     await runList(T.반대심문전);
 
+    // 단추안내: 연습 증언에서 할 일을 차례로 반짝인다. 그 문장으로 가기(▶) → [추궁] → [증거 제시] (단독판 4화 증언 1)
+    const gi = T.문장.findIndex((s) => s.단추안내);
+    const pressed = new Set();
+    // 다 맞히면(이 증언이 끝나면) 안내도 끝난다. [추궁]을 누르기 전에는 [증거 제시]를 잠가 둔다
+    const guideOf = (i) => (gi < 0 ? {} : i !== gi ? { next: true, lock: !pressed.has(gi) } : !pressed.has(gi) ? { press: true, lock: true } : { present: true });
+    const guideEv = () => { const a = (stages[stageNo].정답 || []).find((x) => x.문장 - 1 === gi); return a && a.증거; };
     let i = 0;
     for (;;) {
       const st = T.문장[i];
       const text = revised[i] || st.글;
       G.stage.speaker(T.증인, expr());
       G.box.showStatic({ 이름: T.증인, 글: text, cls: 'cross-text', glow: !!(st.반짝임 && !revised[i]) });
-      const act = await crossAction((i + 1) + ' / ' + n, T);
+      const act = await crossAction((i + 1) + ' / ' + n, T, guideOf(i));
       if (act === 'prev') { i = (i - 1 + n) % n; continue; }
       if (act === 'next') { i = (i + 1) % n; continue; }
       if (act === 'press') {
+        pressed.add(i);
         if (revised[i] && st.수정) { await runList(st.수정.뒤); continue; }
         // 추궁할 때마다 "잠깐!" (대본에 이미 외침이 있는 추궁은 한 번만)
         if (!(st.추궁 || []).some((c) => c.외침)) await shout('잠깐', 650);
@@ -386,7 +393,7 @@
         continue;
       }
       if (act === 'present') {
-        const ev = await G.record.open({ present: true });
+        const ev = await G.record.open({ present: true, guide: gi === i ? guideEv() : null });
         if (!ev) continue;
         const stage = stages[stageNo];
         const hit = (stage.정답 || []).find((a) => a.문장 - 1 === i && a.증거 === ev && (!a.수정후 || revised[i]));
@@ -582,18 +589,21 @@
     await G.sleep(1300);
   }
 
-  function crossAction(label, T) {
+  // guide: 지금 누를 단추를 반짝여 알려 준다 ({ next, press, present } 중 하나. 연습 증언의 단추안내)
+  function crossAction(label, T, guide = {}) {
     return new Promise((resolve) => {
       clearControls();
       const done = (v) => { clearControls(); resolve(v); };
+      const g = (on, cls) => cls + (on ? ' guide' : '');
       controls.append(
-        imgButton('ui/btn_press', '추궁', () => done('press'), 'act-btn press'),
+        imgButton('ui/btn_press', '추궁', () => done('press'), g(guide.press, 'act-btn press')),
         h('div', { class: 'grow' }),
         h('button', { class: 'arrow prev', 'aria-label': '이전 문장', onclick: () => done('prev') }, '◀'),
         h('div', { class: 'count' }, h('small', {}, '증언 「' + T.제목 + '」'), label),
-        h('button', { class: 'arrow next', 'aria-label': '다음 문장', onclick: () => done('next') }, '▶'),
+        h('button', { class: g(guide.next, 'arrow next'), 'aria-label': '다음 문장', onclick: () => done('next') }, '▶'),
         h('div', { class: 'grow' }),
-        imgButton('ui/btn_present', '증거 제시', () => done('present'), 'act-btn present'));
+        imgButton('ui/btn_present', '증거 제시', () => done('present'), g(guide.present, 'act-btn present') + (guide.lock ? ' off' : '')));
+      if (guide.lock) controls.querySelector('.present').disabled = true; // 연습: 먼저 반짝이는 [추궁]을 누르게 한다
       controls.hidden = false;
       G.input.onKey = (e) => {
         if (e.key === 'ArrowLeft') { done('prev'); return true; }
@@ -620,10 +630,11 @@
         await new Promise((resolve) => {
           clearControls();
           if (step.질문) controls.append(h('span', { class: 'help' }, step.질문)); // 예: 이름 말고 이 사람을 가리키는 단서는?
-          controls.append(h('div', { class: 'grow' }), imgButton('ui/btn_present', '증거 제시', () => { clearControls(); resolve(); }, 'act-btn only'));
+          // 단추안내: 처음 증거를 내미는 연습에서 [증거 제시]를 반짝인다 (단독판 4화 「숨을 이유」)
+          controls.append(h('div', { class: 'grow' }), imgButton('ui/btn_present', '증거 제시', () => { clearControls(); resolve(); }, 'act-btn only' + (C.단추안내 && k === 0 ? ' guide' : '')));
           controls.hidden = false;
         });
-        const ev = await G.record.open({ present: true });
+        const ev = await G.record.open({ present: true, guide: C.단추안내 && k === 0 ? [].concat(step.정답)[0] : null });
         if (!ev) continue;
         if ([].concat(step.정답).includes(ev)) { P.presented = ev; await runList(step.정답장면); break; } // 정답이 여러 개일 수 있다 (6화: 🟩 기록 아무거나)
         // 따로오답: 이 증거를 내면 공통 오답 대신 이 장면이 나온다 (5화 「암시장」의 🟥 번호 문신). 벌칙은 증거 색대로

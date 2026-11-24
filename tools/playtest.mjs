@@ -259,6 +259,8 @@ await page.evaluate(({ FROM, FAST, PROBE }) => {
         if (plan.action === 'none') return Object.assign(info, { did: 'cross-none', bad: true });
         if (plan.curId !== plan.target) { controls.querySelector('.arrow.next').click(); return Object.assign(info, { did: 'next' }); }
         if (plan.action === 'press') { controls.querySelector('.press').click(); return Object.assign(info, { did: 'press ' + plan.target }); }
+        // 연습 증언(단독판 4화 증언 1): [추궁]을 누르기 전에는 [증거 제시]가 잠겨 있다. 학생처럼 반짝이는 [추궁]부터 누른다
+        if (controls.querySelector('.present').disabled) { controls.querySelector('.press').click(); return Object.assign(info, { did: 'press ' + plan.target + ' (잠긴 [증거 제시] 앞에서 반짝이는 [추궁])' }); }
         T.want = { ev: plan.ev, zoom: plan.zoom, probe: plan.probe };
         controls.querySelector('.present').click();
         return Object.assign(info, { did: 'open-present @' + plan.target });
