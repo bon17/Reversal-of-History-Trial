@@ -175,6 +175,9 @@
   }
 
   // ─────────── 설정 ───────────
+  // 소리 크기 조절(음악 크기, 효과음 크기): 게임 1·2·단독판 모두 소리 파일이 없어서 숨긴다 (2026-11-24 선생님 요청).
+  // 나중에 assets/audio/ 에 소리를 넣으면 true로 바꾼다
+  const SOUND_SETTINGS = false;
   function settingsScreen() {
     const seg = h('div', { class: 'seg' });
     const drawSeg = () => {
@@ -195,8 +198,7 @@
         h('h2', {}, '설정'),
         act ? h('p', { style: 'text-align:center' }, '지금: 제' + G.epNo(G.ep.번호) + '화 「' + G.ep.제목 + '」') : null,
         h('label', {}, '글자 나오는 속도'), seg,
-        h('label', {}, '음악 크기'), slider('bgm', () => G.audio.refreshVolume()),
-        h('label', {}, '효과음 크기'), slider('se'),
+        SOUND_SETTINGS ? [h('label', {}, '음악 크기'), slider('bgm', () => G.audio.refreshVolume()), h('label', {}, '효과음 크기'), slider('se')] : null,
         h('div', { class: 'row' },
           h('button', { class: 'ui-btn sub', onclick: logScreen }, '지난 대사 보기'),
           G.teacher ? h('button', { class: 'ui-btn sub', onclick: () => G.teacher.open() }, '선생님 창') : null,
