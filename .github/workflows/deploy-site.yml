@@ -51,13 +51,18 @@ jobs:
             mkdir -p "$D/assets"
             cp -r game "$D/"
             if [ -d assets/audio ]; then cp -r assets/audio "$D/assets/"; fi
+            # 코드와 CSS 주소 뒤에 ?v=커밋 을 붙인다. 브라우저가 예전 파일을 10분 동안 다시 쓰지 않게 (GitHub Pages는 max-age=600)
+            V="${GITHUB_SHA::7}"
             sed -e "s|<head>|<head><script>window.GAME_PART=$N</script>|" \
                 -e "s|<title>기억의 법정</title>|<title>$NAME</title>|" \
+                -e "s|\(src=\"game/[^\"]*\.js\)\"|\1?v=$V\"|g" \
+                -e "s|\(href=\"game/css/[^\"]*\.css\)\"|\1?v=$V\"|g" \
                 index.html > "$D/index.html"
             sed -e "s|\"기억의 법정\"|\"$NAME\"|g" manifest.webmanifest > "$D/manifest.webmanifest"
             # 바꿔 넣기가 안 되었으면 여기서 멈춘다 (주소끼리 같은 게임이 되지 않게)
             grep -q "window.GAME_PART=$N" "$D/index.html"
             grep -q "<title>$NAME</title>" "$D/index.html"
+            grep -q "core.js?v=$V" "$D/index.html"
           done
           find site -name .gitkeep -delete
           cat > site/index.html <<'EOF'

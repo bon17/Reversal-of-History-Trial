@@ -966,12 +966,14 @@
     if (G.onStageTap && G.onStageTap(e)) return;
     G.input.tap();
   });
+  // 스페이스바: 한글 자판이 켜져 있으면 key가 ' '가 아니라 'Process'로 올 수 있어서, 자판 위치(code)와 keyCode로도 본다
+  const isSpace = (e) => e.key === ' ' || e.code === 'Space' || e.keyCode === 32;
   document.addEventListener('keydown', (e) => {
     if (e.target.closest && e.target.closest('input')) return;
     if ($('#overlay').children.length) {
       if (e.key === 'Escape' && G.closeTopOverlay) G.closeTopOverlay();
       else if (G.overlayKey && G.overlayKey(e)) e.preventDefault(); // 법정 기록의 ← →
-      else if (e.key === ' ' && G.SOLO) {
+      else if (isSpace(e) && G.SOLO) {
         // 단독판의 스페이스바: 아무 데나 누르면 넘어가는 제목 화면(제N화, 부 제목)만 넘긴다. 다른 창(법정 기록 등)의 단추는 누르지 않는다
         e.preventDefault();
         const top = $('#overlay').lastElementChild;
@@ -982,14 +984,14 @@
     if (G.input.onKey && G.input.onKey(e)) { e.preventDefault(); return; }
     // 단독판의 스페이스바: 대사창(화면)을 누른 것과 같다. 대사를 넘기고, 반대 심문에서는 다음 문장으로 간다.
     // 누르고 있어도 한 번만 넘긴다 (e.repeat). 새로 나온 글을 너무 빨리 넘기지 않는 것도 누를 때와 같다 (G.input.HOLD)
-    if (e.key === ' ' && G.SOLO) {
+    if (isSpace(e) && G.SOLO) {
       e.preventDefault();
       if (!e.repeat && !(G.onStageTap && G.onStageTap(e))) G.input.tap();
       return;
     }
     // 게임 1·2는 엔터·스페이스로 대사를 넘기지 않는다 (잘못 눌러 대사를 놓치지 않게). 스페이스로 화면이 내려가지 않게만 막는다
     // 마우스로 누른 버튼에 남은 초점 때문에 엔터·스페이스가 그 버튼을 다시 누르지 않게도 막는다
-    if (e.key === ' ' || (e.key === 'Enter' && e.target.closest && e.target.closest('button'))) e.preventDefault();
+    if (isSpace(e) || (e.key === 'Enter' && e.target.closest && e.target.closest('button'))) e.preventDefault();
   });
   window.addEventListener('resize', () => G.layout());
   window.addEventListener('orientationchange', () => setTimeout(G.layout, 150));
