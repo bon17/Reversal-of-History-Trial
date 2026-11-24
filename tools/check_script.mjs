@@ -23,6 +23,9 @@ const dataFile = di > 0 ? path.resolve(process.argv[di + 1]) : path.join(ROOT, '
 // 다른 화 데이터도 함께 읽는다 (4화처럼 다른 화의 증거를 빌려 오는 화가 있어서). 비교하는 화의 파일은 맨 뒤에 읽는다
 const otherEps = fs.readdirSync(path.join(ROOT, 'game/data')).filter((f) => /^ep\d+\.js$/.test(f) && f !== 'ep' + EPNO + '.js').map((f) => path.join(ROOT, 'game/data', f));
 for (const f of [path.join(ROOT, 'game/data/common.js'), ...otherEps, dataFile]) vm.runInContext(fs.readFileSync(f, 'utf8'), ctx);
+// 4~6화 대본은 게임 2 판과 비교한다. 단독판에서 바뀌는 곳(「단독판」, 「판」 칸)은 빼고 본다 (단독판은 tools/check_solo.mjs)
+vm.runInContext(fs.readFileSync(path.join(ROOT, 'game/js/edition.js'), 'utf8'), ctx);
+ctx.applyEdition(ctx.window.DATA, false);
 const DATA = ctx.window.DATA;
 const EP = DATA['ep' + EPNO];
 const alias = (n) => (DATA.별칭 && DATA.별칭[n]) || n;

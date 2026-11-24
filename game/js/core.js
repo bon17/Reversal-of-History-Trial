@@ -23,6 +23,17 @@
   const GEMS = { '🟥': 'r', '🟦': 'b', '🟩': 'g' };
   G.mdBold = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/🟥|🟦|🟩/gu, (m) => '<span class="gem gem-' + GEMS[m] + '"></span>');
   G.sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // ─────────── 어느 게임인가 ───────────
+  // window.GAME_PART: 1 = 게임 1(1~3화), 2 = 게임 2(4~6화), 3 = 단독판(4~6화만 하는 판), 없음 = 사이트 전체판(모든 화)
+  // 단독판은 게임 2와 같은 화를 쓰고, 데이터의 「단독판」 칸으로 바꾼 것을 쓴다 (game/js/edition.js).
+  G.PART = window.GAME_PART || 0;
+  G.SOLO = G.PART === 3;
+  G.partOf = (ep) => ep.게임 || (ep.번호 <= 3 ? 1 : 2);
+  G.inPart = (ep) => !G.PART || G.partOf(ep) === (G.SOLO ? 2 : G.PART);
+  // 화면에 보이는 화 번호: 단독판은 4~6화를 제1~3화로 보여 준다 (대본, 공략, 데이터의 번호는 그대로)
+  G.epNo = (n) => (G.SOLO && n > 3 ? n - 3 : n);
+  G.epLabel = (t) => String(t).replace(/제(\d+)화/g, (m, n) => '제' + G.epNo(+n) + '화');
   G.nextFrame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
   // ─────────── 그림 ───────────
@@ -287,7 +298,7 @@
         const OLD = 'memory-court-save';
         const old = SAVE_KEY !== OLD && JSON.parse(localStorage.getItem(OLD) || 'null');
         const ep = old && DATA['ep' + old.화];
-        if (ep && (ep.게임 || (ep.번호 <= 3 ? 1 : 2)) === window.GAME_PART) {
+        if (ep && !G.SOLO && G.partOf(ep) === window.GAME_PART) {
           if (!localStorage.getItem(SAVE_KEY)) localStorage.setItem(SAVE_KEY, JSON.stringify(old));
           localStorage.removeItem(OLD);
         }

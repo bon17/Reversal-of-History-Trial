@@ -906,6 +906,7 @@ img { -webkit-user-drag: none; }
 .teacher-view .t-msg { color: #ffd9a0; font-size: 14px; padding: 0 12px; background: #0a1330; }
 .teacher-view .t-msg:empty { display: none; }
 .teacher-view .t-msg:not(:empty) { padding: 6px 12px; }
+.teacher-view .t-note { white-space: pre-line; color: #f2ead4; line-height: 1.5; border-top: 1px solid rgba(232, 184, 74, .35); }
 .teacher-view .guide-frame { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; background: #f2f3f6; }
 .teacher-login .t-what { text-align: center; color: var(--gold-light); font-weight: 800; word-break: keep-all; }
 .teacher-login .t-how { text-align: center; word-break: keep-all; }

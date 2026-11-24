@@ -2,13 +2,14 @@
 // 이 파일 하나만 있으면 인터넷 없이 더블클릭으로 실행할 수 있다. game/fonts/ 의 글꼴도 함께 넣는다.
 // assets/audio/ 에 소리 파일이 있으면 그 게임에서 쓰는 BGM과 모든 효과음도 넣는다 (tools/embed_audio.mjs).
 //
-// 게임 1(1~3화)과 게임 2(4~6화)를 따로 만든다. 한 파일에 다 넣으면 30MB를 넘기 때문이다.
+// 게임 1(1~3화), 게임 2(4~6화), 단독판(4~6화만 하는 판)을 따로 만든다. 한 파일에 다 넣으면 30MB를 넘기 때문이다.
 //   - 게임 1 파일: [처음부터]가 1화. 이어하기 코드는 1~3화만 받는다.
 //   - 게임 2 파일: [처음부터]가 4화(게임 2 시작 화면). 이어하기 코드는 4~6화만 받는다.
+//   - 단독판 파일: [처음부터]가 4화(단독판 프롤로그). 화면에는 제1~3화로 보인다 (docs/대본/단독판_평범한_사람들.md).
 //   - 그 게임에서 쓰는 그림만 넣는다. (게임 2의 지난 기록에 나오는 1부 인물 얼굴처럼, 다른 게임 그림도 쓰는 것만 넣는다)
 //
-// 실행: node tools/build_single_html.mjs              → dist/기억의_법정_게임1.html, dist/기억의_법정_게임2.html
-//       node tools/build_single_html.mjs --game 2     → 게임 2 파일만
+// 실행: node tools/build_single_html.mjs              → dist/기억의_법정_게임1.html, dist/기억의_법정_게임2.html, dist/기억의_법정_단독판.html
+//       node tools/build_single_html.mjs --game 2     → 게임 2 파일만 (--game 3 은 단독판)
 //       node tools/build_single_html.mjs --game 2 저장할파일.html
 //
 // 30MB를 넘는 파일은 그 파일에 넣는 인물·배경 그림만 조금 낮은 품질(WebP 0.72, 그래도 넘으면 0.62)로 다시 압축해서 넣는다.
@@ -27,14 +28,21 @@ const onlyGame = gi >= 0 ? +args[gi + 1] : null;
 const outArg = args.filter((a, i) => !a.startsWith('--') && !(gi >= 0 && i === gi + 1))[0];
 
 // ─────────── 게임 데이터 읽기 ───────────
-const ctx = {};
-ctx.window = ctx;
-vm.createContext(ctx);
-const dataFiles = ['common.js', ...fs.readdirSync(path.join(ROOT, 'game/data')).filter((f) => /^ep\d+\.js$/.test(f)).sort((a, b) => parseInt(a.slice(2)) - parseInt(b.slice(2)))];
-for (const f of dataFiles) vm.runInContext(fs.readFileSync(path.join(ROOT, 'game/data', f), 'utf8'), ctx);
-const DATA = ctx.window.DATA;
+// 단독판(3)은 게임 2와 같은 화를 쓰고, 데이터의 「단독판」 칸으로 바꾼 것을 쓴다 (game/js/edition.js). 그래서 게임마다 새로 읽는다
+function loadData(part) {
+  const ctx = {};
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  const dataFiles = ['common.js', ...fs.readdirSync(path.join(ROOT, 'game/data')).filter((f) => /^ep\d+\.js$/.test(f)).sort((a, b) => parseInt(a.slice(2)) - parseInt(b.slice(2)))];
+  for (const f of dataFiles) vm.runInContext(fs.readFileSync(path.join(ROOT, 'game/data', f), 'utf8'), ctx);
+  vm.runInContext(fs.readFileSync(path.join(ROOT, 'game/js/edition.js'), 'utf8'), ctx);
+  return ctx.applyEdition(ctx.window.DATA, part === 3);
+}
+let DATA = loadData(1);
+let episodes = [];
+const useData = (part) => { DATA = loadData(part); episodes = Object.values(DATA).filter((d) => d && d.막 && d.번호); };
 const partOf = (e) => e.게임 || (e.번호 <= 3 ? 1 : 2);
-const episodes = Object.values(DATA).filter((d) => d && d.막 && d.번호);
+const sameEps = (part) => (part === 3 ? 2 : part); // 단독판은 게임 2의 화
 
 // ─────────── 게임마다 쓰는 그림 모으기 ───────────
 const imgRoot = path.join(ROOT, 'game', 'img');
@@ -85,7 +93,7 @@ function imagesOf(part) {
     if (v.벽돌) keys.add('backgrounds/cut_ep6_wall_bricks'); // 6화 기억의 벽: 벽돌 그림은 데이터에 이름이 없다 (screen.js bricks)
     for (const x of Object.values(v)) visit(x);
   }
-  for (const ep of episodes.filter((e) => partOf(e) === part)) {
+  for (const ep of episodes.filter((e) => partOf(e) === sameEps(part))) {
     curEp = ep;
     visit(ep.막);
     visit([ep.오답.일반, ep.오답.피해]);
@@ -118,7 +126,7 @@ function soundsOf(part) {
     if (!v || typeof v !== 'object' || seen.has(v)) return;
     seen.add(v);
     Object.values(v).forEach(visit);
-  })(episodes.filter((e) => partOf(e) === part));
+  })(episodes.filter((e) => partOf(e) === sameEps(part)));
   const all = audioFiles(path.join(ROOT, 'assets', 'audio'));
   return Object.fromEntries(Object.entries(all).filter(([key]) => !key.startsWith('bgm/') || used.has(key)));
 }
@@ -153,6 +161,7 @@ async function squeeze(orig, embed, keys, q) {
 // ─────────── HTML 한 파일 만들기 ───────────
 const inline = (s) => s.replace(/<\/script/gi, '<\\/script');
 async function build(part, out) {
+  useData(part);
   const used = imagesOf(part);
   const embed = {};
   for (const key of [...used].sort()) embed[key] = 'data:image/webp;base64,' + fs.readFileSync(path.join(imgRoot, key + '.webp')).toString('base64');
@@ -172,7 +181,7 @@ async function build(part, out) {
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, html);
   const mb = fs.statSync(out).size / 1048576;
-  console.log(`${path.relative(ROOT, out)} 만듦 (게임 ${part}): 그림 ${used.size}장, 소리 ${Object.keys(sounds).length}개, ${mb.toFixed(1)}MB${note}${mb > LIMIT_MB ? '  ※ 30MB가 넘습니다' : ''}`);
+  console.log(`${path.relative(ROOT, out)} 만듦 (${part === 3 ? '단독판' : '게임 ' + part}): 그림 ${used.size}장, 소리 ${Object.keys(sounds).length}개, ${mb.toFixed(1)}MB${note}${mb > LIMIT_MB ? '  ※ 30MB가 넘습니다' : ''}`);
 }
 
 function assemble(part, embed, sounds) {
@@ -189,12 +198,13 @@ function assemble(part, embed, sounds) {
     return '<style>\n' + css + '\n</style>';
   });
   html = html.replace(/<link rel="manifest"[^>]*>\n?/, '');
-  html = html.replace(/<title>([^<]*)<\/title>/, '<title>$1 게임 ' + part + '</title>');
+  html = html.replace(/<title>([^<]*)<\/title>/, part === 3 ? '<title>$1: 평범한 사람들</title>' : '<title>$1 게임 ' + part + '</title>');
   html = html.replace(/<script src="([^"]+)"><\/script>/g, (m, src) => '<script>\n' + inline(fs.readFileSync(path.join(ROOT, src), 'utf8')) + '\n</script>');
   html = html.replace('<script>', '<script>window.GAME_PART = ' + part + '; window.EMBED_IMG = ' + JSON.stringify(embed) + ';</script>\n<script>');
   return embedAudio(html, sounds);
 }
 
-for (const part of onlyGame ? [onlyGame] : [1, 2]) {
-  await build(part, path.resolve(onlyGame && outArg ? outArg : path.join(ROOT, 'dist', `기억의_법정_게임${part}.html`)));
+const outName = (part) => (part === 3 ? '기억의_법정_단독판.html' : `기억의_법정_게임${part}.html`);
+for (const part of onlyGame ? [onlyGame] : [1, 2, 3]) {
+  await build(part, path.resolve(onlyGame && outArg ? outArg : path.join(ROOT, 'dist', outName(part))));
 }

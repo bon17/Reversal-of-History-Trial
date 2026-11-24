@@ -1,4 +1,4 @@
-// 선생님 창: 비밀번호를 넣으면 재판 공략 가이드를 보여 준다 (게임 1은 1~3화, 게임 2는 4~6화)
+// 선생님 창: 비밀번호를 넣으면 재판 공략 가이드를 보여 준다 (게임 1은 1~3화, 게임 2와 단독판은 4~6화)
 // 공략은 game/data/teacher_guide.js 에 암호화되어 들어 있다 (tools/build_teacher_guide.mjs 로 만든다).
 // 비밀번호가 맞아야 풀리므로, 게임 파일 안에는 비밀번호도 정답도 글자 그대로 들어 있지 않다.
 // 처음 화면 오른쪽 위 [선생님] 단추와 설정 창의 [선생님 창] 단추로 연다.
@@ -8,6 +8,14 @@
   const ov = $('#overlay');
   const PART = window.GAME_PART || 0;
   const PART_NAME = { 1: '게임 1 · 제1화~제3화', 2: '게임 2 · 제4화~제6화' };
+  // 단독판(4~6화만 하는 판)은 게임 2의 공략을 그대로 보여 주고, 달라지는 곳을 공략 위에 따로 적는다.
+  // (공략 파일은 비밀번호로 잠가 만들므로, 단독판용을 따로 만들지 않았다. 이 안내에는 정답 증거 이름을 적지 않는다)
+  const GUIDE_PART = PART === 3 ? 2 : PART;
+  const SOLO_NOTE = [
+    '단독판의 제1화~제3화는 이 공략의 제4화~제6화예요. 증언과 정답은 같고, 아래만 달라요. (맨 앞의 지난 기록 대신 프롤로그가 나와요)',
+    '· 제4화 첫 법정의 레테의 주장 「숨을 이유」와 증언 1 「그날 오후」는 연습이라, 틀려도 촛불이 꺼지지 않아요.',
+    '· 1~3화의 🟩 기록(박영수, 후세 다쓰지)이 없어요. 제6화 증언 4의 마지막 문장은 남은 🟩 기록 중 아무거나 내면 정답이에요.',
+  ];
 
   // 한글 자판인 채로 친 비밀번호를 영문 자판 글자로 바꾼다 (두벌식). 예: ㅗㅑㄴ새교 → history
   const KEY = {
@@ -43,7 +51,7 @@
     if (!subtle) throw new Error('nocrypto');
     const base = await subtle.importKey('raw', new TextEncoder().encode(normPw(pw)), 'PBKDF2', false, ['deriveKey']);
     const key = await subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: unb64(T.salt), iterations: T.iter }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
-    const want = PART ? [String(PART)] : Object.keys(T.parts);
+    const want = GUIDE_PART ? [String(GUIDE_PART)] : Object.keys(T.parts);
     const got = {};
     for (const p of want) {
       if (!T.parts[p]) continue;
@@ -97,7 +105,7 @@
     const s = h('div', { class: 'screen teacher-login', onclick: (e) => { if (e.target === s) close(); } },
       h('div', { class: 'panel' },
         h('h2', {}, '선생님 창'),
-        h('p', { class: 't-what' }, '재판 공략 가이드', h('br'), PART ? PART_NAME[PART] : '게임 1 · 게임 2'),
+        h('p', { class: 't-what' }, '재판 공략 가이드', h('br'), PART === 3 ? '단독판 · 제1화~제3화' : PART ? PART_NAME[PART] : '게임 1 · 게임 2'),
         h('p', { class: 't-how' }, '비밀번호를 넣으면 볼 수 있어요.'),
         input, msg,
         h('div', { class: 'row' },
@@ -142,7 +150,7 @@
           h('button', { class: 'ui-btn sub', onclick: openWindow }, '새 창에서 열기'),
           h('button', { class: 'ui-btn sub', onclick: save }, '파일로 저장'),
           h('button', { class: 'ui-btn', onclick: () => close() }, '닫기'))),
-      msg, frame);
+      msg, PART === 3 ? h('div', { class: 't-msg t-note' }, SOLO_NOTE.join('\n')) : null, frame);
     const close = openTop(s);
     show(cur);
   }

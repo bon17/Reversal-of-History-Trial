@@ -3,12 +3,11 @@
   const G = window.G;
   const $ = G.$, h = G.h;
   const ov = $('#overlay');
-  // 한 파일짜리 게임(tools/build_single_html.mjs)은 게임 1(1~3화)용과 게임 2(4~6화)용으로 나누어 만든다.
-  // 그 파일에는 window.GAME_PART 가 1 또는 2로 적혀 있고, 그 게임의 화만 고를 수 있다. 사이트(index.html)는 둘 다 쓴다.
-  const PART = window.GAME_PART || 0;
-  const partOf = (e) => e.게임 || (e.번호 <= 3 ? 1 : 2);
+  // 한 파일짜리 게임(tools/build_single_html.mjs)과 학생용 주소는 게임 1(1~3화), 게임 2(4~6화), 단독판(4~6화만 하는 판)으로 나누어 만든다.
+  // 거기에는 window.GAME_PART 가 1, 2, 3으로 적혀 있고, 그 게임의 화만 고를 수 있다. 사이트(index.html)는 모두 쓴다.
+  const PART = G.PART;
   // 모든 화 (game/data/ep1.js, ep2.js … 를 불러온 것)
-  const episodes = () => Object.values(DATA).filter((d) => d && d.막 && d.번호 && (!PART || partOf(d) === PART)).sort((a, b) => a.번호 - b.번호);
+  const episodes = () => Object.values(DATA).filter((d) => d && d.막 && d.번호 && G.inPart(d)).sort((a, b) => a.번호 - b.번호);
   const epByNo = (n) => episodes().find((e) => e.번호 === n);
   G.ep = episodes()[0];
 
@@ -36,7 +35,7 @@
       return new Promise((resolve) => {
         const s = openScreen(h('div', { class: 'screen solid episode-title', onclick: () => { s.remove(); resolve(); } },
           G.imgEl('ui/title_episode_bg', 'art'),
-          h('div', { class: 'inner' }, h('div', { class: 'no' }, '제' + G.ep.번호 + '화'), h('div', { class: 'ttl' }, '「' + G.ep.제목 + '」'))));
+          h('div', { class: 'inner' }, h('div', { class: 'no' }, '제' + G.epNo(G.ep.번호) + '화'), h('div', { class: 'ttl' }, '「' + G.ep.제목 + '」'))));
       });
     },
     // 부 제목 화면 (게임 2 타이틀, 「제2부 「평범한 사람들」」): 마지막 줄을 크게, 앞줄은 작게
@@ -127,9 +126,9 @@
         openScreen(h('div', { class: 'screen solid art-screen' },
           h('div', { class: 'art-frame' },
             G.imgEl('ui/screen_next_episode', 'art'),
-            h('div', { class: 'next-title' }, title),
+            h('div', { class: 'next-title' }, G.epLabel(title)),
             h('div', { class: 'bottom' },
-              next ? h('button', { class: 'ui-btn', onclick: startNext }, '제' + next.번호 + '화 시작') : null,
+              next ? h('button', { class: 'ui-btn', onclick: startNext }, '제' + G.epNo(next.번호) + '화 시작') : null,
               h('button', { class: 'ui-btn sub', onclick: () => location.reload() }, '처음 화면으로')))));
       });
     },
@@ -153,7 +152,7 @@
   const hasCodes = () => episodes().some((e) => e.코드);
   const norm = (t) => String(t || '').replace(/[\s「」『』"'.,!?·]/g, '');
   function codeScreen() {
-    const input = h('input', { class: 'code-input text', type: 'text', autocomplete: 'off', maxlength: '20', placeholder: PART === 2 ? '예: 숨겨진 방' : '예: 두 개의 국적', 'aria-label': '이어하기 코드' });
+    const input = h('input', { class: 'code-input text', type: 'text', autocomplete: 'off', maxlength: '20', placeholder: PART === 2 ? '예: 숨겨진 방' : PART === 3 ? '예: 아버지의 시계' : '예: 두 개의 국적', 'aria-label': '이어하기 코드' });
     const msg = h('div', { class: 'msg' });
     const go = () => {
       const v = norm(input.value);
@@ -194,7 +193,7 @@
     const s = openScreen(h('div', { class: 'screen', onclick: (e) => { if (e.target === s) close(); } },
       h('div', { class: 'panel' },
         h('h2', {}, '설정'),
-        act ? h('p', { style: 'text-align:center' }, '지금: 제' + G.ep.번호 + '화 「' + G.ep.제목 + '」') : null,
+        act ? h('p', { style: 'text-align:center' }, '지금: 제' + G.epNo(G.ep.번호) + '화 「' + G.ep.제목 + '」') : null,
         h('label', {}, '글자 나오는 속도'), seg,
         h('label', {}, '음악 크기'), slider('bgm', () => G.audio.refreshVolume()),
         h('label', {}, '효과음 크기'), slider('se'),
@@ -233,7 +232,7 @@
     const s = openScreen(h('div', { class: 'screen title-screen' },
       G.imgEl('backgrounds/court_wide', 'art cover'),
       G.imgEl('ui/title_logo', 'logo'),
-      PART ? h('div', { class: 'part-badge' }, PART === 2 ? '게임 2 · 제2부 「평범한 사람들」' : '게임 1 · 제1부 「심판받지 않은 자들」') : null,
+      PART ? h('div', { class: 'part-badge' }, { 1: '게임 1 · 제1부 「심판받지 않은 자들」', 2: '게임 2 · 제2부 「평범한 사람들」', 3: '「평범한 사람들」' }[PART]) : null,
       menu, loading,
       h('div', { class: 'corner' },
         G.teacher ? h('button', { class: 'teacher-btn', onclick: () => G.teacher.open() }, '선생님') : null,
@@ -246,7 +245,7 @@
       startFrom({ 막: 0, 명령: 0 });
     } }, '처음부터');
     const resumeBtn = h('button', { class: 'ui-btn', disabled: !canResume, onclick: () => { G.ep = savedEp; startFrom(saved); } },
-      canResume ? '이어하기 (제' + savedEp.번호 + '화 「' + savedEp.막[saved.막].이름 + '」부터)' : '이어하기');
+      canResume ? '이어하기 (제' + G.epNo(savedEp.번호) + '화 「' + savedEp.막[saved.막].이름 + '」부터)' : '이어하기');
     const codeBtn = h('button', { class: 'ui-btn sub', onclick: codeScreen, hidden: !hasCodes() }, '이어하기 코드 입력');
     [startBtn, resumeBtn, codeBtn].forEach((b) => { b.disabled = true; menu.append(b); });
 

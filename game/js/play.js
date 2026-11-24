@@ -628,7 +628,8 @@
         if ([].concat(step.정답).includes(ev)) { P.presented = ev; await runList(step.정답장면); break; } // 정답이 여러 개일 수 있다 (6화: 🟩 기록 아무거나)
         // 따로오답: 이 증거를 내면 공통 오답 대신 이 장면이 나온다 (5화 「암시장」의 🟥 번호 문신). 벌칙은 증거 색대로
         const own = (step.따로오답 || []).find((o) => o.증거 === ev);
-        await wrongAnswer({ 일반오답: own ? own.장면 : C.일반오답, 피해오답: own ? own.장면 : C.피해오답, 힌트: step.힌트 }, ev, state);
+        // 튜토리얼: 연습이라 틀려도 신뢰도가 줄지 않는다 (단독판 4화 「숨을 이유」)
+        await wrongAnswer({ 일반오답: own ? own.장면 : C.일반오답, 피해오답: own ? own.장면 : C.피해오답, 힌트: step.힌트, 튜토리얼: C.튜토리얼 }, ev, state);
       }
     }
   }

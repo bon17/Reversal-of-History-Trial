@@ -4,11 +4,13 @@
 # GitHub Pages가 `site` 브랜치를 보여 준다 (저장소 Settings → Pages → Branch: site, / (root)).
 #   게임 1 (1~3화): https://bon17.github.io/Reversal-of-History-Trial/1/
 #   게임 2 (4~6화): https://bon17.github.io/Reversal-of-History-Trial/2/
+#   단독판 (4~6화만 하는 판): https://bon17.github.io/Reversal-of-History-Trial/3/
 #
 # - 올리는 것: index.html, manifest.webmanifest, game/, assets/audio/ (소리 파일이 생기면)
 # - 올리지 않는 것: docs/(대본, 정답, 교사용 메모), tools/, gas/, assets/의 원본 그림
-# - 두 주소는 같은 게임 파일에 window.GAME_PART = 1 / 2 만 다르게 넣은 것이다
-#   (HTML 한 파일 게임 1·2와 같은 방식. 그 게임의 화만 고를 수 있고, [처음부터]가 1화 / 4화).
+# - 세 주소는 같은 게임 파일에 window.GAME_PART = 1 / 2 / 3 만 다르게 넣은 것이다
+#   (HTML 한 파일 게임 1·2·단독판과 같은 방식. 그 게임의 화만 고를 수 있고, [처음부터]가 1화 / 4화 / 4화).
+#   단독판은 게임 2와 같은 4~6화를 쓰고, 1~3화를 모르는 학생용으로 바뀐 곳만 다르다 (docs/대본/단독판_평범한_사람들.md).
 # - 수업 브랜치를 바꾸면 아래 branches 의 이름도 바꾼다.
 
 name: 게임 사이트 올리기
@@ -38,23 +40,24 @@ jobs:
             /assets/audio/
           sparse-checkout-cone-mode: false
 
-      - name: 사이트 만들기 (site/1, site/2)
+      - name: 사이트 만들기 (site/1, site/2, site/3)
         run: |
           set -euo pipefail
           rm -rf site && mkdir site
           touch site/.nojekyll   # _manifest.json 처럼 _로 시작하는 파일도 그대로 올리게
-          for N in 1 2; do
+          for N in 1 2 3; do
             D="site/$N"
+            if [ "$N" = 3 ]; then NAME="기억의 법정: 평범한 사람들"; else NAME="기억의 법정 게임 $N"; fi
             mkdir -p "$D/assets"
             cp -r game "$D/"
             if [ -d assets/audio ]; then cp -r assets/audio "$D/assets/"; fi
             sed -e "s|<head>|<head><script>window.GAME_PART=$N</script>|" \
-                -e "s|<title>기억의 법정</title>|<title>기억의 법정 게임 $N</title>|" \
+                -e "s|<title>기억의 법정</title>|<title>$NAME</title>|" \
                 index.html > "$D/index.html"
-            sed -e "s|\"기억의 법정\"|\"기억의 법정 게임 $N\"|g" manifest.webmanifest > "$D/manifest.webmanifest"
-            # 바꿔 넣기가 안 되었으면 여기서 멈춘다 (두 주소가 같은 게임이 되지 않게)
+            sed -e "s|\"기억의 법정\"|\"$NAME\"|g" manifest.webmanifest > "$D/manifest.webmanifest"
+            # 바꿔 넣기가 안 되었으면 여기서 멈춘다 (주소끼리 같은 게임이 되지 않게)
             grep -q "window.GAME_PART=$N" "$D/index.html"
-            grep -q "<title>기억의 법정 게임 $N</title>" "$D/index.html"
+            grep -q "<title>$NAME</title>" "$D/index.html"
           done
           find site -name .gitkeep -delete
           cat > site/index.html <<'EOF'
@@ -74,10 +77,11 @@ jobs:
           <h1>기억의 법정</h1>
           <a href="1/">게임 1 · 제1화~제3화</a>
           <a href="2/">게임 2 · 제4화~제6화</a>
+          <a href="3/">단독판 「평범한 사람들」 · 4~6화만</a>
           </body>
           </html>
           EOF
-          test ! -e site/docs && test ! -e site/1/docs && test ! -e site/2/docs
+          test ! -e site/docs && test ! -e site/1/docs && test ! -e site/2/docs && test ! -e site/3/docs
           du -sh site
 
       - name: site 브랜치에 올리기

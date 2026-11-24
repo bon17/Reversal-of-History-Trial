@@ -10,6 +10,7 @@
 //   --fast N : 기다리는 시간을 1/N로 줄인다 (기본 8)
 //   --html 파일 : index.html 대신 HTML 한 파일(dist/…게임2.html)을 시험한다
 //   --start 막:명령 : 그 화의 이 자리부터 시작한다 (막은 0부터. 예: --from 6 --start 5:0). --fast 1 과 함께 쓰면 연출을 제 속도로 찍는다
+//   --part N : 그 게임으로 연다 (window.GAME_PART). 3 = 단독판(4~6화만 하는 판): node tools/playtest.mjs --part 3 --from 4 --to 6
 import { createRequire } from 'node:module';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -25,6 +26,7 @@ const PROBE = process.argv.includes('--probe');
 const PORTRAIT = process.argv.includes('--portrait');
 const HTML = arg('--html', null);
 const [SA, SC] = String(arg('--start', '0:0')).split(':').map(Number);
+const PART = +arg('--part', 0);
 fs.mkdirSync(OUT, { recursive: true });
 
 // ─────────── 작은 정적 서버 ───────────
@@ -51,6 +53,7 @@ page.on('pageerror', (e) => logs.push('[pageerror] ' + e.message));
 const expected404 = (u) => /^\/(assets\/audio|game\/fonts)\//.test(decodeURIComponent(new URL(u).pathname));
 let quiet404 = 0;
 page.on('response', (r) => { if (r.status() >= 400) { if (expected404(r.url())) quiet404++; else logs.push('[' + r.status() + '] ' + decodeURIComponent(new URL(r.url()).pathname)); } });
+if (PART) await page.addInitScript((n) => { window.GAME_PART = n; }, PART);
 await page.goto(url);
 await page.waitForFunction(() => window.G && G.startGame && document.querySelector('.title-screen'), null, { timeout: 30000 });
 
