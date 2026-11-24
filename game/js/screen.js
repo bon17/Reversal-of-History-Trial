@@ -939,7 +939,7 @@
   };
 
   // ─────────── 입력 ───────────
-  // 누르기(마우스, 터치)와 스페이스바로 대사를 넘긴다. 버튼이나 창 위를 누른 것은 넘기지 않는다.
+  // 누르기(마우스, 터치)로 대사를 넘긴다. 단독판(window.GAME_PART = 3)만 스페이스바로도 넘긴다. 버튼이나 창 위를 누른 것은 넘기지 않는다.
   let waiter = null;
   G.input = {
     HOLD: 400, // 새로 보인 것은 이 시간(ms) 동안 눌러도 넘기지 않는다
@@ -971,8 +971,8 @@
     if ($('#overlay').children.length) {
       if (e.key === 'Escape' && G.closeTopOverlay) G.closeTopOverlay();
       else if (G.overlayKey && G.overlayKey(e)) e.preventDefault(); // 법정 기록의 ← →
-      else if (e.key === ' ') {
-        // 스페이스바: 아무 데나 누르면 넘어가는 제목 화면(제N화, 부 제목)만 넘긴다. 다른 창(법정 기록 등)의 단추는 누르지 않는다
+      else if (e.key === ' ' && G.SOLO) {
+        // 단독판의 스페이스바: 아무 데나 누르면 넘어가는 제목 화면(제N화, 부 제목)만 넘긴다. 다른 창(법정 기록 등)의 단추는 누르지 않는다
         e.preventDefault();
         const top = $('#overlay').lastElementChild;
         if (!e.repeat && top && top.matches('.episode-title, .part-title')) top.click();
@@ -980,16 +980,16 @@
       return;
     }
     if (G.input.onKey && G.input.onKey(e)) { e.preventDefault(); return; }
-    // 스페이스바: 대사창(화면)을 누른 것과 같다. 대사를 넘기고, 반대 심문에서는 다음 문장으로 간다.
+    // 단독판의 스페이스바: 대사창(화면)을 누른 것과 같다. 대사를 넘기고, 반대 심문에서는 다음 문장으로 간다.
     // 누르고 있어도 한 번만 넘긴다 (e.repeat). 새로 나온 글을 너무 빨리 넘기지 않는 것도 누를 때와 같다 (G.input.HOLD)
-    // 스페이스로 화면이 내려가거나, 마우스로 누른 단추에 남은 초점 때문에 그 단추가 다시 눌리지 않게 기본 동작은 막는다
-    if (e.key === ' ') {
+    if (e.key === ' ' && G.SOLO) {
       e.preventDefault();
       if (!e.repeat && !(G.onStageTap && G.onStageTap(e))) G.input.tap();
       return;
     }
-    // 엔터로는 대사를 넘기지 않는다. 엔터가 초점이 남은 단추를 다시 누르지 않게만 막는다
-    if (e.key === 'Enter' && e.target.closest && e.target.closest('button')) e.preventDefault();
+    // 게임 1·2는 엔터·스페이스로 대사를 넘기지 않는다 (잘못 눌러 대사를 놓치지 않게). 스페이스로 화면이 내려가지 않게만 막는다
+    // 마우스로 누른 버튼에 남은 초점 때문에 엔터·스페이스가 그 버튼을 다시 누르지 않게도 막는다
+    if (e.key === ' ' || (e.key === 'Enter' && e.target.closest && e.target.closest('button'))) e.preventDefault();
   });
   window.addEventListener('resize', () => G.layout());
   window.addEventListener('orientationchange', () => setTimeout(G.layout, 150));
