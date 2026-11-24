@@ -198,7 +198,7 @@ function assemble(part, embed, sounds) {
     return '<style>\n' + css + '\n</style>';
   });
   html = html.replace(/<link rel="manifest"[^>]*>\n?/, '');
-  html = html.replace(/<title>([^<]*)<\/title>/, part === 3 ? '<title>$1: 평범한 사람들</title>' : '<title>$1 게임 ' + part + '</title>');
+  html = html.replace(/<title>([^<]*)<\/title>/, { 1: '<title>$1: 심판받지 않은 자들</title>', 3: '<title>$1: 평범한 사람들</title>' }[part] || '<title>$1 게임 ' + part + '</title>');
   html = html.replace(/<script src="([^"]+)"><\/script>/g, (m, src) => '<script>\n' + inline(fs.readFileSync(path.join(ROOT, src), 'utf8')) + '\n</script>');
   html = html.replace('<script>', '<script>window.GAME_PART = ' + part + '; window.EMBED_IMG = ' + JSON.stringify(embed) + ';</script>\n<script>');
   return embedAudio(html, sounds);

@@ -234,7 +234,7 @@
     const s = openScreen(h('div', { class: 'screen title-screen' },
       G.imgEl('backgrounds/court_wide', 'art cover'),
       G.imgEl('ui/title_logo', 'logo'),
-      PART ? h('div', { class: 'part-badge' }, { 1: '게임 1 · 제1부 「심판받지 않은 자들」', 2: '게임 2 · 제2부 「평범한 사람들」', 3: '「평범한 사람들」' }[PART]) : null,
+      PART ? h('div', { class: 'part-badge' }, { 1: '「심판받지 않은 자들」', 2: '게임 2 · 제2부 「평범한 사람들」', 3: '「평범한 사람들」' }[PART]) : null,
       menu, loading,
       h('div', { class: 'corner' },
         G.teacher ? h('button', { class: 'teacher-btn', onclick: () => G.teacher.open() }, '선생님') : null,
